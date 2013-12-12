@@ -14,8 +14,8 @@ env = {
     "qrels": os.path.join(home, "qrels"),
     "sys": os.path.join(home, "sys"),
     "index": os.path.join(home, "index"),
-    "ret": os.path.join(home, "ret"),
-    "eval": os.path.join(home, "eval")
+    "runs": os.path.join(home, "runs"),
+    "evals": os.path.join(home, "eval")
 }
 
 # systems are objects
@@ -45,7 +45,7 @@ qrelslist = [os.path.join(env["qrels"], "qrels.trec6.adhoc.parts1-5"),
         os.path.join(env["qrels"], "qrels.trec7.adhoc.parts1-5"),
         os.path.join(env["qrels"], "qrels.trec8.adhoc.parts1-5")]
 
-modellist = ["A", "B"]
+modellist = ["tfidf", "bm25"]
 
 def main(argv):
 
@@ -55,8 +55,10 @@ def main(argv):
     qr = Qrels(qrelslist[0])
 
     s = SysTerrier(env, d, t, m, qr)
-    s.index(d)
-    # s.retrieve()
+    # s.index()
+    s.topic.build_query("t")
+    q = s.topic.query
+    s.retrieve(q)
     # s.evaluate()
     
 if __name__ == "__main__":
