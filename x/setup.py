@@ -1,9 +1,9 @@
 import sys, os
-from sys_ import sys_terrier
-from doc_ import doc_
-from topics_ import topics_
-from qrels_ import qrels_
-from model_ import model_
+from Sys import SysTerrier
+from Doc import Doc
+from Topics import Topics
+from Qrels import Qrels
+from Model import Model
 
 home = "/home/rup/ir/exp"
 
@@ -49,12 +49,12 @@ modellist = ["A", "B"]
 
 def main(argv):
 
-    d = doc_(doclist[0], "test")
-    t = topics_(topiclist[0])
-    m = model_(modellist[0])
-    qr = qrels_(qrelslist[0])
+    d = Doc(doclist[0], "test")
+    t = Topics(topiclist[0])
+    m = Model(modellist[0])
+    qr = Qrels(qrelslist[0])
 
-    s = sys_terrier(env, d, t, m, qr)
+    s = SysTerrier(env, d, t, m, qr)
     s.index(d)
     # s.retrieve()
     # s.evaluate()
