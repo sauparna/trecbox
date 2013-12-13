@@ -55,10 +55,10 @@ def main(argv):
     qr = Qrels(qrelslist[0])
 
     s = SysTerrier(env, d, t, m, qr)
-    # s.index()
-    s.topic.build_query("t")
-    q = s.topic.query
-    s.retrieve(q)
+    #s.index()
+    #s.topic.build_query("t")
+    #q = s.topic.query
+    #s.retrieve(q)
     # s.evaluate()
     
 if __name__ == "__main__":
