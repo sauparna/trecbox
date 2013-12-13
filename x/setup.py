@@ -15,7 +15,8 @@ env = {
     "sys": os.path.join(home, "sys"),
     "index": os.path.join(home, "index"),
     "runs": os.path.join(home, "runs"),
-    "evals": os.path.join(home, "eval")
+    "evals": os.path.join(home, "eval"),
+    "treceval": "/home/rup/trec_eval.9.0/trec_eval"
 }
 
 # systems are objects
@@ -57,9 +58,8 @@ def main(argv):
     s = SysTerrier(env, d, t, m, qr)
     #s.index()
     #s.topic.build_query("t")
-    #q = s.topic.query
-    #s.retrieve(q)
-    # s.evaluate()
+    #s.retrieve()
+    #s.evaluate()
     
 if __name__ == "__main__":
    main(sys.argv[1:])

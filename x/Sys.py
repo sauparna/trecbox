@@ -62,20 +62,15 @@ class SysTerrier(Sys):
             "doc2": "-DTrecDocTags.idtag=DOCNO",
             "doc3": "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
             "doc4": "-DTrecDocTags.skip=DOCHDR",
+            "doc5": "-DTrecDocTags.casesensitive=true",
             "index": "-Dterrier.index.path=" + self.param["index"]
             }
 
         # call terrier to index
-        subprocess.check_output([args["exec"],
-                                 args["mode"],
-                                 args["doc"],
-                                 args["index"]])
+        subprocess.check_output([args.pop("exec"), args.pop("mode")] 
+                                + args.values())
 
-    def retrieve(self, q):
-        # create runs dir
-        if os.path.exists(self.param["runs"]):
-            os.removedirs(self.param["runs"])
-        os.mkdir(self.param["runs"])
+    def retrieve(self):
 
         # determine query
         l = list(self.topic.query)
@@ -100,14 +95,27 @@ class SysTerrier(Sys):
             "query4": "-DTrecQueryTags.skip=" + skip,
             "query5": "-DTrecQueryTags.casesensitive=false",
             "model": "-Dtrec.model=" + self.param["model"],
-            #"runs": "-Dterrier.var=" + self.param["runs"]
-            "runs": "-Dtrec.results.file" + self.param["runs"]
+            "rundir": "-Dtrec.results=" + self.env["runs"],
+            "runfile": "-Dtrec.results.file=" + self.run_id
             }
         
         # call terrier to retrieve
-        subprocess.check_output([args["exec"], args["mode"], 
-                                 args["index"], args["query"], 
-                                 args["query1"], args["query2"], 
-                                 args["query3"], args["query4"], 
-                                 args["query5"], args["model"], 
-                                 args["runs"]])
+        subprocess.check_output([args.pop("exec"), args.pop("mode")] 
+                                + args.values())
+
+    def evaluate(self):
+
+        # overwrites files in eval dir
+        # trec_eval -q QREL_file Retrieval_Results > eval_output
+        
+        args = {
+            "exec": self.env["treceval"],
+            "mode": "-q",
+            "qrel": self.qrel.file,
+            "runfile": os.path.join(self.param["runs"])
+            }
+
+        # call trec_eval and dump output to a file
+        with open(self.param["evals"], "w") as f:
+            f.write(subprocess.check_output([args["exec"], args["mode"],
+                                             args["qrel"], args["runfile"]]))
