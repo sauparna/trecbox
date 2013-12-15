@@ -118,8 +118,7 @@ class SysIndri(Sys):
 
         # get rid of the first line of the xml introduced by BeautifulSoup
         with open(self.param["iparam"], "w") as f:
-            f.write(soup.prettify())
-            #f.write("\n".join(soup.prettify().split("\n")[1:]))
+            f.write("\n".join(soup.prettify().split("\n")[1:]))
 
         sys.exit(0)
 
