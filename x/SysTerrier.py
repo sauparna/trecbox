@@ -22,6 +22,7 @@ class SysTerrier(Sys):
 
     def index(self):
         # TODO: create collection.spec
+        # do something about this step, very irritating indeed
 
         # create index dir
         # consider backing up an existing one with a stamp in stead of
