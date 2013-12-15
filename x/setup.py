@@ -1,5 +1,7 @@
 import sys, os
-from Sys import SysTerrier
+from Sys import *
+from SysTerrier import *
+from SysIndri import *
 from Doc import Doc
 from Topics import Topics
 from Qrels import Qrels
@@ -55,8 +57,9 @@ def main(argv):
     m = Model(modellist[0])
     qr = Qrels(qrelslist[0])
 
-    s = SysTerrier(env, d, t, m, qr)
-    #s.index()
+    #s = SysTerrier(env, d, t, m, qr)
+    s = SysIndri(env, d, t, m, qr)
+    s.index()
     #s.topic.build_query("t")
     #s.retrieve()
     #s.evaluate()
