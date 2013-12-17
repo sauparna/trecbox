@@ -96,7 +96,7 @@ class SysIndri(Sys):
         T_index.string = self.param["index"]
         soup.parameters.append(T_index)
 
-        # float 5 fields in the soup
+        # float 5 <field> tags in the soup
         TREC_field = ["TEXT", "H3", "DOCTITLE", "HEADLINE", "TTL"]
         i = 0
         for i in range(5):
@@ -150,3 +150,18 @@ class SysIndri(Sys):
 
         with open(self.param["qparam"], "w") as f:
             f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
+
+        args = {
+            "exec": "/home/rup/indri-5.5/runquery/IndriRunQuery",
+            "param_file": self.param["qparam"],
+            "index": "-index=" + self.param["index"],
+            "count": "-count 10",
+            "out_format": "-trecFormat=True"
+            }
+
+        runfile = os.path.join(self.env["runs"], self.run_id)
+        
+        with open(runfile, "w") as f:
+            f.write(subprocess.check_output([args["exec"], args["param_file"],
+                                             args["count"], args["index"],
+                                             args["out_format"]]))
