@@ -45,13 +45,37 @@ class SysIndri(Sys):
             "evals": os.path.join(self.env["evals"], self.run_id)
             }
 
+    def shapeup_xml(self, l):
+
+        l_ = []
+        n = 0
+
+        for i in range(len(l)):
+            l[i] = l[i].lstrip().rstrip()
+            l[i] = l[i].lstrip("\n").rstrip("\n")
+            l_.append(l[i])
+            n = len(l_) - 1
+
+            if i == 0:
+                continue
+
+            if l_[n].startswith("</"):
+                if not l_[n-1].startswith("<"):
+                    e  = l_.pop()
+                    e1 = l_.pop()
+                    e2 = l_.pop()
+                    l_.append(e2 + e1 + e)
+                    n = len(l_) - 1
+                
+        return "\n".join(l_)
+        
     def index(self):
-        # create index dir
-        # consider backing up an existing one with a stamp in stead of
+
+        # consider backing up an existing one with a stamp instead of
         # deleting it
-        if os.path.exists(self.param["index"]):
-            os.removedirs(self.param["index"])
-        os.mkdir(self.param["index"])
+        #if os.path.exists(self.param["index"]):
+        #    os.removedirs(self.param["index"])
+        #os.mkdir(self.param["index"])
 
         # build and write Indri's index param file
 
@@ -89,7 +113,7 @@ class SysIndri(Sys):
         T_field = soup.new_tag("field")
         soup.parameters.append(T_field)
 
-        # iterate over 5 <field> tags adding the <name> tag to each
+        # iterate over 5 <field> tags adding the <name> child to each
 
         f_ = soup.parameters.field
         T_name = soup.new_tag("name")
@@ -117,14 +141,20 @@ class SysIndri(Sys):
         f_.append(T_name)
 
         # get rid of the first line of the xml introduced by BeautifulSoup
+        # and shape it up for Indri to consume
         with open(self.param["iparam"], "w") as f:
-            f.write("\n".join(soup.prettify().split("\n")[1:]))
-
-        sys.exit(0)
-
+            f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
+            
         args = {
             "exec": "/home/rup/indri-5.5/buildindex/IndriBuildIndex",
             "param_file": self.param["iparam"]
             }
 
         subprocess.check_output([args["exec"], args["param_file"]])
+
+    def retrieve(self, q):
+        
+        # determine query
+        # q is a dict here
+        
+        # build the query-param xml and write it out to disk
