@@ -159,9 +159,25 @@ class SysIndri(Sys):
             "out_format": "-trecFormat=True"
             }
 
-        runfile = os.path.join(self.env["runs"], self.run_id)
-        
-        with open(runfile, "w") as f:
+        with open(self.param["runs"], "w") as f:
             f.write(subprocess.check_output([args["exec"], args["param_file"],
                                              args["count"], args["index"],
                                              args["out_format"]]))
+
+    def evaluate(self):
+
+        # overwrites files in eval dir
+        
+        args = {
+            "exec": self.env["treceval"],
+            "mode": "-q",
+            "qrel": self.qrel.file,
+            "run": self.param["runs"]
+            }
+
+        # trec_eval -q QREL_file Retrieval_Results > eval_output
+        # call trec_eval and dump output to a file
+
+        with open(self.param["evals"], "w") as f:
+            f.write(subprocess.check_output([args["exec"], args["mode"],
+                                             args["qrel"], args["run"]]))

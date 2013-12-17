@@ -60,8 +60,8 @@ def main(argv):
     #s = SysTerrier(env, d, t, m, qr)
     s = SysIndri(env, d, t, m, qr)
     #s.index()
-    s.retrieve()
-    #s.evaluate()
+    #s.retrieve()
+    s.evaluate()
     
 if __name__ == "__main__":
    main(sys.argv[1:])
