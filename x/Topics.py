@@ -1,3 +1,6 @@
+from bs4 import BeautifulSoup
+import string
+
 class Topics():
     def __init__(self, f, mode = "t"):
         self.file = f
@@ -21,7 +24,7 @@ class Topics():
         for top in soup.find_all("top"):
             n = top.num.string.lstrip().rstrip()
             q[n] = ""
-            for m in list(mode):
+            for m in list(self.mode):
                 if m == "t":
                     q[n] += " " + top.title.string
                 if m == "d":

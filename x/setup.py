@@ -59,10 +59,8 @@ def main(argv):
 
     #s = SysTerrier(env, d, t, m, qr)
     s = SysIndri(env, d, t, m, qr)
-    s.index()
-    #q = s.topic.query_T("t")
-    #q = s.topic.query_I("t")
-    #s.retrieve(q)
+    #s.index()
+    s.retrieve()
     #s.evaluate()
     
 if __name__ == "__main__":

@@ -48,12 +48,13 @@ class SysTerrier(Sys):
         subprocess.check_output([args.pop("exec"), args.pop("mode")] 
                                 + args.values())
 
-    def retrieve(self, q):
+    def retrieve(self):
 
         # determine query
-        # q is a string here, like "tdn"
+        # query in this case is a string here, like "tdn"
 
-        l = list(q)
+        l = list(self.topic.query_T())
+
         process = []
         skip = []
         for s in ["t", "d", "n"]:

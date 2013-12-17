@@ -96,24 +96,16 @@ class SysIndri(Sys):
         T_index.string = self.param["index"]
         soup.parameters.append(T_index)
 
-        # Attach the 5 <field> tags
-
-        for i in range(5):
-            T_field = soup.new_tag("field")
-            soup.parameters.append(T_field)
-
-        # iterate over 5 <field> tags adding the <name> child to each
-
+        # float 5 fields in the soup
         TREC_field = ["TEXT", "H3", "DOCTITLE", "HEADLINE", "TTL"]
         i = 0
-
-        T_field = soup.parameters.field
-        while(T_field):
+        for i in range(5):
+            T_field = soup.new_tag("field")
             T_name = soup.new_tag("name")
             T_name.string = TREC_field[i]
-            i += 1
             T_field.append(T_name)
-            T_field = T_field.find_next_sibling("field")
+            soup.parameters.append(T_field)
+            i += 1
 
         # get rid of the first line of the xml introduced by BeautifulSoup
         # and shape it up for Indri to consume
@@ -128,10 +120,33 @@ class SysIndri(Sys):
 
         subprocess.check_output([args["exec"], args["param_file"]])
 
-    def retrieve(self, q):
+    def retrieve(self):
         
         # determine query
-        # q is a dict here
+        # query here is a dict
+        
+        q = self.topic.query_I()
         
         # build the query-param xml and write it out to disk
-        dumb = ""
+        soup = BeautifulSoup("<parameters></parameters>", "xml")
+
+        # float n query tags in the soup
+
+        for num in q.keys():
+            T_query = soup.new_tag("query")
+            T_type = soup.new_tag("type")
+            T_type.string = "indri"
+            T_number = soup.new_tag("number")
+            T_number.string = num
+            T_text = soup.new_tag("text")
+            T_text.string = "#combine(" + q[num] + ")"
+            T_query.append(T_type)
+            T_query.append(T_number)
+            T_query.append(T_text)
+            soup.parameters.append(T_query)
+        
+        # get rid of the first line of the xml introduced by BeautifulSoup
+        # and shape it up for Indri to consume
+
+        with open(self.param["qparam"], "w") as f:
+            f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
