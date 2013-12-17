@@ -1,14 +1,12 @@
 class Topics():
-    def __init__(self, f):
+    def __init__(self, f, mode = "t"):
         self.file = f
-        self.mode = "t" #default
-
-    def query_T(self, mode):
         self.mode = mode.lower()
+
+    def query_T(self):
         return self.mode
         
-    def query_I(self, mode):
-        self.mode = mode.lower()
+    def query_I(self):
 
         #if ever you want to prettyprint the soup without the tricks
         #print "\n".join(soup.prettify().split("\n")[2:-1])

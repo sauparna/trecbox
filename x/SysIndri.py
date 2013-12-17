@@ -33,7 +33,7 @@ class SysIndri(Sys):
         self.sys_id = "I"
         self.index_id = ".".join([self.sys_id, self.doc.name])
         self.run_id = ".".join([self.sys_id, self.doc.name, 
-                                self.model.name, self.topic.query])
+                                self.model.name, self.topic.mode])
         self.iparam_f = ".".join(["param", "i", self.index_id])
         self.qparam_f = ".".join(["param", "q", self.run_id])
         self.param = {
@@ -96,52 +96,28 @@ class SysIndri(Sys):
         T_index.string = self.param["index"]
         soup.parameters.append(T_index)
 
-        # Build the 5 <field> tags
+        # Attach the 5 <field> tags
 
-        T_field = soup.new_tag("field")
-        soup.parameters.append(T_field)
-
-        T_field = soup.new_tag("field")
-        soup.parameters.append(T_field)
-
-        T_field = soup.new_tag("field")
-        soup.parameters.append(T_field)
-
-        T_field = soup.new_tag("field")
-        soup.parameters.append(T_field)
-
-        T_field = soup.new_tag("field")
-        soup.parameters.append(T_field)
+        for i in range(5):
+            T_field = soup.new_tag("field")
+            soup.parameters.append(T_field)
 
         # iterate over 5 <field> tags adding the <name> child to each
 
-        f_ = soup.parameters.field
-        T_name = soup.new_tag("name")
-        T_name.string = "TEXT"
-        f_.append(T_name)
-        
-        f_ = f_.find_next_sibling("field")
-        T_name = soup.new_tag("name")
-        T_name.string = "H3"
-        f_.append(T_name)
+        TREC_field = ["TEXT", "H3", "DOCTITLE", "HEADLINE", "TTL"]
+        i = 0
 
-        f_ = f_.find_next_sibling("field")
-        T_name = soup.new_tag("name")
-        T_name.string = "DOCTITLE"
-        f_.append(T_name)
-
-        f_ = f_.find_next_sibling("field")
-        T_name = soup.new_tag("name")
-        T_name.string = "HEADLINE"
-        f_.append(T_name)
-
-        f_ = f_.find_next_sibling("field")
-        T_name = soup.new_tag("name")
-        T_name.string = "TTL"
-        f_.append(T_name)
+        T_field = soup.parameters.field
+        while(T_field):
+            T_name = soup.new_tag("name")
+            T_name.string = TREC_field[i]
+            i += 1
+            T_field.append(T_name)
+            T_field = T_field.find_next_sibling("field")
 
         # get rid of the first line of the xml introduced by BeautifulSoup
         # and shape it up for Indri to consume
+
         with open(self.param["iparam"], "w") as f:
             f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
             
@@ -158,3 +134,4 @@ class SysIndri(Sys):
         # q is a dict here
         
         # build the query-param xml and write it out to disk
+        dumb = ""

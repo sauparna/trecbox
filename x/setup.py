@@ -53,7 +53,7 @@ modellist = ["tfidf", "bm25"]
 def main(argv):
 
     d = Doc(doclist[0], "test")
-    t = Topics(topiclist[0])
+    t = Topics(topiclist[0], "t")
     m = Model(modellist[0])
     qr = Qrels(qrelslist[0])
 
@@ -61,7 +61,7 @@ def main(argv):
     s = SysIndri(env, d, t, m, qr)
     s.index()
     #q = s.topic.query_T("t")
-    q = s.topic.query_I("t")
+    #q = s.topic.query_I("t")
     #s.retrieve(q)
     #s.evaluate()
     

@@ -7,7 +7,7 @@ class SysTerrier(Sys):
         self.sys_id = "T"
         self.index_id = ".".join([self.sys_id, self.doc.name])
         self.run_id = ".".join([self.sys_id, self.doc.name, 
-                                self.model.name, self.topic.query])
+                                self.model.name, self.topic.mode])
         self.query_map = {"t": "TITLE", "d": "DESC", "n": "NARR"}
         self.model_map = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
         self.param = {
