@@ -2,6 +2,7 @@ import sys, os
 from Sys import *
 from SysTerrier import *
 from SysIndri import *
+from SysLucene import *
 from Doc import Doc
 from Topics import Topics
 from Qrels import Qrels
@@ -58,7 +59,8 @@ def main(argv):
     qr = Qrels(qrelslist[0])
 
     #s = SysTerrier(env, d, t, m, qr)
-    s = SysIndri(env, d, t, m, qr)
+    #s = SysIndri(env, d, t, m, qr)
+    s = SysLucene(env, d, t, m, qr)
     #s.index()
     #s.retrieve()
     s.evaluate()
