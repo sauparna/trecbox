@@ -156,8 +156,6 @@ class SysIndri():
     
     def evaluate(self, rtag, qrels):
 
-        # overwrites files in eval dir
-
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
 

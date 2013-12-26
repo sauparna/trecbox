@@ -4,6 +4,7 @@ import time
 class SysTerrier():
 
     def __init__(self, env):
+
         self.env = env
         self.query_map = {"t": "TITLE", "d": "DESC", "n": "NARR"}
         self.model_map = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
@@ -72,8 +73,6 @@ class SysTerrier():
             "-Dtrec.results.file=" + o_file_name])
 
     def evaluate(self, rtag, qrels):
-
-        # overwrites files in eval dir
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
 
