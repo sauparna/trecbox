@@ -52,13 +52,15 @@ def main(argv):
 
     t = Topics(topiclist[0])
     #s = SysTerrier(env, d, t, m, qr)
-    #s = SysIndri(env, d, t, m, qr)
-    s = SysLucene(env)
-    #s.index(doclist[0], "xyz")
+    s = SysIndri(env)
+    #s = SysLucene(env)
+    #s.index(doclist[0], "uvw")
     #s.retrieve("xyz", "xyz", "tfidf", t.query("lucene"))
-    #s.retrieve("xyz", "xyz", "tfidf", t.query("indri"))
+    #s.retrieve("uvw", "uvw", "tfidf", t.query("indri"))
     #s.retrieve("xyz", "xyz", "tfidf", t.query("terrier", "t"))
-    s.evaluate("xyz", qrelslist[0])
+    s.evaluate("uvw", qrelslist[0])
+    #s.evaluate("xyz", qrelslist[0])
+
     
 if __name__ == "__main__":
    main(sys.argv[1:])
