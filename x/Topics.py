@@ -6,6 +6,9 @@ class Topics():
         self.file = f
         self.mode = mode.lower()
 
+    def query_L(self):
+        return "/home/rup/lucene.TREC/test-data/title-queries.301-450"
+
     def query_T(self):
         return self.mode
         
