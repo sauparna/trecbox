@@ -1,5 +1,4 @@
 import sys
-from Sys import *
 from bs4 import BeautifulSoup
 
 #indri-5.0/buildindex/IndriBuildIndex parameter_file
@@ -28,22 +27,8 @@ from bs4 import BeautifulSoup
 
 class SysIndri(Sys):
 
-    def __init__(self, env, doc, topic, model, qrel):
-        Sys.__init__(self, env, doc, topic, model, qrel)
-        self.sys_id = "I"
-        self.index_id = ".".join([self.sys_id, self.doc.name])
-        self.run_id = ".".join([self.sys_id, self.doc.name, 
-                                self.model.name, self.topic.mode])
-        self.iparam_f = ".".join(["param", "i", self.index_id])
-        self.qparam_f = ".".join(["param", "q", self.run_id])
-        self.param = {
-            "iparam": os.path.join(self.env["index"], self.iparam_f),
-            "index": os.path.join(self.env["index"], self.index_id),
-            "topics": os.path.join(self.env["topics"], self.topic.file),
-            "qparam": os.path.join(self.env["runs"], self.qparam_f),
-            "runs": os.path.join(self.env["runs"], self.run_id),
-            "evals": os.path.join(self.env["evals"], self.run_id)
-            }
+    def __init__(self, env):
+        self.env = env
 
     def shapeup_xml(self, l):
 
@@ -69,13 +54,9 @@ class SysIndri(Sys):
                 
         return "\n".join(l_)
         
-    def index(self):
+    def index(self, doc, itag):
 
-        # consider backing up an existing one with a stamp instead of
-        # deleting it
-        #if os.path.exists(self.param["index"]):
-        #    os.removedirs(self.param["index"])
-        #os.mkdir(self.param["index"])
+        o_dir = os.path.join(self.env["index"], itag)
 
         # build and write Indri's index param file
 
@@ -85,7 +66,7 @@ class SysIndri(Sys):
         soup.parameters.append(T_corpus)
 
         T_path = soup.new_tag("path")
-        T_path.string = self.doc.path
+        T_path.string = doc
         soup.parameters.corpus.append(T_path)
 
         T_class = soup.new_tag("class")
@@ -93,7 +74,7 @@ class SysIndri(Sys):
         soup.parameters.corpus.append(T_class)
 
         T_index = soup.new_tag("index")
-        T_index.string = self.param["index"]
+        T_index.string = o_dir
         soup.parameters.append(T_index)
 
         # float 5 <field> tags in the soup
@@ -107,27 +88,23 @@ class SysIndri(Sys):
             soup.parameters.append(T_field)
             i += 1
 
-        # get rid of the first line of the xml introduced by BeautifulSoup
-        # and shape it up for Indri to consume
+        # purge the XML declaration introduced by BeautifulSoup and
+        # shape it up for Indri to consume
 
-        with open(self.param["iparam"], "w") as f:
+        o_param_file = os.path.join(self.env["index"], ".".join(itag, "indri"))
+
+        with open(o_param_file, "w") as f:
             f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
             
-        args = {
-            "exec": "/home/rup/indri-5.5/buildindex/IndriBuildIndex",
-            "param_file": self.param["iparam"]
-            }
+        subprocess.check_output(["/home/rup/indri-5.5/buildindex/IndriBuildIndex",
+                                 o_param_file])
 
-        subprocess.check_output([args["exec"], args["param_file"]])
-
-    def retrieve(self):
+    def retrieve(self, itag, rtag, m, q):
         
-        # determine query
-        # query here is a dict
-        
-        q = self.topic.query_I()
+        # queries are in a dict q
         
         # build the query-param xml and write it out to disk
+
         soup = BeautifulSoup("<parameters></parameters>", "xml")
 
         # float n query tags in the soup
@@ -144,40 +121,42 @@ class SysIndri(Sys):
             T_query.append(T_number)
             T_query.append(T_text)
             soup.parameters.append(T_query)
-        
-        # get rid of the first line of the xml introduced by BeautifulSoup
-        # and shape it up for Indri to consume
 
-        with open(self.param["qparam"], "w") as f:
+        o_param_file = os.path.join(self.env["runs"], ".".join(rtag, "indri"))
+
+        # purge the XML declaration introduced by BeautifulSoup and
+        # shape it up for Indri to consume
+
+        with open(o_param_file, "w") as f:
             f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
 
-        args = {
-            "exec": "/home/rup/indri-5.5/runquery/IndriRunQuery",
-            "param_file": self.param["qparam"],
-            "index": "-index=" + self.param["index"],
-            "count": "-count 10",
-            "out_format": "-trecFormat=True"
-            }
+        i_dir = os.path.join(self.env["index"], itag)
+        o_file = ps.path.join(self.env["runs"], rtag)
 
-        with open(self.param["runs"], "w") as f:
-            f.write(subprocess.check_output([args["exec"], args["param_file"],
-                                             args["count"], args["index"],
-                                             args["out_format"]]))
-
-    def evaluate(self):
+        with open(o_file, "w") as f:
+            f.write(subprocess.check_output(
+                    ["/home/rup/indri-5.5/runquery/IndriRunQuery",
+                     o_param_file,
+                     "-index=" + i_dir,
+                     "-count=1000",
+                     "-trecFormat=true"]
+                    ))
+    
+    def evaluate(self, rtag, qrels):
 
         # overwrites files in eval dir
-        
-        args = {
-            "exec": self.env["treceval"],
-            "mode": "-q",
-            "qrel": self.qrel.file,
-            "run": self.param["runs"]
-            }
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
 
-        with open(self.param["evals"], "w") as f:
-            f.write(subprocess.check_output([args["exec"], args["mode"],
-                                             args["qrel"], args["run"]]))
+        i_file = os.path.join(self.env["runs"], rtag)
+        o_file = os.path.join(self.env["evals"], rtag)
+
+        with open(o_file, "w") as f:
+            f.write(subprocess.check_output(
+                    [self.env["treceval"],
+                     "-q",
+                     qrels,
+                     i_file]))
+
+       

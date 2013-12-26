@@ -1,12 +1,8 @@
 import sys, os
-from Sys import *
 from SysTerrier import *
 from SysIndri import *
 from SysLucene import *
-from Doc import Doc
 from Topics import Topics
-from Qrels import Qrels
-from Model import Model
 
 home = "/home/rup/ir/exp"
 
@@ -20,11 +16,12 @@ env = {
     "runs": os.path.join(home, "runs"),
     "evals": os.path.join(home, "eval"),
     "treceval": "/home/rup/trec_eval.9.0/trec_eval"
+    # TODO: specify paths to systems too
 }
 
 # systems are objects
 # document collections are paths
-# topics are objects
+# topics are objects TODO: rethink
 # qrels are files
 
 #topic
@@ -53,17 +50,16 @@ modellist = ["tfidf", "bm25"]
 
 def main(argv):
 
-    d = Doc(doclist[0], "test")
     t = Topics(topiclist[0], "t")
-    m = Model(modellist[0])
-    qr = Qrels(qrelslist[0])
 
     #s = SysTerrier(env, d, t, m, qr)
     #s = SysIndri(env, d, t, m, qr)
-    s = SysLucene(env, d, t, m, qr)
-    #s.index()
-    #s.retrieve()
-    s.evaluate()
+    #s = SysLucene(env)
+    #s.index(doclist[0], "xyz")
+    #s.retrieve("xyz", "xyz", "tfidf", t.query_L())
+    #s.retrieve("xyz", "xyz", "tfidf", t.query_I())
+    #s.retrieve("xyz", "xyz", "tfidf", t.query_T(), "t")
+    #s.evaluate("xyz", qrelslist[0])
     
 if __name__ == "__main__":
    main(sys.argv[1:])
