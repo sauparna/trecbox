@@ -1,4 +1,4 @@
-import sys
+import sys, os, subprocess
 from bs4 import BeautifulSoup
 
 #indri-5.0/buildindex/IndriBuildIndex parameter_file
@@ -136,14 +136,14 @@ class SysIndri():
         o_dir = os.path.join(self.env["index"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir)
             
-        subprocess.check_output([os.path.join(env["indri"], "buildindex/IndriBuildIndex"),
+        subprocess.check_output([os.path.join(self.env["indri"], "buildindex/IndriBuildIndex"),
                                  i_file])
 
     def retrieve(self, itag, rtag, m, q):
         
         i_dir = os.path.join(self.env["index"], itag)
         i_file = self.__query_params_file(rtag, q)
-        o_file = ps.path.join(self.env["runs"], rtag)
+        o_file = os.path.join(self.env["runs"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
