@@ -17,7 +17,8 @@ env = {
     "indri"   : os.path.join(home, "indri-5.6"),
     "index"   : os.path.join(root, "index"),
     "runs"    : os.path.join(root, "runs"),
-    "evals"   : os.path.join(root, "evals")
+    "evals"   : os.path.join(root, "evals"),
+    "attic"   : os.path.join(root, "attic")
     }
 
 # systems are objects
@@ -25,13 +26,16 @@ env = {
 # topics are objects
 # qrels are files
 
+# index(), retrieve() and evaluate() overwrites previous data
+# SysTerrier.index() takes care to move an existing index to the attic
+# TODO: this asymmetry could be resolved.
+
 #topic
 # data:
 #  topic - file
 #  mode - type of query processing
-#  query - constructs a query out of the topic
 # func:
-#  make_query()
+#  query() - constructs a query out of the topic
 
 doclist = [os.path.join(env["doc"], "test"),
            os.path.join(env["doc"], "cd45/fbis"),
@@ -51,14 +55,15 @@ modellist = ["tfidf", "bm25"]
 def main(argv):
 
     t = Topics(topiclist[0])
-    #s = SysTerrier(env, d, t, m, qr)
-    s = SysIndri(env)
-    #s = SysLucene(env)
-    #s.index(doclist[0], "uvw")
+    #s = SysTerrier(env)
+    #s = SysIndri(env)
+    s = SysLucene(env)
+    s.index(doclist[0], "xyz")
     #s.retrieve("xyz", "xyz", "tfidf", t.query("lucene"))
     #s.retrieve("uvw", "uvw", "tfidf", t.query("indri"))
-    #s.retrieve("xyz", "xyz", "tfidf", t.query("terrier", "t"))
-    s.evaluate("uvw", qrelslist[0])
+    #s.retrieve("rst", "rst", "tfidf", t.query("terrier"))
+    #s.evaluate("rst", qrelslist[0])
+    #s.evaluate("uvw", qrelslist[0])
     #s.evaluate("xyz", qrelslist[0])
 
     

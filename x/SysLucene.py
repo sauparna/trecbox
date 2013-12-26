@@ -24,9 +24,6 @@ class SysLucene():
 
         o_dir = os.path.join(self.env["index"], itag)
 
-        if os.path.exists(o_dir):
-            os.removedirs(o_dir)
-        
         #java -cp "lucene.TREC/lib/*:lucene.TREC/bin/lucene.TREC.jar" IndexTREC 
         #-docs lucene.TREC/src
 

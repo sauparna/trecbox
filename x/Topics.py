@@ -41,7 +41,7 @@ class Topics():
             
         elif opt == "terrier":
 
-            return self.mode    
+            return self.file
 
     def __hack_n_hew(self):
 
