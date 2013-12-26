@@ -2,41 +2,46 @@ from bs4 import BeautifulSoup
 import string
 
 class Topics():
-    def __init__(self, f, mode = "t"):
+
+    def __init__(self, f, mode="t"):
+
         self.file = f
         self.mode = mode.lower()
 
-    def query_L(self):
-        return "/home/rup/lucene.TREC/test-data/title-queries.301-450"
+    def query(self, opt):
 
-    def query_T(self):
-        return self.mode
-        
-    def query_I(self):
+        opt = opt.lower()
 
-        #if ever you want to prettyprint the soup without the tricks
-        #print "\n".join(soup.prettify().split("\n")[2:-1])
+        if opt == "indri" or opt == "lucene":
 
-        soup = self.__hack_n_hew()
+            #return "/home/palchowdhury/ir/topics/title-queries.301-450"
 
-        q = {}
+            #if ever you want to prettyprint the soup without the tricks
+            #print "\n".join(soup.prettify().split("\n")[2:-1])
 
-        # wade in the soup and
-        # return a dict of query text indexed by qid
+            soup = self.__hack_n_hew()
 
-        for top in soup.find_all("top"):
-            n = top.num.string.lstrip().rstrip()
-            q[n] = ""
-            for m in list(self.mode):
-                if m == "t":
-                    q[n] += " " + top.title.string
-                if m == "d":
-                    q[n] += " " + top.desc.string
-                if m == "n":
-                    q[n] += " " + top.narr.string
+            q = {}
 
-        return q
+            # wade in the soup and
+            # return a dict of query text indexed by qid
 
+            for top in soup.find_all("top"):
+                n = top.num.string.lstrip().rstrip()
+                q[n] = ""
+                for m in list(self.mode):
+                    if m == "t":
+                        q[n] += " " + top.title.string
+                    if m == "d":
+                        q[n] += " " + top.desc.string
+                    if m == "n":
+                        q[n] += " " + top.narr.string
+
+            return q
+            
+        elif opt == "terrier":
+
+            return self.mode    
 
     def __hack_n_hew(self):
 

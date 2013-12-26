@@ -1,4 +1,4 @@
-import sys
+import sys, os, subprocess
 
 class SysLucene():
 
@@ -6,12 +6,23 @@ class SysLucene():
         self.env = env
         self.model_map = {"bm25": "bm25", "dfr": "dfr", 
                           "tfidf": "default", "lm": "lm"}
+        self.jar = os.path.join(self.env["lucene"], "bin/lucene.TREC.jar")
+        self.lib = os.path.join(self.env["lucene"], "lib/*")
+
+    def __query_file(self, rtag, q):
+
+        o_file = os.path.join(self.env["runs"], ".".join([rtag, "lucene"]))
+
+        with open(o_file, "w") as f:
+            for num in q.keys():
+                f.write(num + " " + q[num] + "\n")
+
+        return o_file
+
 
     def index(self, doc, itag):
 
         o_dir = os.path.join(self.env["index"], itag)
-        jar = "/home/rup/lucene.TREC/bin/lucene.TREC.jar"
-        lib = "/home/rup/lucene.TREC/lib/*"
 
         if os.path.exists(o_dir):
             os.removedirs(o_dir)
@@ -20,7 +31,7 @@ class SysLucene():
         #-docs lucene.TREC/src
 
         subprocess.check_output(["java",
-                                 "-cp", jar + ":" + lib,
+                                 "-cp", self.jar + ":" + self.lib,
                                  "IndexTREC",
                                  "-index", o_dir,
                                  "-docs", doc
@@ -29,9 +40,8 @@ class SysLucene():
     def retrieve(self, itag, rtag, m, q):
 
         i_dir = os.path.join(self.env["index"], itag)
+        i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.env["runs"], rtag)
-        jar = "/home/rup/lucene.TREC/bin/lucene.TREC.jar"
-        lib = "/home/rup/lucene.TREC/lib/*"
 
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
         #-queries /path/to/title-queries.301-450 -simfn default > default.out
@@ -40,10 +50,10 @@ class SysLucene():
             f.write(
                 subprocess.check_output(
                     ["java",
-                     "-cp", jar + ":" + lib,
+                     "-cp", self.jar + ":" + self.lib,
                      "BatchSearch",
                      "-index", i_dir,
-                     "-queries", q,
+                     "-queries", i_file,
                      "-simfn", self.model_map[m]]
                     )
                 )
@@ -61,7 +71,8 @@ class SysLucene():
         o_file = os.path.join(self.env["evals"], rtag)
 
         with open(o_file, "w") as f:
-            f.write(subprocess.check_output([self.env["treceval"],
-                                             "-q", 
-                                             qrels,
-                                             i_file]))
+            f.write(subprocess.check_output(
+                    [os.path.join(self.env["treceval"], "trec_eval"),
+                     "-q", 
+                     qrels,
+                     i_file]))

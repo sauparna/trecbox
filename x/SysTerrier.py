@@ -8,12 +8,12 @@ class SysTerrier():
 
     def index(self, doc, itag):
 
-        # doc is the collection.spec file
-        # TODO: create collection.spec
-        # do something about this step, very irritating indeed
-
+        o_file = os.path.join(self.env["index"], ".".join([itag, "doclist"]))
         o_dir = os.path.join(self.env["index"], itag)
-        
+
+        with open(o_file, "w") as f:
+            f.write(subprocess.check_output(["find", doc, "-type", "f"]))
+
         if os.path.exists(o_dir):
             os.removedirs(o_dir)
 
@@ -23,7 +23,7 @@ class SysTerrier():
         subprocess.check_output([
                 "/home/rup/terrier-3.5/bin/trec_terrier.sh",
                 "-i",
-                "-Dcollection.spec=" + doc,
+                "-Dcollection.spec=" + o_file,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
@@ -31,7 +31,7 @@ class SysTerrier():
                 "-DTrecDocTags.casesensitive=true",
                 "-Dterrier.index.path=" + o_dir])
 
-    def retrieve(self, itag, rtag, m, q, q_mode):
+    def retrieve(self, itag, rtag, m, q, q_mode="t"):
 
         # q is the topic file
         # q_mode is a string like "tdn"
@@ -54,15 +54,15 @@ class SysTerrier():
             "/home/rup/terrier-3.5/bin/trec_terrier.sh",
             "-r",
             "-Dterrier.index.path=" + i_dir,
-            "query": "-Dtrec.topics=" + q,
-            "query1": "-DTrecQueryTags.doctag=TOP",
-            "query2": "-DTrecQueryTags.idtag=NUM",
-            "query3": "-DTrecQueryTags.process=TOP,NUM," + process,
-            "query4": "-DTrecQueryTags.skip=" + skip,
-            "query5": "-DTrecQueryTags.casesensitive=false",
-            "model": "-Dtrec.model=" + self.model_map[m],
-            "rundir": "-Dtrec.results=" + self.env["runs"],
-            "runfile": "-Dtrec.results.file=" + rtag])
+            "-Dtrec.topics=" + q,
+            "-DTrecQueryTags.doctag=TOP",
+            "-DTrecQueryTags.idtag=NUM",
+            "-DTrecQueryTags.process=TOP,NUM," + process,
+            "-DTrecQueryTags.skip=" + skip,
+            "-DTrecQueryTags.casesensitive=false",
+            "-Dtrec.model=" + self.model_map[m],
+            "-Dtrec.results=" + self.env["runs"],
+            "-Dtrec.results.file=" + rtag])
 
     def evaluate(self, rtag, qrels):
 
@@ -74,7 +74,8 @@ class SysTerrier():
         o_file = os.path.join(self.env["evals"], rtag)
 
         with open(o_file, "w") as f:
-            f.write(subprocess.check_output([self.env["treceval"],
-                                             "-q",
-                                             qrels,
-                                             i_file]))
+            f.write(subprocess.check_output(
+                    [os.path.join(self.env["treceval"], "trec_eval"),
+                     "-q",
+                     qrels,
+                     i_file]))

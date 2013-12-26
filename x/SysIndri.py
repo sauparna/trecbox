@@ -25,12 +25,13 @@ from bs4 import BeautifulSoup
 #texts. And in Indri, "U.S." will be translated into "us" in the
 #indexer.
 
-class SysIndri(Sys):
+class SysIndri():
 
     def __init__(self, env):
+
         self.env = env
 
-    def shapeup_xml(self, l):
+    def __shapeup_xml(self, l):
 
         l_ = []
         n = 0
@@ -54,9 +55,8 @@ class SysIndri(Sys):
                 
         return "\n".join(l_)
         
-    def index(self, doc, itag):
 
-        o_dir = os.path.join(self.env["index"], itag)
+    def __index_params_file(self, itag, doc, o_dir):
 
         # build and write Indri's index param file
 
@@ -91,19 +91,17 @@ class SysIndri(Sys):
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
 
-        o_param_file = os.path.join(self.env["index"], ".".join(itag, "indri"))
+        o_file = os.path.join(self.env["index"], ".".join([itag, "indri"]))
 
-        with open(o_param_file, "w") as f:
-            f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
-            
-        subprocess.check_output(["/home/rup/indri-5.5/buildindex/IndriBuildIndex",
-                                 o_param_file])
+        with open(o_file, "w") as f:
+            f.write(self.__shapeup_xml(soup.prettify().split("\n")[1:]))
 
-    def retrieve(self, itag, rtag, m, q):
-        
+        return o_file
+
+    def __query_params_file(self, rtag, q):
+
         # queries are in a dict q
-        
-        # build the query-param xml and write it out to disk
+        # build the query-param XML and write it out to disk
 
         soup = BeautifulSoup("<parameters></parameters>", "xml")
 
@@ -122,21 +120,35 @@ class SysIndri(Sys):
             T_query.append(T_text)
             soup.parameters.append(T_query)
 
-        o_param_file = os.path.join(self.env["runs"], ".".join(rtag, "indri"))
+        o_file = os.path.join(self.env["runs"], ".".join([rtag, "indri"]))
 
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
 
-        with open(o_param_file, "w") as f:
-            f.write(self.shapeup_xml(soup.prettify().split("\n")[1:]))
+        with open(o_file, "w") as f:
+            f.write(self.__shapeup_xml(soup.prettify().split("\n")[1:]))
 
+        return o_file
+
+        
+    def index(self, doc, itag):
+
+        o_dir = os.path.join(self.env["index"], itag)
+        i_file = self.__index_params_file(itag, doc, o_dir)
+            
+        subprocess.check_output([os.path.join(env["indri"], "buildindex/IndriBuildIndex"),
+                                 i_file])
+
+    def retrieve(self, itag, rtag, m, q):
+        
         i_dir = os.path.join(self.env["index"], itag)
+        i_file = self.__query_params_file(rtag, q)
         o_file = ps.path.join(self.env["runs"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    ["/home/rup/indri-5.5/runquery/IndriRunQuery",
-                     o_param_file,
+                    [os.path.join(self.env["indri"], "runquery/IndriRunQuery"),
+                     i_file,
                      "-index=" + i_dir,
                      "-count=1000",
                      "-trecFormat=true"]
@@ -154,9 +166,7 @@ class SysIndri(Sys):
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [self.env["treceval"],
+                    [os.path.join(self.env["treceval"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file]))
-
-       
