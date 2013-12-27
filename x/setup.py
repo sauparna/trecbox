@@ -38,14 +38,12 @@ qrels = {"t6": os.path.join(env["qrels"], "qrels.trec6.adhoc.parts1-5"),
 
 model = ["tfidf", "bm25"]
 
-
-
 def main(argv):
 
     t = Topics(topic["t6"])
 
     #s = SysTerrier(env)
-    s.index(doc["test"], "xyz", ["stop", "stem"]])
+    s.index("xyz", doc["test"], ["stop", "porter"]])
 
     #s = SysIndri(env)
     s = SysLucene(env)
