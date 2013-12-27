@@ -3,20 +3,45 @@ import time
 
 class SysTerrier():
 
+
     def __init__(self, env):
 
         self.env = env
-        self.query_map = {"t": "TITLE", "d": "DESC", "n": "NARR"}
-        self.model_map = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
+        self.query_map   = {"t": "TITLE", "d": "DESC", "n": "NARR"}
+        self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
+        self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", "snowball": "EnglishSnowballStemmer"}
+        self.stopfile    = "stop"
 
-    def index(self, doc, itag):
 
+    def __write_doclist(itag):
+
+        # write Terrier's collection.spec file
         o_file = os.path.join(self.env["index"], ".".join([itag, "terrier"]))
-        o_dir = os.path.join(self.env["index"], itag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(["find", doc, "-type", "f"]))
 
+        return o_file
+
+    def index(self, itag, doc, opt):
+        
+        # opt is a fixed length list, so check for it
+
+        p = []
+
+        if opt[0] == "stop":
+            p.append(self.stopfile)
+
+        if opt[1] in self.stemmer_map.keys():
+            p.append(self.stemmer_map[opt[1]])
+            
+        pipeline = ",".join(p)
+
+        i_file  = self.__write_doclist(itag)
+        i_file1 = os.path.join(self.env["utils"], "stops")
+        o_dir   = os.path.join(self.env["index"], itag)
+
+        # backup existing index
         if os.path.exists(o_dir):
             os.rename(o_dir, os.path.join(self.env["attic"], 
                                           "-".join([itag,str(time.time())])))
@@ -27,13 +52,16 @@ class SysTerrier():
         subprocess.check_output([
                 os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
                 "-i",
-                "-Dcollection.spec=" + o_file,
+                "-Dcollection.spec="    + i_file,
+                "-Dterrier.index.path=" + o_dir,
+                "-Dstopwords.filename=" + i_file1,
+                "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
                 "-DTrecDocTags.skip=DOCHDR",
-                "-DTrecDocTags.casesensitive=true",
-                "-Dterrier.index.path=" + o_dir])
+                "-DTrecDocTags.casesensitive=true")
+
 
     def retrieve(self, itag, rtag, m, q, q_mode="t"):
 

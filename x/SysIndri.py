@@ -27,9 +27,13 @@ from bs4 import BeautifulSoup
 
 class SysIndri():
 
+
     def __init__(self, env):
 
-        self.env = env
+        self.env         = env
+        self.stemmer_map = {"porter": "porter", "krovetz": "krovetz"}
+        self.stopfile    = "stop"
+
 
     def __shapeup_xml(self, l):
 
@@ -56,8 +60,8 @@ class SysIndri():
         return "\n".join(l_)
         
 
-    def __index_params_file(self, itag, doc, o_dir):
-
+    def __index_params_file(self, itag, doc, o_dir, opt):
+        
         # build and write Indri's index param file
 
         soup = BeautifulSoup("<parameters></parameters>", "xml")
@@ -87,6 +91,20 @@ class SysIndri():
             T_field.append(T_name)
             soup.parameters.append(T_field)
             i += 1
+
+        # add stopfile
+        if opt[0] == "stop":
+            T_stopwords = soup.new_tag("stopwords")
+            T_stopwords.string = self.stopfile
+            soup.parameters.append(T_stopwords)
+            
+        # add stemmer
+        if opt[1] in self.stemmer_map.keys():
+            T_stemmer = soup.new_tag("stemmer")
+            T_name = soup.new_tag("name")
+            T_name.string = self.stemmer_map[opt[1]]
+            T_stemmer.append(T_name)
+            soup.parameters.append(T_stemmer)
 
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
@@ -131,10 +149,10 @@ class SysIndri():
         return o_file
 
         
-    def index(self, doc, itag):
+    def index(self, doc, itag, opt):
 
-        o_dir = os.path.join(self.env["index"], itag)
-        i_file = self.__index_params_file(itag, doc, o_dir)
+        o_dir  = os.path.join(self.env["index"], itag)
+        i_file = self.__index_params_file(itag, doc, o_dir, opt)
             
         subprocess.check_output([os.path.join(self.env["indri"], "buildindex/IndriBuildIndex"),
                                  i_file])
