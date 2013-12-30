@@ -46,7 +46,9 @@ def main(argv):
     s.index("xyz", doc["test"], ["stop", "porter"]])
 
     #s = SysIndri(env)
-    s = SysLucene(env)
+    #s.index("xyz", doc["test"], ["stop", "porter"]])
+
+    #s = SysLucene(env)
 
     #s.retrieve("xyz", "xyz", "tfidf", t.query("lucene"))
     #s.retrieve("uvw", "uvw", "tfidf", t.query("indri"))
