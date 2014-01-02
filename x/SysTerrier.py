@@ -9,8 +9,8 @@ class SysTerrier():
         self.env = env
         self.query_map   = {"t": "TITLE", "d": "DESC", "n": "NARR"}
         self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
-        self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", "snowball": "EnglishSnowballStemmer"}
-        self.stopfile    = "stop"
+        self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", 
+                            "snowball": "EnglishSnowballStemmer"}
 
 
     def __write_doclist(itag):
@@ -28,9 +28,11 @@ class SysTerrier():
         # opt is a fixed length list, so check for it
 
         p = []
+        stopwords = ""
 
-        if opt[0] == "stop":
-            p.append(self.stopfile)
+        if opt[0] != "None":
+            p.append("Stopwords")
+            stopwords = os.path.join(self.env["utils"], opt[0])
 
         if opt[1] in self.stemmer_map.keys():
             p.append(self.stemmer_map[opt[1]])
@@ -38,7 +40,6 @@ class SysTerrier():
         pipeline = ",".join(p)
 
         i_file  = self.__write_doclist(itag)
-        i_file1 = os.path.join(self.env["utils"], "stops")
         o_dir   = os.path.join(self.env["index"], itag)
 
         # backup existing index
@@ -54,7 +55,7 @@ class SysTerrier():
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
-                "-Dstopwords.filename=" + i_file1,
+                "-Dstopwords.filename=" + stopwords,
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",

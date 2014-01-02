@@ -32,8 +32,6 @@ class SysIndri():
 
         self.env         = env
         self.stemmer_map = {"porter": "porter", "krovetz": "krovetz"}
-        self.stopfile    = "stop"
-
 
     def __shapeup_xml(self, l):
 
@@ -93,9 +91,9 @@ class SysIndri():
             i += 1
 
         # add stopfile
-        if opt[0] == "stop":
+        if opt[0] != "None":
             T_stopwords = soup.new_tag("stopwords")
-            T_stopwords.string = self.stopfile
+            T_stopwords.string = os.path.join(self.env["utils"], opt[0])
             soup.parameters.append(T_stopwords)
             
         # add stemmer

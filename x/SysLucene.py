@@ -2,12 +2,16 @@ import sys, os, subprocess
 
 class SysLucene():
 
+
     def __init__(self, env):
         self.env = env
-        self.model_map = {"bm25": "bm25", "dfr": "dfr", 
-                          "tfidf": "default", "lm": "lm"}
+        self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
+                            "tfidf": "default", "lm": "lm"}
+        self.stemmer_map = {"porter": "porter", "krovetz": "krovetz", 
+                            "snowball": "snowball", "sstemmer": "sstemmer"}
         self.jar = os.path.join(self.env["lucene"], "bin/lucene.TREC.jar")
         self.lib = os.path.join(self.env["lucene"], "lib/*")
+
 
     def __query_file(self, rtag, q):
 
@@ -20,7 +24,16 @@ class SysLucene():
         return o_file
 
 
-    def index(self, doc, itag):
+    def index(self, doc, itag, opt):
+
+        stemmer = "None"
+        stopwords = "None"
+
+        if opt[0] != "None":
+            stopwords = os.path.join(self.env["utils"], opt[0])
+
+        if opt[1] in self.stemmer_map.keys():
+            stemmer = self.stemmer_map[opt[1]]
 
         o_dir = os.path.join(self.env["index"], itag)
 
@@ -31,8 +44,10 @@ class SysLucene():
                                  "-cp", self.jar + ":" + self.lib,
                                  "IndexTREC",
                                  "-index", o_dir,
-                                 "-docs", doc
-                                 ])
+                                 "-docs", doc,
+                                 "-stop", stopwords,
+                                 "-stemmer", stemmer])
+
 
     def retrieve(self, itag, rtag, m, q):
 
@@ -54,6 +69,7 @@ class SysLucene():
                      "-simfn", self.model_map[m]]
                     )
                 )
+
 
     def evaluate(self, rtag, qrels):
 
