@@ -46,7 +46,7 @@ class SysLucene():
                                  "-index", o_dir,
                                  "-docs", doc,
                                  "-stop", stopwords,
-                                 "-stemmer", stemmer])
+                                 "-stem", stemmer])
 
 
     def retrieve(self, itag, rtag, m, q):

@@ -13,7 +13,7 @@ class SysTerrier():
                             "snowball": "EnglishSnowballStemmer"}
 
 
-    def __write_doclist(itag):
+    def __write_doclist(self, itag, doc):
 
         # write Terrier's collection.spec file
         o_file = os.path.join(self.env["index"], ".".join([itag, "terrier"]))
@@ -23,10 +23,9 @@ class SysTerrier():
 
         return o_file
 
-    def index(self, itag, doc, opt):
-        
-        # opt is a fixed length list, so check for it
+    def __build_termpipeline(self, opt):
 
+        # opt is a fixed length list, so check for it
         p = []
         stopwords = ""
 
@@ -37,9 +36,13 @@ class SysTerrier():
         if opt[1] in self.stemmer_map.keys():
             p.append(self.stemmer_map[opt[1]])
             
-        pipeline = ",".join(p)
+        return ",".join(p), stopwords
 
-        i_file  = self.__write_doclist(itag)
+
+    def index(self, itag, doc, opt):
+        
+        pipeline, stopwords = self.__build_termpipeline(opt)
+        i_file  = self.__write_doclist(itag, doc)
         o_dir   = os.path.join(self.env["index"], itag)
 
         # backup existing index
@@ -61,14 +64,18 @@ class SysTerrier():
                 "-DTrecDocTags.idtag=DOCNO",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
                 "-DTrecDocTags.skip=DOCHDR",
-                "-DTrecDocTags.casesensitive=true")
+                "-DTrecDocTags.casesensitive=true"])
 
 
-    def retrieve(self, itag, rtag, m, q, q_mode="t"):
+    def retrieve(self, itag, rtag, opt, m, q, q_mode="t"):
 
         # q is the topic file
         # q_mode is a string like "tdn"
 
+        print type(self.model_map[m])
+        sys.exit(0)
+
+        pipeline, stopwords = self.__build_termpipeline(opt)
         i_file = q
         o_dir = self.env["runs"]
         o_file_name = rtag
@@ -97,6 +104,8 @@ class SysTerrier():
             "-DTrecQueryTags.process=TOP,NUM," + process,
             "-DTrecQueryTags.skip=" + skip,
             "-DTrecQueryTags.casesensitive=false",
+            "-Dstopwords.filename=" + stopwords,
+            "-Dtermpipelines="      + pipeline,
             "-Dtrec.model=" + self.model_map[m],
             "-Dtrec.results=" + o_dir,
             "-Dtrec.results.file=" + o_file_name])
