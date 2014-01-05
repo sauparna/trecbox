@@ -43,6 +43,28 @@ class Topics():
 
             return self.file
 
+
+    def __name(self, tag):
+        return tag.lstrip("<").rstrip(">").lstrip("/")
+
+    def __is_closing(self, tag):
+        if tag[1] == "/":
+            return True
+        else:
+            return False
+
+    def __is_opening(self, tag):
+        if tag[1] != "/":
+            return True
+        else:
+            return False
+
+    def __opening_of(self, tag):
+        return "<" + name(tag) + ">"
+    
+    def __closing_of(self, tag):
+        return "</" + name(tag) + ">"
+
     def __hack_n_hew(self):
 
         # sanitize old TREC topics for Indri's consumption
@@ -55,22 +77,54 @@ class Topics():
         s = ""
         c_ = ""
 
+        stack = []
+
         for c in txt:
             if c == "\n" or c == "\r" or c == "\t":
                 continue
             if c == "<":
                 in_tag = True
             elif c == ">":
-                in_tag = False
                 s += c
-                if s == "<title>":
-                    s = "</num>" + s
-                if s == "<desc>":
-                    s = "</title>" + s
-                if s == "<narr>":
-                    s = "</desc>" + s
-                if s == "</top>":
-                    s = "</narr>" + s
+                in_tag = False
+
+                # This block of code makes __hack_n_hew()
+                # idempotent. Which means, old TREC SGML topic files
+                # that have no closing tags, as well as well formed
+                # TREC XML topic files will pass through smoothly,
+                # ready for consumption by an XML parser.
+
+                # Keeps pushing the opening tags to a stack. If an
+                # incoming opening tag is not the topmost tag (<top>),
+                # and the top of the stack is another opening tag, the
+                # incoming tag is sent to the output stream with the
+                # closing of the top as a prefix and the stack is
+                # popped. If the incoming tag is a closing tag and the
+                # stack top is its corresponing opening, then simply
+                # the stack is popped. Again, if the incoming tag is a
+                # closing tag and the stack top holds an opening tag,
+                # then the incoming tag is sent to the stream prefixed
+                # with the closing of the top, and the stack is
+                # popped. At any moment the stack contains only
+                # opening tags, or is empty if the closing topmost tag
+                # has been read.
+
+                if s == "<top>":
+                    stack.append(s)
+                elif is_opening(s):
+                    top = stack.pop()
+                    if top == "<top>":
+                        stack.append(top)
+                        stack.append(s)
+                    else:
+                        stack.append(s)
+                        s = closing_of(top) + s
+                elif is_closing(s):
+                    top = stack.pop()
+                    if top != opening_of(s):
+                        s = closing_of(top) + s
+                        stack.pop()
+
                 c_ += s
                 s = ""
                 continue
