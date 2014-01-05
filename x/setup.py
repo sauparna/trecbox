@@ -4,7 +4,11 @@ from SysIndri import *
 from SysLucene import *
 from Topics import Topics
 
-home = "/home/palchowdhury/ir"
+home = ""
+
+with open("config", "r") as f:
+    home = f.readline().rstrip("\n")
+
 root = os.path.join(home, "exp")
 
 env = {
@@ -22,21 +26,25 @@ env = {
     "attic"   : os.path.join(root, "attic")
     }
 
-doc   = {"test" : os.path.join(env["doc"], "test"),
-         "test1": os.path.join(env["doc"], "test1"),
-         "fbis" : os.path.join(env["doc"], "cd45/fbis"),
-         "fr94" : os.path.join(env["doc"], "cd45/fr94"),
-         "ft"   : os.path.join(env["doc"], "cd45/ft"),
-         "la"   : os.path.join(env["doc"], "cd45/latimes")}
+doc = {"test" : os.path.join(env["doc"], "test"),
+       "test1": os.path.join(env["doc"], "test1"),
+       "fbis" : os.path.join(env["doc"], "cd45/fbis"),
+       "fr94" : os.path.join(env["doc"], "cd45/fr94"),
+       "ft"   : os.path.join(env["doc"], "cd45/ft"),
+       "la"   : os.path.join(env["doc"], "cd45/latimes")
+       }
 
 topic = {"test1": os.path.join(env["topics"], "test1"),
          "t6": os.path.join(env["topics"], "topics.301-350"),
          "t7": os.path.join(env["topics"], "topics.351-400"),
-         "t8": os.path.join(env["topics"], "topics.401-450")}
+         "t8": os.path.join(env["topics"], "topics.401-450")
+         }
 
-qrels = {"t6": os.path.join(env["qrels"], "qrels.trec6.adhoc.parts1-5"),
+qrels = {"test1": os.path.join(env["qrels"], "test1"),
+         "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc.parts1-5"),
          "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc.parts1-5"),
-         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc.parts1-5")}
+         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc.parts1-5")
+         }
 
 model = ["tfidf", "bm25"]
 
@@ -46,9 +54,14 @@ def main(argv):
     t = Topics(topic["test1"])
 
     s = SysTerrier(env)
-    #s.index("xyz", doc["test1"], ["stoptest", "porter"])
-    s.retrieve("xyz", "xyz", ["stoptest", "porter"], 
-               "tfidf", t.query("terrier"))
+
+    s.index("xyz", doc["test1"], ["None", "None"])
+    s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
+    s.evaluate("xyz", qrels["test1"])
+
+    s.index("xyz.s", doc["test1"], ["stoptest", "None"])
+    s.retrieve("xyz.s", "xyz.s", ["stoptest", "None"], "tfidf", t.query("terrier"))
+    s.evaluate("xyz.s", qrels["test1"])
 
     #s = SysIndri(env)
     #s.index("xyz", doc["test"], ["stop", "porter"]])
@@ -59,7 +72,7 @@ def main(argv):
     #s.retrieve("xyz", "xyz", "tfidf", t.query("lucene"))
     #s.retrieve("uvw", "uvw", "tfidf", t.query("indri"))
     
-    #s.evaluate("rst", qrels["t6"])
+    
     
 if __name__ == "__main__":
    main(sys.argv[1:])

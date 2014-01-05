@@ -5,36 +5,32 @@ class SysTerrier():
 
 
     def __init__(self, env):
-
         self.env = env
         self.query_map   = {"t": "TITLE", "d": "DESC", "n": "NARR"}
         self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
         self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", 
                             "snowball": "EnglishSnowballStemmer"}
 
-
     def __write_doclist(self, itag, doc):
-
         # write Terrier's collection.spec file
         o_file = os.path.join(self.env["index"], ".".join([itag, "terrier"]))
-
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(["find", doc, "-type", "f"]))
-
         return o_file
 
     def __build_termpipeline(self, opt):
 
         # opt is a fixed length list, so check for it
-        p = []
+
+        p = ["NoOp", "NoOp"]
         stopwords = ""
 
         if opt[0] != "None":
-            p.append("Stopwords")
+            p[0] = "Stopwords"
             stopwords = os.path.join(self.env["utils"], opt[0])
 
         if opt[1] in self.stemmer_map.keys():
-            p.append(self.stemmer_map[opt[1]])
+            p[1] = self.stemmer_map[opt[1]]
             
         return ",".join(p), stopwords
 
@@ -50,7 +46,7 @@ class SysTerrier():
             os.rename(o_dir, os.path.join(self.env["attic"], 
                                           "-".join([itag,str(time.time())])))
 
-        # needed, or else terrier complains
+        # needed, or else Terrier complains
         os.mkdir(o_dir)
 
         subprocess.check_output([
@@ -72,8 +68,8 @@ class SysTerrier():
         # q is the topic file
         # q_mode is a string like "tdn"
 
-        print type(self.model_map[m])
-        sys.exit(0)
+        #print type(self.model_map[m])
+        #sys.exit(0)
 
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_file = q
