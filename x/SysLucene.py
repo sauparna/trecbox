@@ -2,7 +2,6 @@ import sys, os, subprocess
 
 class SysLucene():
 
-
     def __init__(self, env):
         self.env = env
         self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
