@@ -30,10 +30,18 @@ class SysIndri():
 
     def __init__(self, env):
 
-        self.env         = env
+        self.env = env
         self.stemmer_map = {"porter": "porter", "krovetz": "krovetz"}
 
     def __shapeup_xml(self, l):
+
+        # The Indri parameters file must have absolute paths within
+        # tags without any extraneous characters (like newlines) at
+        # the ends of the string. This function makes it a point to
+        # gather all tags and content within tags in one line for
+        # everyhting that there is in the file. For an explanation
+        # see:
+        # http://sourceforge.net/p/lemur/discussion/2106523/thread/431e2048/
 
         l_ = []
         n = 0

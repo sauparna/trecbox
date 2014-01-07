@@ -35,6 +35,9 @@ doc = {"test" : os.path.join(env["doc"], "test"),
        }
 
 topic = {"test1": os.path.join(env["topics"], "test1"),
+         "test2": os.path.join(env["qrels"], "test2"),
+         "test3": os.path.join(env["qrels"], "test3"),
+         "f3": os.path.join("/tmp", "f3"),
          "t6": os.path.join(env["topics"], "topics.301-350"),
          "t7": os.path.join(env["topics"], "topics.351-400"),
          "t8": os.path.join(env["topics"], "topics.401-450")
@@ -52,16 +55,26 @@ def main(argv):
 
     #t = Topics(topic["t6"])
     t = Topics(topic["test1"])
+    t1 = Topics(topic["test2"])
+    t2 = Topics(topic["test3"])
+    t3 = Topics(topic["f3"])
 
     s = SysTerrier(env)
 
-    s.index("xyz", doc["test1"], ["None", "None"])
-    s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
-    s.evaluate("xyz", qrels["test1"])
+    #s.index("xyz", doc["test1"], ["None", "None"])
 
-    s.index("xyz.s", doc["test1"], ["stoptest", "None"])
-    s.retrieve("xyz.s", "xyz.s", ["stoptest", "None"], "tfidf", t.query("terrier"))
-    s.evaluate("xyz.s", qrels["test1"])
+    #s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
+    #s.evaluate("xyz", qrels["test1"])
+
+    #s.retrieve("xyz", "xyz.1", ["None", "None"], "tfidf", t1.query("terrier"))
+    #s.evaluate("xyz.1", qrels["test1"])
+
+    s.retrieve("xyz", "xyz.2", ["None", "None"], "tfidf", t3.query("terrier"))
+    #s.evaluate("xyz.2", qrels["test1"])
+
+    #s.index("xyz.s", doc["test1"], ["stoptest", "None"])
+    #s.retrieve("xyz.s", "xyz.s", ["stoptest", "None"], "tfidf", t.query("terrier"))
+    #s.evaluate("xyz.s", qrels["test1"])
 
     #s = SysIndri(env)
     #s.index("xyz", doc["test"], ["stop", "porter"]])

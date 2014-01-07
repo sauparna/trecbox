@@ -1,8 +1,8 @@
 import sys, os, subprocess
 import time
+from bs4 import BeautifulSoup
 
 class SysTerrier():
-
 
     def __init__(self, env):
         self.env = env
@@ -34,6 +34,36 @@ class SysTerrier():
             
         return ",".join(p), stopwords
 
+    def __query_file(self, rtag, q):
+
+        # queries are in a dict q
+        # build the query XML, that we want to feed terrier, and write
+        # it out to disk
+
+        soup = BeautifulSoup("<trick></trick>", "xml")
+
+        # float n query tags in the soup
+
+        for num in q.keys():
+            T_top = soup.new_tag("top")
+            T_num = soup.new_tag("num")
+            T_num.string = num
+            T_text = soup.new_tag("text")
+            T_text.string = q[num]
+            T_top.append(T_num)
+            T_top.append(T_text)
+            soup.trick.append(T_top)
+        
+        o_file = os.path.join(self.env["runs"], ".".join([rtag, "terrier"]))
+
+        # Drop the XML declaration and no more tricks please. Write it
+        # out.
+
+        with open(o_file, "w") as f:
+            f.write("\n".join(soup.prettify().split("\n")[2:-1]))
+
+        return o_file
+
 
     def index(self, itag, doc, opt):
         
@@ -41,12 +71,14 @@ class SysTerrier():
         i_file  = self.__write_doclist(itag, doc)
         o_dir   = os.path.join(self.env["index"], itag)
 
-        # backup existing index
+        # backup existing index to an attic by time stamping it
+
         if os.path.exists(o_dir):
             os.rename(o_dir, os.path.join(self.env["attic"], 
                                           "-".join([itag,str(time.time())])))
 
         # needed, or else Terrier complains
+
         os.mkdir(o_dir)
 
         subprocess.check_output([
@@ -63,33 +95,25 @@ class SysTerrier():
                 "-DTrecDocTags.casesensitive=true"])
 
 
-    def retrieve(self, itag, rtag, opt, m, q, q_mode="t"):
-
-        # q is the topic file
-        # q_mode is a string like "tdn"
-
-        #print type(self.model_map[m])
-        #sys.exit(0)
+    def retrieve(self, itag, rtag, opt, m, q):
 
         pipeline, stopwords = self.__build_termpipeline(opt)
-        i_file = q
-        o_dir = self.env["runs"]
-        o_file_name = rtag
-
-        l = list(q_mode)
-
-        process = []
-        skip = []
-        for s in ["t", "d", "n"]:
-            if s in l:
-                process.append(self.query_map[s])
-            else:
-                skip.append(self.query_map[s])
-        process = ",".join(process)
-        skip = ",".join(skip)
-
         i_dir = os.path.join(self.env["index"], itag)
-        
+        i_file = self.__query_file(rtag, q)
+        o_dir = self.env["runs"]
+        o_file = rtag
+
+        # terrier is fed a topic file where all the text resides
+        # within the <text> and </text> tags, because picking topic
+        # portions by t, d, n is handled at a point in the past by the
+        # Topics.query() function. This does away with the need to
+        # construct the 'TrecQueryTags.process' and
+        # 'TrecQueryTags.skip' parameters here, making things look
+        # neater. It so happens, and I know not why, that terrier
+        # needs to be told what to 'process' and what to 'skip'
+        # simultaniously. 'process' this, this and this, does not
+        # imply not doing anything about them.
+
         subprocess.check_output([
             os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
             "-r",
@@ -97,14 +121,14 @@ class SysTerrier():
             "-Dtrec.topics=" + i_file,
             "-DTrecQueryTags.doctag=TOP",
             "-DTrecQueryTags.idtag=NUM",
-            "-DTrecQueryTags.process=TOP,NUM," + process,
-            "-DTrecQueryTags.skip=" + skip,
+            "-DTrecQueryTags.process=TOP,NUM,TEXT",
+            "-DTrecQueryTags.skip=",
             "-DTrecQueryTags.casesensitive=false",
             "-Dstopwords.filename=" + stopwords,
             "-Dtermpipelines="      + pipeline,
             "-Dtrec.model=" + self.model_map[m],
             "-Dtrec.results=" + o_dir,
-            "-Dtrec.results.file=" + o_file_name])
+            "-Dtrec.results.file=" + o_file])
 
     def evaluate(self, rtag, qrels):
 
