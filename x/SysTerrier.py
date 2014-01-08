@@ -90,7 +90,6 @@ class SysTerrier():
         log = ""
 
         try:
-
            log =  subprocess.check_output(
                [os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
                 "-i",
@@ -104,9 +103,7 @@ class SysTerrier():
                 "-DTrecDocTags.skip=DOCHDR",
                 "-DTrecDocTags.casesensitive=true"],
                stderr=subprocess.STDOUT)
-
         except subprocess.CalledProcessError as e:
-            
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.env["index"], itag + ".log"))
@@ -120,6 +117,7 @@ class SysTerrier():
         i_file = self.__query_file(rtag, q)
         o_dir = self.env["runs"]
         o_file = rtag
+        log = ""
 
         # terrier is fed a topic file where all the text resides
         # within the <text> and </text> tags, because picking topic
@@ -132,21 +130,29 @@ class SysTerrier():
         # simultaniously. 'process' this, this and this, does not
         # imply not doing anything about them.
 
-        subprocess.check_output([
-            os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
-            "-r",
-            "-Dterrier.index.path=" + i_dir,
-            "-Dtrec.topics=" + i_file,
-            "-DTrecQueryTags.doctag=TOP",
-            "-DTrecQueryTags.idtag=NUM",
-            "-DTrecQueryTags.process=TOP,NUM,TEXT",
-            "-DTrecQueryTags.skip=",
-            "-DTrecQueryTags.casesensitive=false",
-            "-Dstopwords.filename=" + stopwords,
-            "-Dtermpipelines="      + pipeline,
-            "-Dtrec.model=" + self.model_map[m],
-            "-Dtrec.results=" + o_dir,
-            "-Dtrec.results.file=" + o_file])
+        try:
+            log = subprocess.check_output(
+                [os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
+                 "-r",
+                 "-Dterrier.index.path=" + i_dir,
+                 "-Dtrec.topics=" + i_file,
+                 "-DTrecQueryTags.doctag=TOP",
+                 "-DTrecQueryTags.idtag=NUM",
+                 "-DTrecQueryTags.process=TOP,NUM,TEXT",
+                 "-DTrecQueryTags.skip=",
+                 "-DTrecQueryTags.casesensitive=false",
+                 "-Dstopwords.filename=" + stopwords,
+                 "-Dtermpipelines="      + pipeline,
+                 "-Dtrec.model=" + self.model_map[m],
+                 "-Dtrec.results=" + o_dir,
+                 "-Dtrec.results.file=" + o_file],
+                stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+
+        o_log = os.path.join(os.path.join(self.env["runs"], rtag + ".log"))
+        with open(o_log, "w") as f:
+            f.write(log)
 
     def evaluate(self, rtag, qrels):
 
