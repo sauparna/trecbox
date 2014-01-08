@@ -8,12 +8,13 @@ class SysTerrier():
         self.env = env
         #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
 
-        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25",
-                          "dlh": "DLH", "dlh13": "DLH13", "dph": "DPH", "dfree": "DFRee", 
-                          "hiemstra_lm": "Hiemstra_LM", "ifb2": "IFB2", "in_expb2": "In_expB2", 
-                          "in_expc2": "In_expC2", "inl2": "InL2", "lemurtf_idf": "LemurTF_IDF", 
-                          "lgd": "LGD", "pl2": "PL2", "tf_idf": "TF_IDF", 
-                          "dfrweightingmodel": "DFRWeightingModel"}
+        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25", 
+                          "dfree": "DFRee", "dfrweightingmodel": "DFRWeightingModel", 
+                          "dirichletlm": "DirichletLM", "dlh": "DLH", "dlh13": "DLH13", "dph": "DPH", 
+                          "hiemstra_lm": "Hiemstra_LM", "idf": "Idf", "ifb2": "IFB2", 
+                          "in_expb2": "In_expB2", "in_expc2": "In_expC2", "inb2": "InB2", 
+                          "inl2": "InL2", "js_kls": "Js_KLs", "lemurtf_idf": "LemurTF_IDF", 
+                          "lgd": "LGD", "pl2": "PL2", "tf_idf": "TF_IDF", "xsqra_m": "XSqrA_M"}
 
         self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", 
                             "snowball": "EnglishSnowballStemmer"}
@@ -73,7 +74,9 @@ class SysTerrier():
 
 
     def index(self, itag, doc, opt):
-        
+
+        print itag
+
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_file  = self.__write_doclist(itag, doc)
         o_dir   = os.path.join(self.env["index"], itag)
@@ -111,6 +114,8 @@ class SysTerrier():
             f.write(log)
 
     def retrieve(self, itag, rtag, opt, m, q):
+
+        print rtag
 
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_dir = os.path.join(self.env["index"], itag)
@@ -155,6 +160,8 @@ class SysTerrier():
             f.write(log)
 
     def evaluate(self, rtag, qrels):
+
+        print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
 
