@@ -15,7 +15,7 @@ class SysTerrier():
         # write Terrier's collection.spec file
         o_file = os.path.join(self.env["index"], ".".join([itag, "terrier"]))
         with open(o_file, "w") as f:
-            f.write(subprocess.check_output(["find", doc, "-type", "f"]))
+            f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
 
     def __build_termpipeline(self, opt):
@@ -36,9 +36,9 @@ class SysTerrier():
 
     def __query_file(self, rtag, q):
 
-        # queries are in a dict q
-        # build the query XML, that we want to feed terrier, and write
-        # it out to disk
+        # queries are in the dict q
+        # Build the query XML, that we want to feed terrier, and write
+        # it out to disk.
 
         soup = BeautifulSoup("<trick></trick>", "xml")
 
