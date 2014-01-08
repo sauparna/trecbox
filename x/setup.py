@@ -27,69 +27,54 @@ env = {
     "attic"   : os.path.join(root, "attic")
     }
 
-doc = {"test" : os.path.join(env["doc"], "test"),
-       "test1": os.path.join(env["doc"], "test1"),
-       "bunch": os.path.join("/tmp", "bunch"),
-       "fbis" : os.path.join(env["doc"], "cd45/fbis"),
-       "fr94" : os.path.join(env["doc"], "cd45/fr94"),
-       "ft"   : os.path.join(env["doc"], "cd45/ft"),
-       "la"   : os.path.join(env["doc"], "cd45/latimes")
-       }
+models = ["bb2", "bm25", "dfr_bm25", "dlh", "dlh13", 
+          "hiemstra_lm", "ifb2", "in_expb2", "in_expc2", 
+          "inl2", "lemurtf_idf", "pl2", 
+          "tf_idf", "pontecroft", "dfrweightingmodel"]
 
-topic = {"test1": os.path.join(env["topics"], "test1"),
-         "test2": os.path.join(env["qrels"], "test2"),
-         "test3": os.path.join(env["qrels"], "test3"),
-         "f3": os.path.join("/tmp", "f3"),
-         "t6": os.path.join(env["topics"], "topics.301-350"),
-         "t7": os.path.join(env["topics"], "topics.351-400"),
-         "t8": os.path.join(env["topics"], "topics.401-450")
-         }
+stemmers = ["porter", "weak-porter", "snowball"]
 
-qrels = {"test1": os.path.join(env["qrels"], "test1"),
-         "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc.parts1-5"),
-         "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc.parts1-5"),
-         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc.parts1-5")
-         }
+doc = {"t678": os.path.join(env["doc"], "trec678"),
+       "t678-fr": os.path.join(env["doc"], "trec678-fr")}
 
-model = ["tfidf", "bm25"]
+topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
+          "t6": os.path.join(env["topics"], "topics.301-350"),
+          "t7": os.path.join(env["topics"], "topics.331-400"),
+          "t8": os.path.join(env["topics"], "topics.401-450")}
 
-def main(argv):
+qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
+         "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
+         "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc"),
+         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc")}
 
-    #t = Topics(topic["t6"])
+def tests():
+    qrels = {"test1": os.path.join(env["qrels"], "test1")}
+    topic = {"test1": os.path.join(env["topics"], "test1")}
+    doc = {"test" : os.path.join(env["doc"], "test")}
     t = Topics(topic["test1"])
-    t1 = Topics(topic["test2"])
-    t2 = Topics(topic["test3"])
-    t3 = Topics(topic["f3"])
-
     s = SysTerrier(env)
-
-    s.index("bunch", doc["bunch"], ["None", "None"])
-    #s.retrieve("bunch", "bunch", ["None", "None"], "tfidf", t.query("terrier", "t"))
-    #s.evaluate("bunch", qrels["test1"])
-
     #s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
     #s.evaluate("xyz", qrels["test1"])
 
-    #s.retrieve("xyz", "xyz.1", ["None", "None"], "tfidf", t1.query("terrier"))
-    #s.evaluate("xyz.1", qrels["test1"])
+def exp(opt):
+    t = Topics(topics["t678"], "d")
+    s = SysTerrier(env)
 
-    #s.retrieve("xyz", "xyz.2", ["None", "None"], "tfidf", t3.query("terrier"))
-    #s.evaluate("xyz.2", qrels["test1"])
+    if opt == "i":
+        s.index("t678", doc["t678"], ["stopwords", "None"])
+        #s.index("t678.p", doc["t678"], ["stopwords", "porter"])
+        #s.index("t678.wp", doc["t678"], ["stopwords", "weak-porter"])
+        #s.index("t678.s", doc["t678"], ["stopwords", "snowball"])
+    elif opt == "r":
+        s.retrieve("t678", "t678.bm25", ["stopwords", "None"], "bm25", t.query("terrier"))
+    elif opt == "e":
+        s.evaluate("t678.bm25", qrels["t678"])
 
-    #s.index("xyz.s", doc["test1"], ["stoptest", "None"])
-    #s.retrieve("xyz.s", "xyz.s", ["stoptest", "None"], "tfidf", t.query("terrier"))
-    #s.evaluate("xyz.s", qrels["test1"])
-
-    #s = SysIndri(env)
-    #s.index("xyz", doc["test"], ["stop", "porter"]])
-
-    #s = SysLucene(env)
-    #s.index("xyz", doc["test"], ["stop", "porter"]])
-
-    #s.retrieve("xyz", "xyz", "tfidf", t.query("lucene"))
-    #s.retrieve("uvw", "uvw", "tfidf", t.query("indri"))
-    
-    
+def main(argv):
+    if len(argv) != 2:
+        print "usage: python setup.py <i|r|e>"
+        sys.exit(0)
+    exp(argv[1])
     
 if __name__ == "__main__":
-   main(sys.argv[1:])
+   main(sys.argv)

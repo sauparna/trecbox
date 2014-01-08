@@ -6,8 +6,15 @@ class SysTerrier():
 
     def __init__(self, env):
         self.env = env
-        self.query_map   = {"t": "TITLE", "d": "DESC", "n": "NARR"}
-        self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
+        #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
+
+        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25",
+                          "dlh": "DLH", "dlh13": "DLH13", "dph": "DPH", "dfree": "DFRee", 
+                          "hiemstra_lm": "Hiemstra_LM", "ifb2": "IFB2", "in_expb2": "In_expB2", 
+                          "in_expc2": "In_expC2", "inl2": "InL2", "lemurtf_idf": "LemurTF_IDF", 
+                          "lgd": "LGD", "pl2": "PL2", "tf_idf": "TF_IDF", 
+                          "dfrweightingmodel": "DFRWeightingModel"}
+
         self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", 
                             "snowball": "EnglishSnowballStemmer"}
 
@@ -78,11 +85,14 @@ class SysTerrier():
                                           "-".join([itag,str(time.time())])))
 
         # needed, or else Terrier complains
-
         os.mkdir(o_dir)
 
-        subprocess.check_output([
-                os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
+        log = ""
+
+        try:
+
+           log =  subprocess.check_output(
+               [os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
@@ -92,8 +102,16 @@ class SysTerrier():
                 "-DTrecDocTags.idtag=DOCNO",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
                 "-DTrecDocTags.skip=DOCHDR",
-                "-DTrecDocTags.casesensitive=true"])
+                "-DTrecDocTags.casesensitive=true"],
+               stderr=subprocess.STDOUT)
 
+        except subprocess.CalledProcessError as e:
+            
+            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+
+        o_log = os.path.join(os.path.join(self.env["index"], itag + ".log"))
+        with open(o_log, "w") as f:
+            f.write(log)
 
     def retrieve(self, itag, rtag, opt, m, q):
 
