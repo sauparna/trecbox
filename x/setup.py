@@ -6,6 +6,7 @@ from Topics import Topics
 
 home = ""
 
+# bootstrap env ('config' usually left out of version control)
 with open("config", "r") as f:
     home = f.readline().rstrip("\n")
 
@@ -28,6 +29,7 @@ env = {
 
 doc = {"test" : os.path.join(env["doc"], "test"),
        "test1": os.path.join(env["doc"], "test1"),
+       "bunch": os.path.join("/tmp", "bunch"),
        "fbis" : os.path.join(env["doc"], "cd45/fbis"),
        "fr94" : os.path.join(env["doc"], "cd45/fr94"),
        "ft"   : os.path.join(env["doc"], "cd45/ft"),
@@ -61,7 +63,9 @@ def main(argv):
 
     s = SysTerrier(env)
 
-    #s.index("xyz", doc["test1"], ["None", "None"])
+    s.index("bunch", doc["bunch"], ["None", "None"])
+    #s.retrieve("bunch", "bunch", ["None", "None"], "tfidf", t.query("terrier", "t"))
+    #s.evaluate("bunch", qrels["test1"])
 
     #s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
     #s.evaluate("xyz", qrels["test1"])
@@ -69,7 +73,7 @@ def main(argv):
     #s.retrieve("xyz", "xyz.1", ["None", "None"], "tfidf", t1.query("terrier"))
     #s.evaluate("xyz.1", qrels["test1"])
 
-    s.retrieve("xyz", "xyz.2", ["None", "None"], "tfidf", t3.query("terrier"))
+    #s.retrieve("xyz", "xyz.2", ["None", "None"], "tfidf", t3.query("terrier"))
     #s.evaluate("xyz.2", qrels["test1"])
 
     #s.index("xyz.s", doc["test1"], ["stoptest", "None"])
