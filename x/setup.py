@@ -40,7 +40,7 @@ doc = {"t678": os.path.join(env["doc"], "trec678"),
 
 topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
           "t6": os.path.join(env["topics"], "topics.301-350"),
-          "t7": os.path.join(env["topics"], "topics.331-400"),
+          "t7": os.path.join(env["topics"], "topics.351-400"),
           "t8": os.path.join(env["topics"], "topics.401-450")}
 
 qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
@@ -155,7 +155,7 @@ def main(argv):
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
 
-    exp_t678_fr(argv[1])
+    exp_t6_7_8(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
