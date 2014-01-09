@@ -27,10 +27,11 @@ env = {
     "attic"   : os.path.join(root, "attic")
     }
 
-models = ["bb2","bm25","dfi0","dfr_bm25","dfree","dfrweightingmodel",
-          "dirichletlm","dlh","dlh13","dph","hiemstra_lm","idf",
-          "ifb2","in_expb2","in_expc2","inb2","inl2","js_kls",
-          "lemurtf_idf","lgd", "pl2", "tf_idf","xsqra_m"]
+# dfrweightingmodel, idf don't work. See logs in w or attic
+models = ["bb2","bm25","dfi0","dfr_bm25","dfree","dirichletlm",
+          "dlh","dlh13","dph","hiemstra_lm","ifb2","in_expb2",
+          "in_expc2","inb2","inl2","js_kls","lemurtf_idf",
+          "lgd", "pl2", "tf_idf","xsqra_m"]
 
 stemmers = ["porter", "weak-porter", "snowball"]
 
@@ -103,7 +104,7 @@ def exp_t678_fr(opt):
         q = t.query("terrier")
 
         for m in models:
-            s.retrieve("t678-fr",    "t678-fr."    + m, ["stopwords", "None"],        m, q)
+            s.retrieve("t678-fr.n",  "t678-fr.n."  + m, ["stopwords", "None"],        m, q)
             s.retrieve("t678-fr.p",  "t678-fr.p."  + m, ["stopwords", "porter"],      m, q)
             s.retrieve("t678-fr.wp", "t678-fr.wp." + m, ["stopwords", "weak-porter"], m, q)
             s.retrieve("t678-fr.s",  "t678-fr.s."  + m, ["stopwords", "snowball"],    m, q)
@@ -111,7 +112,7 @@ def exp_t678_fr(opt):
     elif opt == "e":
 
         for m in models:
-            s.evaluate("t678-fr."    + m, qrels["t678"])
+            s.evaluate("t678-fr.n."  + m, qrels["t678"])
             s.evaluate("t678-fr.p."  + m, qrels["t678"])
             s.evaluate("t678-fr.wp." + m, qrels["t678"])
             s.evaluate("t678-fr.s."  + m, qrels["t678"])
@@ -123,35 +124,38 @@ def exp_t6_7_8(opt):
 
     if opt == "i":
 
-        print "don't want to spend time indexing, use t678"
+        print "use t678.*"
 
     elif opt == "r":
 
-        for t in ["t6", "t7", "t8"]:
+        for rtag in ["t6", "t7", "t8"]:
 
-            t = Topics(topics["t6"], "d")
+            t = Topics(topics[rtag], "d")
             q = t.query("terrier")
 
             for m in models:
-                s.retrieve("t678",    "t6."    + m, ["stopwords", "None"],        m, q)
-                s.retrieve("t678.p",  "t6.p."  + m, ["stopwords", "porter"],      m, q)
-                s.retrieve("t678.wp", "t6.wp." + m, ["stopwords", "weak-porter"], m, q)
-                s.retrieve("t678.s",  "t6.s."  + m, ["stopwords", "snowball"],    m, q)
+                s.retrieve("t678.n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
+                s.retrieve("t678.p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
+                s.retrieve("t678.wp", rtag + ".wp." + m, ["stopwords", "weak-porter"], m, q)
+                s.retrieve("t678.s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
 
     elif opt == "e":
 
-        for m in models:
-            s.evaluate("t6."    + m, qrels["t6"])
-            s.evaluate("t6.p."  + m, qrels["t6"])
-            s.evaluate("t6.wp." + m, qrels["t6"])
-            s.evaluate("t6.s."  + m, qrels["t6"])
+        for rtag in ["t6", "t7", "t8"]:
+
+            for m in models:
+                s.evaluate(rtag + ".n."  + m, qrels[rtag])
+                s.evaluate(rtag + ".p."  + m, qrels[rtag])
+                s.evaluate(rtag + ".wp." + m, qrels[rtag])
+                s.evaluate(rtag + ".s."  + m, qrels[rtag])
 
 
 def main(argv):
     if len(argv) != 2:
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
-    exp_t678(argv[1])
+
+    exp_t678_fr(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
