@@ -1,12 +1,12 @@
 # prints all 5 measures for all 84 systems for all 7 test collections
 # NOTE: the above figures may change
-
 #t678.n.bb2  map:0.1531 gm_map:0.0413 Rprec:0.1966 P_5:0.3640 P_10:0.3260
 
 BEGIN {
      getline root <"../config"
-     names = "t678 t678-fr t6 t7 t8 fbis fr94"
-     # names = "t678 t678-fr"
+   
+     names = "t678 t678-fr"
+     #names = "t678 t678-fr t6 t7 t8 fbis fr94"
      measures = "map gm_map Rprec P_5 P_10"
 
      L = 5 # number of measures

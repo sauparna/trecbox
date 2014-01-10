@@ -36,7 +36,9 @@ models = ["bb2","bm25","dfi0","dfr_bm25","dfree","dirichletlm",
 stemmers = ["porter", "weak-porter", "snowball"]
 
 doc = {"t678": os.path.join(env["doc"], "trec678"),
-       "t678-fr": os.path.join(env["doc"], "trec678-fr")}
+       "t678-fr": os.path.join(env["doc"], "trec678-fr"),
+       "fbis": os.path.join(env["doc"], "cd5/fbis"),
+       "fr94": os.path.join(env["doc"], "cd4/fr94")}
 
 topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
           "t6": os.path.join(env["topics"], "topics.301-350"),
@@ -117,7 +119,6 @@ def exp_t678_fr(opt):
             s.evaluate("t678-fr.wp." + m, qrels["t678"])
             s.evaluate("t678-fr.s."  + m, qrels["t678"])
 
-# TODO
 def exp_t6_7_8(opt):
 
     s = SysTerrier(env)
@@ -149,13 +150,56 @@ def exp_t6_7_8(opt):
                 s.evaluate(rtag + ".wp." + m, qrels[rtag])
                 s.evaluate(rtag + ".s."  + m, qrels[rtag])
 
+def exp_fbis(opt):
+    s = SysTerrier(env)
+    if opt == "i":
+        s.index("fbis.n",  doc["fbis"], ["stopwords", "None"])
+        s.index("fbis.p",  doc["fbis"], ["stopwords", "porter"])
+        s.index("fbis.wp", doc["fbis"], ["stopwords", "weak-porter"])
+        s.index("fbis.s",  doc["fbis"], ["stopwords", "snowball"])
+    elif opt == "r":
+        t = Topics(topics["t678"], "d")
+        q = t.query("terrier")
+        for m in models:
+            s.retrieve("fbis.n",  "fbis.n."  + m, ["stopwords", "None"],        m, q)
+            s.retrieve("fbis.p",  "fbis.p."  + m, ["stopwords", "porter"],      m, q)
+            s.retrieve("fbis.wp", "fbis.wp." + m, ["stopwords", "weak-porter"], m, q)
+            s.retrieve("fbis.s",  "fbis.s."  + m, ["stopwords", "snowball"],    m, q)
+    elif opt == "e":
+        for m in models:
+            s.evaluate("fbis.n."  + m, qrels["t678"])
+            s.evaluate("fbis.p."  + m, qrels["t678"])
+            s.evaluate("fbis.wp." + m, qrels["t678"])
+            s.evaluate("fbis.s."  + m, qrels["t678"])
+
+def exp_fr94(opt):
+    s = SysTerrier(env)
+    if opt == "i":
+        s.index("fr94.n",  doc["fr94"], ["stopwords", "None"])
+        s.index("fr94.p",  doc["fr94"], ["stopwords", "porter"])
+        s.index("fr94.wp", doc["fr94"], ["stopwords", "weak-porter"])
+        s.index("fr94.s",  doc["fr94"], ["stopwords", "snowball"])
+    elif opt == "r":
+        t = Topics(topics["t678"], "d")
+        q = t.query("terrier")
+        for m in models:
+            s.retrieve("fr94.n",  "fr94.n."  + m, ["stopwords", "None"],        m, q)
+            s.retrieve("fr94.p",  "fr94.p."  + m, ["stopwords", "porter"],      m, q)
+            s.retrieve("fr94.wp", "fr94.wp." + m, ["stopwords", "weak-porter"], m, q)
+            s.retrieve("fr94.s",  "fr94.s."  + m, ["stopwords", "snowball"],    m, q)
+    elif opt == "e":
+        for m in models:
+            s.evaluate("fr94.n."  + m, qrels["t678"])
+            s.evaluate("fr94.p."  + m, qrels["t678"])
+            s.evaluate("fr94.wp." + m, qrels["t678"])
+            s.evaluate("fr94.s."  + m, qrels["t678"])
 
 def main(argv):
     if len(argv) != 2:
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
 
-    exp_t6_7_8(argv[1])
+    exp_fr94(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
