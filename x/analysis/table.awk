@@ -5,15 +5,17 @@
 #t678.n.bb2  map:0.1531 gm_map:0.0413 Rprec:0.1966 P_5:0.3640 P_10:0.3260
 
 BEGIN {
-     getline root <"../config"
-   
+     # TODO: consider using or dropping
+     # getline root <"../config"
+
+     names = "t678 t678-fr t6 t7 t8 fbis fr94"
      #names = "t678 t678-fr"
      #names = "t6 t7 t8" 
-     names = "fbis fr94"
+     # names = "fbis fr94"
      measures = "map gm_map Rprec P_5 P_10"
 
      L = 84  # number of systems, also the number of lines in each file
-     M = 2   # number of test collections
+     M = 7   # number of test collections
      N = 5   # number of measures
 
      if(split(names, f, " ") != M) {
@@ -37,6 +39,7 @@ BEGIN {
      fmt = "%-20s"
 
      # build the test collection header
+
      h1 = sprintf(fmt, "")
      for (i=1; i <= M; i++)
      {
@@ -58,6 +61,7 @@ BEGIN {
      h0 = h0 sprintf("\n")
      
      # build the measures header
+
      h2 = sprintf(fmt, "")
      for (i=1; i <= M; i++)
      {
@@ -68,10 +72,10 @@ BEGIN {
      h2 = h2 sprintf("\n")
 
      # write out neat headers
-     printf(h1)
-     printf(h0)
-     printf(h2)
-     printf(h0)
+     # printf(h1)
+     # printf(h0)
+     # printf(h2)
+     # printf(h0)
      
      for (i=1; i <= L; i++)
      {
