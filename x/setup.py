@@ -217,6 +217,7 @@ def exp_ziff(opt):
             q = t.query("terrier", "d", qlist)
             for m in models:
                 s.retrieve(rtag + ".n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
+                sys.exit(0)
                 s.retrieve(rtag + ".p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
                 s.retrieve(rtag + ".wp", rtag + ".wp." + m, ["stopwords", "weak-porter"], m, q)
                 s.retrieve(rtag + ".s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)

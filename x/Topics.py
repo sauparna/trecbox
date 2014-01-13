@@ -142,6 +142,9 @@ class Topics():
                         s = self.__closing_of(top) + s
                         stack.pop()
 
+                # print stack
+                print s
+
                 c_ += s
                 s = ""
                 continue
