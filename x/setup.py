@@ -38,17 +38,26 @@ stemmers = ["porter", "weak-porter", "snowball"]
 doc = {"t678": os.path.join(env["doc"], "trec678"),
        "t678-fr": os.path.join(env["doc"], "trec678-fr"),
        "fbis": os.path.join(env["doc"], "cd5/fbis"),
-       "fr94": os.path.join(env["doc"], "cd4/fr94")}
+       "fr94": os.path.join(env["doc"], "cd4/fr94"),
+       "ziff1": os.path.join(env["doc"], "ziff1"),
+       "ziff2": os.path.join(env["doc"], "ziff2"),
+       "ziff3": os.path.join(env["doc"], "ziff3")}
 
 topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
           "t6": os.path.join(env["topics"], "topics.301-350"),
           "t7": os.path.join(env["topics"], "topics.351-400"),
-          "t8": os.path.join(env["topics"], "topics.401-450")}
+          "t8": os.path.join(env["topics"], "topics.401-450"),
+          "ziff1": os.path.join(env["topics"], "topics.1-150"),
+          "ziff2": os.path.join(env["topics"], "topics.1-150"),
+          "ziff3": os.path.join(env["topics"], "topics.1-150")}
 
 qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
          "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc"),
-         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc")}
+         "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
+         "ziff1": os.path.join(env["qrels"], "qrels.trec123.adhoc"),
+         "ziff2": os.path.join(env["qrels"], "qrels.trec123.adhoc"),
+         "ziff3": os.path.join(env["qrels"], "qrels.trec123.adhoc")}
 
 def tests():
     qrels = {"test1": os.path.join(env["qrels"], "test1")}
@@ -72,8 +81,8 @@ def exp_t678(opt):
 
     elif opt == "r":
 
-        t = Topics(topics["t678"], "d")
-        q = t.query("terrier")
+        t = Topics(topics["t678"])
+        q = t.query("terrier", "d")
 
         for m in models:
             s.retrieve("t678.n",  "t678.n."  + m, ["stopwords", "None"],        m, q)
@@ -102,8 +111,8 @@ def exp_t678_fr(opt):
 
     elif opt == "r":
 
-        t = Topics(topics["t678"], "d")
-        q = t.query("terrier")
+        t = Topics(topics["t678"])
+        q = t.query("terrier", "d")
 
         for m in models:
             s.retrieve("t678-fr.n",  "t678-fr.n."  + m, ["stopwords", "None"],        m, q)
@@ -131,8 +140,8 @@ def exp_t6_7_8(opt):
 
         for rtag in ["t6", "t7", "t8"]:
 
-            t = Topics(topics[rtag], "d")
-            q = t.query("terrier")
+            t = Topics(topics[rtag])
+            q = t.query("terrier", "d")
 
             for m in models:
                 s.retrieve("t678.n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
@@ -158,8 +167,8 @@ def exp_fbis(opt):
         s.index("fbis.wp", doc["fbis"], ["stopwords", "weak-porter"])
         s.index("fbis.s",  doc["fbis"], ["stopwords", "snowball"])
     elif opt == "r":
-        t = Topics(topics["t678"], "d")
-        q = t.query("terrier")
+        t = Topics(topics["t678"])
+        q = t.query("terrier", "d")
         for m in models:
             s.retrieve("fbis.n",  "fbis.n."  + m, ["stopwords", "None"],        m, q)
             s.retrieve("fbis.p",  "fbis.p."  + m, ["stopwords", "porter"],      m, q)
@@ -180,8 +189,8 @@ def exp_fr94(opt):
         s.index("fr94.wp", doc["fr94"], ["stopwords", "weak-porter"])
         s.index("fr94.s",  doc["fr94"], ["stopwords", "snowball"])
     elif opt == "r":
-        t = Topics(topics["t678"], "d")
-        q = t.query("terrier")
+        t = Topics(topics["t678"])
+        q = t.query("terrier", "d")
         for m in models:
             s.retrieve("fr94.n",  "fr94.n."  + m, ["stopwords", "None"],        m, q)
             s.retrieve("fr94.p",  "fr94.p."  + m, ["stopwords", "porter"],      m, q)
@@ -193,6 +202,30 @@ def exp_fr94(opt):
             s.evaluate("fr94.p."  + m, qrels["t678"])
             s.evaluate("fr94.wp." + m, qrels["t678"])
             s.evaluate("fr94.s."  + m, qrels["t678"])
+
+def exp_ziff(opt):
+    s = SysTerrier(env)
+    for rtag in ["ziff1", "ziff2", "ziff3"]:
+        if opt == "i":
+            s.index(rtag + ".n",  doc[rtag], ["stopwords", "None"])
+            s.index(rtag + ".p",  doc[rtag], ["stopwords", "porter"])
+            s.index(rtag + ".wp", doc[rtag], ["stopwords", "weak-porter"])
+            s.index(rtag + ".s",  doc[rtag], ["stopwords", "snowball"])
+        elif opt == "r":
+            qlist = open(rtag + ".qid", "r").read().splitlines()
+            t = Topics(topics[rtag])
+            q = t.query("terrier", "d", qlist)
+            for m in models:
+                s.retrieve(rtag + ".n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
+                s.retrieve(rtag + ".p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
+                s.retrieve(rtag + ".wp", rtag + ".wp." + m, ["stopwords", "weak-porter"], m, q)
+                s.retrieve(rtag + ".s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
+        elif opt == "e":
+            for m in models:
+                s.evaluate(rtag + ".n."  + m, qrels[rtag])
+                s.evaluate(rtag + ".p."  + m, qrels[rtag])
+                s.evaluate(rtag + ".wp." + m, qrels[rtag])
+                s.evaluate(rtag + ".s."  + m, qrels[rtag])
 
 def main(argv):
     if len(argv) != 2:
