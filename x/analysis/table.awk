@@ -8,23 +8,23 @@ BEGIN {
      # TODO: consider using or dropping
      # getline root <"../config"
 
-     names = "t678 t678-fr t6 t7 t8 fbis fr94"
+     #names = "t678 t678-fr t6 t7 t8 fbis fr94"
      #names = "t678 t678-fr"
-     #names = "t6 t7 t8" 
+     names = "t6 t7 t8" 
      # names = "fbis fr94"
      measures = "map gm_map Rprec P_5 P_10"
 
      L = 84  # number of systems, also the number of lines in each file
-     M = 7   # number of test collections
+     M = 3   # number of test collections
      N = 5   # number of measures
 
      if(split(names, f, " ") != M) {
-	  print "Error: number of files != N"
+	  print "Error: number of test collections != M"
 	  exit
      }
 
      if(split(measures, g, " ") != N) {
-	  print "Error: number of files != L"
+	  print "Error: number of measures != N"
 	  exit
      }
 
@@ -73,9 +73,9 @@ BEGIN {
 
      # write out neat headers
      # printf(h1)
-     # printf(h0)
-     # printf(h2)
-     # printf(h0)
+     printf(h0)
+     printf(h2)
+     printf(h0)
      
      for (i=1; i <= L; i++)
      {
