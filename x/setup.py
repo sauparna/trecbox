@@ -232,7 +232,7 @@ def main(argv):
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
 
-    exp_fr94(argv[1])
+    exp_ziff(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
