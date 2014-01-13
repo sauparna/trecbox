@@ -212,7 +212,7 @@ def exp_ziff(opt):
             s.index(rtag + ".wp", doc[rtag], ["stopwords", "weak-porter"])
             s.index(rtag + ".s",  doc[rtag], ["stopwords", "snowball"])
         elif opt == "r":
-            qlist = open(rtag + ".qid", "r").read().splitlines()
+            qlist = open(os.path.join(env["topics"], rtag + ".qid"), "r").read().splitlines()
             t = Topics(topics[rtag])
             q = t.query("terrier", "d", qlist)
             for m in models:
