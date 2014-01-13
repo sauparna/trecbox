@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import string
+import string, re, sys
 
 class Topics():
 
@@ -88,13 +88,19 @@ class Topics():
         c_ = ""
 
         stack = []
-
+        stack1 = []
+        
         for c in txt:
             if c == "\n" or c == "\r" or c == "\t":
                 continue
             if c == "<":
+                stack1.append(c)
                 in_tag = True
             elif c == ">":
+                if not stack1:
+                    continue
+                else:
+                    stack1.pop()
                 s += c
                 in_tag = False
 
@@ -124,7 +130,7 @@ class Topics():
                     stack.append(s)
                 elif self.__is_opening(s):
                     top = stack.pop()
-                    if top == "<top>":
+                    if top == "<top>" or top == "<fac>":
                         stack.append(top)
                         stack.append(s)
                     else:
