@@ -95,7 +95,7 @@ class Topics():
         for c in txt:
             if c == "\n" or c == "\r" or c == "\t":
                 continue
-            if c == "<":
+            elif c == "<":
                 stack1.append(c)
                 in_tag = True
             elif c == ">":
@@ -107,27 +107,33 @@ class Topics():
                 in_tag = False
 
                 # This block of code makes __hack_n_hew()
-                # idempotent. Which means, old TREC SGML topic files
-                # that have no closing tags, as well as well formed
-                # TREC XML topic files will pass through smoothly,
+                # idempotent. Old TREC SGML topic files (that have no
+                # closing tags) will be corrected , and well formed
+                # TREC XML topic files will pass through unchanged,
                 # ready for consumption by an XML parser.
-
+                #
                 # algorithm:
-                # Keeps pushing the opening tags to a stack. If an
-                # incoming opening tag is not the TREC tag "<top>",
-                # and the top of the stack is some other opening tag,
-                # the incoming tag is sent to the output stream with
-                # the closing of the stack top as a prefix and the
-                # stack is popped. If the incoming tag is a closing
-                # tag and the stack top is its corresponing opening,
-                # then simply the stack is popped. Again, if the
-                # incoming tag is a closing tag and the stack top
-                # holds an opening tag, then the incoming tag is sent
-                # to the stream prefixed with the closing of the stack
-                # top, and the stack is popped. At any moment the
-                # stack contains only opening tags, or is empty if the
-                # closing TREC tag "</top>" has been read.
-
+                #
+                # Push the first (opening) tag to a stack and then
+                # branch depending on what type of tag arrives next
+                # from the input stream and what tag is at the top of
+                # the stack. Only opening tags are pushed. So at any
+                # instant the stack contains opening tags, or is empty
+                # if </top> has been read. Here are the situations to
+                # handle, depending on the incoming tag:
+                #
+                # a) opening tag
+                # If it is <top> then push. If not then check the
+                # top. If the top is also some other opening tag, the
+                # incoming tag is sent to the output stream with the
+                # closing of the top as a prefix and then pop.
+                #
+                # b) closing tag
+                # i) If the top is its corresponing opening, then pop.
+                # ii) If the top holds an opening tag, then the
+                # incoming tag is sent to the stream prefixed with the
+                # closing of the top, and then pop.
+                #
                 # NOTE: BAD HACK! The old TREC topic files (1-150)
                 # have a <fac></fac> nesting inside <top></top>. I
                 # close <fac> immediately with a </fac>, close all
@@ -139,7 +145,7 @@ class Topics():
 
                 if s == "<top>":
                     stack.append(s)
-                if s == "</fac>":
+                elif s == "</fac>":
                     s = ""
                     continue
                 elif self.__is_opening(s):
