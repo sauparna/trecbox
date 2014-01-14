@@ -33,7 +33,9 @@ class Topics():
         # 'mode', scoped by 'qlist' (if given) and indexed by qid
 
         for top in soup.find_all("top"):
-            n = top.num.string.lstrip().rstrip()
+            # lower (older) qids are padded with zeros, as in '002'
+            # int() drops these leading zeros
+            n = unicode(int(top.num.string.lstrip().rstrip()))
             if qlist and (n not in qlist):
                 continue
             q[n] = ""
@@ -126,11 +128,23 @@ class Topics():
                 # stack contains only opening tags, or is empty if the
                 # closing TREC tag "</top>" has been read.
 
+                # NOTE: BAD HACK! The old TREC topic files (1-150)
+                # have a <fac></fac> nesting inside <top></top>. I
+                # close <fac> immediately with a </fac>, close all
+                # tags inside <fac> as usual, and throw away
+                # </fac>. This potentially breaks the original
+                # structure, leading to a useless <fac></fac> item but
+                # solves my problem for the time being because I never
+                # make use of the contents of <fac>.
+
                 if s == "<top>":
                     stack.append(s)
+                if s == "</fac>":
+                    s = ""
+                    continue
                 elif self.__is_opening(s):
                     top = stack.pop()
-                    if top == "<top>" or top == "<fac>":
+                    if top == "<top>":
                         stack.append(top)
                         stack.append(s)
                     else:
@@ -143,7 +157,7 @@ class Topics():
                         stack.pop()
 
                 # print stack
-                print s
+                # print s
 
                 c_ += s
                 s = ""
