@@ -5,6 +5,18 @@ The above line selects measures and gathers them by test collection
 and writes files in viz. Run it from within evals directory for neater
 output.
 
-awk -f table.awk will work on them in viz to get a table out
+awk -f table.awk will work on *.measures in viz to write out a tab0
+commenting on / off some lines controls prettyprinting, and jumbling
+up the positions of the test collection columns.
 
-tab0 in viz is the entire results table without headers
+awk -f table1.awk produces a rarragned output of the above
+commenting on / off some printf()'s controls prettyprinting.
+
+tab0 in viz is the entire results table without headers (output of table.awk)
+tab0.1 has the same data as tab0, but laid out differently (output of table1.awk)
+*.rand.* has the test collection columns randomly ordered
+*.pretty are readable versions of tab0*
+*.pretty-hide is the readable version of *.rand.* with test collection names replaced by alphabets
+
+single-measure tables from tab0.1 types
+sort -k2,2d tab0.1 | grep map | grep -v gm_map >tab0.1.map
