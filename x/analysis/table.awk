@@ -1,6 +1,6 @@
 # Usage: awk -f table.awk 
 # Run the script from inside x/analysis/ directory. TODO: clean this up
-# prints all 5 measures for all 84 systems for all 7 test collections
+# prints all 5 measures for all 84 systems for all 10 test collections
 # NOTE: the above figures may change
 #
 # A line of output is of the form:

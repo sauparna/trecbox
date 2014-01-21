@@ -1,9 +1,9 @@
-# prettyprint the tab0.1
+# prettyprint the tab.1
 # they are usually named tab0.*.map, where 'map' is the measure
 
 BEGIN{
-     # f = "../../viz/tab0.1"
-     f = "../../viz/tab0.1.rand"
+     # f = "../../viz/tab.1"
+     f = "../../viz/tab.1.rand"
      if (f ~ /rand/)
 	  h = "A B C D E F G H I J"
 	  # h = "t6 ziff2 t678-fr fbis t8 t7 ziff3 fr94 t678 ziff1"

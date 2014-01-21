@@ -39,6 +39,7 @@ doc = {"t678": os.path.join(env["doc"], "trec678"),
        "t678-fr": os.path.join(env["doc"], "trec678-fr"),
        "fbis": os.path.join(env["doc"], "cd5/fbis"),
        "fr94": os.path.join(env["doc"], "cd4/fr94"),
+       "ziff": os.path.join(env["doc"], "ziff"),
        "ziff1": os.path.join(env["doc"], "ziff1"),
        "ziff2": os.path.join(env["doc"], "ziff2"),
        "ziff3": os.path.join(env["doc"], "ziff3")}
@@ -47,17 +48,13 @@ topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
           "t6": os.path.join(env["topics"], "topics.301-350"),
           "t7": os.path.join(env["topics"], "topics.351-400"),
           "t8": os.path.join(env["topics"], "topics.401-450"),
-          "ziff1": os.path.join(env["topics"], "topics.1-150"),
-          "ziff2": os.path.join(env["topics"], "topics.1-150"),
-          "ziff3": os.path.join(env["topics"], "topics.1-150")}
+          "ziff": os.path.join(env["topics"], "topics.1-150")}
 
 qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
          "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc"),
          "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
-         "ziff1": os.path.join(env["qrels"], "qrels.trec123.adhoc"),
-         "ziff2": os.path.join(env["qrels"], "qrels.trec123.adhoc"),
-         "ziff3": os.path.join(env["qrels"], "qrels.trec123.adhoc")}
+         "ziff": os.path.join(env["qrels"], "qrels.trec123.adhoc")}
 
 def tests():
     qrels = {"test1": os.path.join(env["qrels"], "test1")}
@@ -203,7 +200,9 @@ def exp_fr94(opt):
             s.evaluate("fr94.wp." + m, qrels["t678"])
             s.evaluate("fr94.s."  + m, qrels["t678"])
 
-def exp_ziff(opt):
+# Splitting the index by three TREC years is not useful it seems.
+# This setup will probably be discarded.
+def exp_ziff_x(opt):
     s = SysTerrier(env)
     for rtag in ["ziff1", "ziff2", "ziff3"]:
         if opt == "i":
@@ -226,6 +225,32 @@ def exp_ziff(opt):
                 s.evaluate(rtag + ".p."  + m, qrels[rtag])
                 s.evaluate(rtag + ".wp." + m, qrels[rtag])
                 s.evaluate(rtag + ".s."  + m, qrels[rtag])
+
+def exp_ziff(opt):
+    s = SysTerrier(env)
+    itag = "ziff"
+    if opt == "i":
+        s.index(itag + ".n",  doc[itag], ["stopwords", "None"])
+        s.index(itag + ".p",  doc[itag], ["stopwords", "porter"])
+        s.index(itag + ".wp", doc[itag], ["stopwords", "weak-porter"])
+        s.index(itag + ".s",  doc[itag], ["stopwords", "snowball"])
+    elif opt == "r":
+        t = Topics(topics[itag])
+        for rtag in ["ziff1", "ziff2", "ziff3"]:
+            qlist = open(os.path.join(env["topics"], rtag + ".qid"), "r").read().splitlines()
+            q = t.query("terrier", "d", qlist)
+            for m in models:
+                s.retrieve(itag + ".n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
+                s.retrieve(itag + ".p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
+                s.retrieve(itag + ".wp", rtag + ".wp." + m, ["stopwords", "weak-porter"], m, q)
+                s.retrieve(itag + ".s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
+    elif opt == "e":
+        for rtag in ["ziff1", "ziff2", "ziff3"]:
+            for m in models:
+                s.evaluate(rtag + ".n."  + m, qrels[itag])
+                s.evaluate(rtag + ".p."  + m, qrels[itag])
+                s.evaluate(rtag + ".wp." + m, qrels[itag])
+                s.evaluate(rtag + ".s."  + m, qrels[itag])
 
 def main(argv):
     if len(argv) != 2:

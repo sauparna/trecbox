@@ -16,8 +16,8 @@ BEGIN{
 	  exit
      }
 	  
-     f = "../../viz/tab0.rand"
-     # f = "../../viz/tab0"
+     # f = "../../viz/tab.rand"
+     f = "../../viz/tab"
      measures = ARGV[1]
      N_ = split(measures, m, ",")
 
@@ -50,6 +50,4 @@ BEGIN{
 	       s = ""
 	  }
      }
-     
-     
 }
