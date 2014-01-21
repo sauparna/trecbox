@@ -1,5 +1,5 @@
 # prettyprint the tab.1
-# they are usually named tab0.*.map, where 'map' is the measure
+# name the output file tab.1.*.map, where 'map' is the measure
 
 BEGIN{
      # f = "../../viz/tab.1"
