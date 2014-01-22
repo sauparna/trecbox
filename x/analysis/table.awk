@@ -18,37 +18,22 @@ BEGIN {
      M = 10  # number of test collections
      N = 5   # number of measures
 
-     names = "t678 t678-fr t6 t7 t8 fbis fr94 ziff1 ziff2 ziff3"
+     # names = "t678 t678-fr t6 t7 t8 fbis fr94 ziff1 ziff2 ziff3"
      # names = "t678 t678-fr"
      # names = "t6 t7 t8" 
      # names = "fbis fr94"
-     # names = "ziff1 ziff2 ziff3"
+     names = "ziff1 ziff2 ziff3"
+     M = split(names, f, " ")
+
+     measures = "map gm_map Rprec P_5 P_10"
+     N = split(measures, g, " ")
 
      # random index and names
      # rand_int  = "2 1"
      rand_int  = "3 9 2 6 5 4 10 7 1 8"
      rand_char = "A B C D E F G  H I J"
      split(rand_int, u, " ")
-
-     # # not sure if needed, nevertheless
-     # for (i=1; i <= M; i++)
-     # 	  u[i] = int(u[i])
-
      split(rand_char, u_, " ")
-
-     measures = "map gm_map Rprec P_5 P_10"
-
-     # TODO: odd to check M, N this way, rather, use what split()
-     # returns
-     if(split(names, f, " ") != M) {
-	  print "Error: number of test collections != M"
-	  exit
-     }
-
-     if(split(measures, g, " ") != N) {
-	  print "Error: number of measures != N"
-	  exit
-     }
 
      # prepare table headers
 
