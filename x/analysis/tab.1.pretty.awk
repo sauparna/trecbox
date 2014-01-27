@@ -3,10 +3,11 @@
 
 BEGIN{
      # f = "../../viz/tab.1"
-     f = "../../viz/tab.1.rand"
+     # f = "../../viz/tab.1.rand"
+     f = "../../viz/tab.1.rand.map"
      if (f ~ /rand/)
-	  h = "A B C D E F G H I J"
-	  # h = "t6 ziff2 t678-fr fbis t8 t7 ziff3 fr94 t678 ziff1"
+	  # h = "A B C D E F G H I J"
+	  h = "t6 ziff2 t678-fr fbis t8 t7 ziff3 fr94 t678 ziff1"
      else
 	  h = "t678 t678-fr t6 t7 t8 fbis fr94 ziff1 ziff2 ziff3"
      n = split(h, a, " ")

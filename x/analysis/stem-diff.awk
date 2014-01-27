@@ -1,6 +1,6 @@
-# runs through a tab0.1.<measure> type, diffing the values across stemmers
+# runs through a tab0.1.*.<measure> type, diffing the values across stemmers
 BEGIN{
-     f = "../../viz/tab0.1.map"
+     f = "../../viz/tab.1.rand.map"
      c = 0
      e = 1.0e-20
      
@@ -17,7 +17,7 @@ BEGIN{
 		    v[i-3] = $i
 		    s = s sprintf("%8.4f", $i)
 	       }
-	       printf("%-2s %-10s %5s%s\n", $1, $2, $3, s)
+	       printf("%-3s%-12s%4s%s\n", $1, $2, $3, s)
 	       continue
 	  }
 	  
@@ -28,7 +28,7 @@ BEGIN{
 	       # diff = $i - v[i-3]
 	       # s = s sprintf("%+8.4f", diff)
 	  }
-	  printf("%-2s %-10s %5s%s\n", $1, $2, "", s)
+	  printf("%-3s%-12s%4s%s\n", $1, $2, "", s)
 
 	  if (c == 4)
 	  {

@@ -20,3 +20,8 @@ tab.1 has the same data as tab, but laid out differently (output of table1.awk)
 
 single-measure tables from tab.1 types
 sort -k2,2d tab0.1 | grep map | grep -v gm_map >tab.1.map
+
+
+awk '{if($4==1)n[$1]++;if($4==0)r[$1]++}END{for(t in n)print t " " n[t] " " r[t]}' qrels.trec678.adhoc  | sort -nk1,1 >../topics/t678.qid
+
+awk '$4 == 1 && $3 ~ /^FR/{a[$1]++}END{for(t in a)print t " " a[t]}' qrels.trec678.adhoc | sort -nk1,1 >../topics/fr94.qid
