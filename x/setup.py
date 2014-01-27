@@ -33,7 +33,7 @@ models = ["bb2","bm25","dfi0","dfr_bm25","dfree","dirichletlm",
           "in_expc2","inb2","inl2","js_kls","lemurtf_idf",
           "lgd", "pl2", "tf_idf","xsqra_m"]
 
-stemmers = ["porter", "weak-porter", "snowball"]
+stems = ["n", "p", "s", "w"]
 
 doc = {"t678": os.path.join(env["doc"], "trec678"),
        "t678-fr": os.path.join(env["doc"], "trec678-fr"),
@@ -53,202 +53,33 @@ qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
          "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
 
-def tests():
-    qrels = {"test1": os.path.join(env["qrels"], "test1")}
-    topic = {"test1": os.path.join(env["topics"], "test1")}
-    doc = {"test" : os.path.join(env["doc"], "test")}
-    t = Topics(topic["test1"])
-    s = SysTerrier(env)
-    #s.retrieve("xyz", "xyz", ["None", "None"], "tfidf", t.query("terrier"))
-    #s.evaluate("xyz", qrels["test1"])
 
-def exp_t678(opt):
+def exp(opt):
 
     s = SysTerrier(env)
+    
+    tag = ["t6": "t678", "t7": "t678", "t8": "t678", 
+           "t678-fr": "t678-fr", "fr94": "fr94", 
+           "ziff1": "ziff", "ziff2": "ziff"]
 
     if opt == "i":
-
-        s.index("t678.n", doc["t678"], ["stopwords", "None"])
-        s.index("t678.p", doc["t678"], ["stopwords", "porter"])
-        s.index("t678.w", doc["t678"], ["stopwords", "weak-porter"])
-        s.index("t678.s", doc["t678"], ["stopwords", "snowball"])
-
+        for i in tag.values():
+            for j in stems:
+            s.index(i+"."+j,  doc[i], ["stop", j])
     elif opt == "r":
-
-        t = Topics(topics["t678"])
-        q = t.query("terrier", "d")
-
-        for m in models:
-            s.retrieve("t678.n",  "t678.n."  + m, ["stopwords", "None"],      m, q)
-            s.retrieve("t678.p",  "t678.p."  + m, ["stopwords", "porter"],    m, q)
-            s.retrieve("t678.w", "t678.w." + m, ["stopwords", "weak-porter"], m, q)
-            s.retrieve("t678.s",  "t678.s."  + m, ["stopwords", "snowball"],  m, q)
-
+        for i in tag.keys():
+            qid = open(os.path.join(env["topics"],  i+".qid"), "r").read().splitlines()
+            t = Topics(tag[i])
+            q = t.query("terrier", "d", qid)
+            for j in stems:
+                for k in models:
+                    s.retrieve(tag[i]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
     elif opt == "e":
+        for i in tag.keys():
+            for j in stems:
+                for k in models:
+                    s.evaluate(i+"."+j+"."+k, qrels[tag[i]])
 
-        for m in models:
-            s.evaluate("t678.n." + m, qrels["t678"])
-            s.evaluate("t678.p." + m, qrels["t678"])
-            s.evaluate("t678.w." + m, qrels["t678"])
-            s.evaluate("t678.s." + m, qrels["t678"])
-
-def exp_t678_fr(opt):
-
-    s = SysTerrier(env)
-
-    if opt == "i":
-
-        s.index("t678-fr.n",  doc["t678-fr"], ["stopwords", "None"])
-        s.index("t678-fr.p",  doc["t678-fr"], ["stopwords", "porter"])
-        s.index("t678-fr.w", doc["t678-fr"], ["stopwords", "weak-porter"])
-        s.index("t678-fr.s",  doc["t678-fr"], ["stopwords", "snowball"])
-
-    elif opt == "r":
-
-        t = Topics(topics["t678"])
-        q = t.query("terrier", "d")
-
-        for m in models:
-            s.retrieve("t678-fr.n",  "t678-fr.n."  + m, ["stopwords", "None"],        m, q)
-            s.retrieve("t678-fr.p",  "t678-fr.p."  + m, ["stopwords", "porter"],      m, q)
-            s.retrieve("t678-fr.w", "t678-fr.w." + m, ["stopwords", "weak-porter"], m, q)
-            s.retrieve("t678-fr.s",  "t678-fr.s."  + m, ["stopwords", "snowball"],    m, q)
-
-    elif opt == "e":
-
-        for m in models:
-            s.evaluate("t678-fr.n."  + m, qrels["t678"])
-            s.evaluate("t678-fr.p."  + m, qrels["t678"])
-            s.evaluate("t678-fr.w." + m, qrels["t678"])
-            s.evaluate("t678-fr.s."  + m, qrels["t678"])
-
-def exp_t6_7_8(opt):
-
-    s = SysTerrier(env)
-
-    if opt == "i":
-
-        print "use t678.*"
-
-    elif opt == "r":
-
-        for rtag in ["t6", "t7", "t8"]:
-
-            t = Topics(topics[rtag])
-            q = t.query("terrier", "d")
-
-            for m in models:
-                s.retrieve("t678.n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
-                s.retrieve("t678.p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
-                s.retrieve("t678.w", rtag + ".w." + m, ["stopwords", "weak-porter"], m, q)
-                s.retrieve("t678.s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
-
-    elif opt == "e":
-
-        for rtag in ["t6", "t7", "t8"]:
-
-            for m in models:
-                s.evaluate(rtag + ".n."  + m, qrels[rtag])
-                s.evaluate(rtag + ".p."  + m, qrels[rtag])
-                s.evaluate(rtag + ".w." + m, qrels[rtag])
-                s.evaluate(rtag + ".s."  + m, qrels[rtag])
-
-def exp_fbis(opt):
-    s = SysTerrier(env)
-    if opt == "i":
-        s.index("fbis.n",  doc["fbis"], ["stopwords", "None"])
-        s.index("fbis.p",  doc["fbis"], ["stopwords", "porter"])
-        s.index("fbis.w", doc["fbis"], ["stopwords", "weak-porter"])
-        s.index("fbis.s",  doc["fbis"], ["stopwords", "snowball"])
-    elif opt == "r":
-        t = Topics(topics["t678"])
-        q = t.query("terrier", "d")
-        for m in models:
-            s.retrieve("fbis.n",  "fbis.n."  + m, ["stopwords", "None"],        m, q)
-            s.retrieve("fbis.p",  "fbis.p."  + m, ["stopwords", "porter"],      m, q)
-            s.retrieve("fbis.w", "fbis.w." + m, ["stopwords", "weak-porter"], m, q)
-            s.retrieve("fbis.s",  "fbis.s."  + m, ["stopwords", "snowball"],    m, q)
-    elif opt == "e":
-        for m in models:
-            s.evaluate("fbis.n."  + m, qrels["t678"])
-            s.evaluate("fbis.p."  + m, qrels["t678"])
-            s.evaluate("fbis.w." + m, qrels["t678"])
-            s.evaluate("fbis.s."  + m, qrels["t678"])
-
-def exp_fr94(opt):
-    s = SysTerrier(env)
-    if opt == "i":
-        s.index("fr94.n",  doc["fr94"], ["stopwords", "None"])
-        s.index("fr94.p",  doc["fr94"], ["stopwords", "porter"])
-        s.index("fr94.w", doc["fr94"], ["stopwords", "weak-porter"])
-        s.index("fr94.s",  doc["fr94"], ["stopwords", "snowball"])
-    elif opt == "r":
-        t = Topics(topics["t678"])
-        q = t.query("terrier", "d")
-        for m in models:
-            s.retrieve("fr94.n",  "fr94.n."  + m, ["stopwords", "None"],        m, q)
-            s.retrieve("fr94.p",  "fr94.p."  + m, ["stopwords", "porter"],      m, q)
-            s.retrieve("fr94.w", "fr94.w." + m, ["stopwords", "weak-porter"], m, q)
-            s.retrieve("fr94.s",  "fr94.s."  + m, ["stopwords", "snowball"],    m, q)
-    elif opt == "e":
-        for m in models:
-            s.evaluate("fr94.n."  + m, qrels["t678"])
-            s.evaluate("fr94.p."  + m, qrels["t678"])
-            s.evaluate("fr94.w." + m, qrels["t678"])
-            s.evaluate("fr94.s."  + m, qrels["t678"])
-
-# Splitting the index by three TREC years is not useful it seems.
-# This setup will probably be discarded.
-def exp_ziff_x(opt):
-    s = SysTerrier(env)
-    itag = "ziff"
-    for rtag in ["ziff1", "ziff2", "ziff3"]:
-        if opt == "i":
-            s.index(rtag + ".n",  doc[rtag], ["stopwords", "None"])
-            s.index(rtag + ".p",  doc[rtag], ["stopwords", "porter"])
-            s.index(rtag + ".w", doc[rtag], ["stopwords", "weak-porter"])
-            s.index(rtag + ".s",  doc[rtag], ["stopwords", "snowball"])
-        elif opt == "r":
-            qlist = open(os.path.join(env["topics"], rtag + ".qid"), "r").read().splitlines()
-            t = Topics(topics[itag])
-            q = t.query("terrier", "d", qlist)
-            for m in models:
-                s.retrieve(rtag + ".n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
-                s.retrieve(rtag + ".p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
-                s.retrieve(rtag + ".w", rtag + ".w." + m, ["stopwords", "weak-porter"], m, q)
-                s.retrieve(rtag + ".s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
-        elif opt == "e":
-            for m in models:
-                s.evaluate(rtag + ".n."  + m, qrels[itag])
-                s.evaluate(rtag + ".p."  + m, qrels[itag])
-                s.evaluate(rtag + ".w." + m, qrels[itag])
-                s.evaluate(rtag + ".s."  + m, qrels[itag])
-
-def exp_ziff(opt):
-    s = SysTerrier(env)
-    itag = "ziff"
-    if opt == "i":
-        s.index(itag + ".n",  doc[itag], ["stopwords", "None"])
-        s.index(itag + ".p",  doc[itag], ["stopwords", "porter"])
-        s.index(itag + ".w", doc[itag], ["stopwords", "weak-porter"])
-        s.index(itag + ".s",  doc[itag], ["stopwords", "snowball"])
-    elif opt == "r":
-        t = Topics(topics[itag])
-        for rtag in ["ziff1", "ziff2", "ziff3"]:
-            qlist = open(os.path.join(env["topics"], rtag + ".qid"), "r").read().splitlines()
-            q = t.query("terrier", "d", qlist)
-            for m in models:
-                s.retrieve(itag + ".n",  rtag + ".n."  + m, ["stopwords", "None"],        m, q)
-                s.retrieve(itag + ".p",  rtag + ".p."  + m, ["stopwords", "porter"],      m, q)
-                s.retrieve(itag + ".w", rtag + ".w." + m, ["stopwords", "weak-porter"], m, q)
-                s.retrieve(itag + ".s",  rtag + ".s."  + m, ["stopwords", "snowball"],    m, q)
-    elif opt == "e":
-        for rtag in ["ziff1", "ziff2", "ziff3"]:
-            for m in models:
-                s.evaluate(rtag + ".n."  + m, qrels[itag])
-                s.evaluate(rtag + ".p."  + m, qrels[itag])
-                s.evaluate(rtag + ".w." + m, qrels[itag])
-                s.evaluate(rtag + ".s."  + m, qrels[itag])
 
 def main(argv):
     if len(argv) != 2:

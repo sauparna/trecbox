@@ -16,8 +16,7 @@ class SysTerrier():
                           "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
                           "tf_idf": "TF_IDF", "xsqra_m": "XSqrA_M"}
 
-        self.stemmer_map = {"porter": "PorterStemmer", "weak-porter": "WeakPorterStemmer", 
-                            "snowball": "EnglishSnowballStemmer"}
+        self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer", "s": "EnglishSnowballStemmer"}
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
