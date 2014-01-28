@@ -42,10 +42,7 @@ doc = {"t678": os.path.join(env["doc"], "trec678"),
        "ziff": os.path.join(env["doc"], "ziff")}
 
 topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
-          "t6": os.path.join(env["topics"], "topics.301-350"),
-          "t7": os.path.join(env["topics"], "topics.351-400"),
-          "t8": os.path.join(env["topics"], "topics.401-450"),
-          "ziff": os.path.join(env["topics"], "topics.1-150")}
+          "t123": os.path.join(env["topics"], "topics.1-150")}
 
 qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
@@ -53,45 +50,51 @@ qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
          "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
 
-
 def exp(opt):
 
     s = SysTerrier(env)
-    
-    tag = ["t6": "t678", "t7": "t678", "t8": "t678", 
-           "t678-fr": "t678-fr", "fr94": "fr94", 
-           "ziff1": "ziff", "ziff2": "ziff"]
-
+    # {"runid": "index topic qrel"}
+    tag = {"t6": "t678 t678 t6",
+           "t7": "t678 t678 t7",
+           "t8": "t678 t678 t8",
+           "t678-fr": "t678-fr t678 t678",
+           "fr94": "fr94 t678 t678",
+           "ziff1": "ziff t123 ziff",
+           "ziff2": "ziff t123 ziff"}
     if opt == "i":
+        # pull out the index names
+        a = []
         for i in tag.values():
+            a.append(i.split()[0])
+        index = list(set(a))
+        for i in index:
             for j in stems:
-            s.index(i+"."+j,  doc[i], ["stop", j])
+                s.index(i+"."+j,  doc[i], ["stop", j])
     elif opt == "r":
         for i in tag.keys():
+            i_ = tag[i].split()
+            t = Topics(topics[i_[1]])
             qid = open(os.path.join(env["topics"],  i+".qid"), "r").read().splitlines()
-            t = Topics(tag[i])
             q = t.query("terrier", "d", qid)
             for j in stems:
                 for k in models:
-                    s.retrieve(tag[i]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
+                    s.retrieve(i_[0]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
     elif opt == "e":
         for i in tag.keys():
+            i_ = tag[i].split()
             for j in stems:
                 for k in models:
-                    s.evaluate(i+"."+j+"."+k, qrels[tag[i]])
-
+                    s.evaluate(i+"."+j+"."+k, qrels[i_[2]])
 
 def main(argv):
     if len(argv) != 2:
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
-
     if not (os.path.exists(env["index"]) 
             and os.path.exists(env["runs"]) 
             and os.path.exists(env["evals"])):
         print "Either of index, runs or evals directory doesn't exist."
-
-    exp_ziff(argv[1])
+    exp(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
