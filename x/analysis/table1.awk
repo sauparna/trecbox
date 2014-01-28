@@ -7,17 +7,17 @@
 
 BEGIN{
 
-     if (ARGC != 2)
+     if (ARGC != 3)
      {
-	  print "Usage: awk -f table1.awk <measures>"
+	  print "Usage: awk -f table1.awk <measures> <file>"
 	  print "measures is the list of measures separated by commas with no space between them"
 	  print "use the following strings: map, gm_map, Rprec, P_5, P_10"
-	  print "e.g. awk -f table1.awk map,Rprec,P_5"
+	  print "e.g. awk -f table1.awk map,Rprec,P_5 tab"
+	  print "e.g. awk -f table1.awk map,gm_map,Rprec,P_5,P_10 tab.rand"
 	  exit
      }
 	  
-     # f = "../../viz/tab.rand"
-     f = "../../viz/tab"
+     f = ARGV[2]
      measures = ARGV[1]
      N_ = split(measures, m, ",")
 

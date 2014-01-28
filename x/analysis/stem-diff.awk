@@ -1,6 +1,12 @@
-# runs through a tab0.1.*.<measure> type, diffing the values across stemmers
+# runs through a tab.1.*.<measure> type, diffing the values across stemmers
 BEGIN{
-     f = "../../viz/tab.1.rand.map"
+     if (ARGC != 2)
+     {
+	  print "usage: awk -f stem-diff.awk <file>"
+	  print "e.g. awk -f stem-diff.awk ../../viz/tab.1.rand.map"
+	  exit
+     }
+     f = ARGV[1]
      c = 0
      e = 1.0e-20
      

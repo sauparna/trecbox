@@ -1,4 +1,4 @@
-# Usage: awk -f table.awk 
+# Usage: awk -f table.awk [rand]
 # Run the script from inside x/analysis/ directory. TODO: clean this up
 # prints all 5 measures for all 84 systems for all 10 test collections
 # NOTE: the above figures may change
@@ -9,30 +9,47 @@
 # set separated by a double white space)
 #
 # t678.n.bb2  map:0.1531 gm_map:0.0413 Rprec:0.1966 P_5:0.3640 P_10:0.3260
+function knuth_shuffle(u, n)
+{
+}
 
 BEGIN {
      # TODO: consider using or dropping
      # getline root <"../config"
 
      L = 84  # number of systems, also the number of lines in each file
-     M = 10  # number of test collections
+     M = 7   # number of test collections
      N = 5   # number of measures
 
-     names = "t678 t678-fr t6 t7 t8 fbis fr94 ziff1 ziff2 ziff3"
-     # names = "t678 t678-fr"
-     # names = "t6 t7 t8" 
-     # names = "fbis fr94"
-     # names = "ziff1 ziff2 ziff3"
+     names = "t6 t7 t8 t678-fr fr94 ziff1 ziff2"
      M = split(names, f, " ")
 
      measures = "map gm_map Rprec P_5 P_10"
      N = split(measures, g, " ")
 
      # random index and names
-     # rand_int  = "2 1"
-     rand_int  = "3 9 2 6 5 4 10 7 1 8"
-     rand_char = "A B C D E F G  H I J"
+     rand_int  = "1 2 3 4 5 6 7"
      split(rand_int, u, " ")
+
+     # a knuth shuffle
+     for (i=M; i>=2; i--)
+     {
+	  j = int(i * rand()) + 1
+	  t = u[j]
+	  u[j] = u[i]
+	  u[i] = t
+     }
+
+     # make a note of the ordering
+     rand_f = "../../viz/rand"
+     for(i=1; i<=M; i++)
+	  printf("%d ", u[i]) >rand_f
+     printf("\n") >rand_f
+     for(i=1; i<=M; i++)
+	  printf("%s ", f[u[i]]) >rand_f
+     printf("\n") >rand_f
+
+     rand_char = "A B C D E F G"
      split(rand_char, u_, " ")
 
      # prepare table headers
@@ -92,8 +109,11 @@ BEGIN {
 	  s["dummy"] = ""
      	  for (j=1; j <= M; j++)
 	  {
-	       # rtag = f[j]
-	       rtag = f[u[j]]
+	       if (ARGV[1] ~ /rand/)
+		    rtag = f[u[j]]
+	       else
+		    rtag = f[j]
+
 	       v = ""
 	       f_ = "../../viz/" rtag ".measures"
 

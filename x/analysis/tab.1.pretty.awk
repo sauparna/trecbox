@@ -1,15 +1,33 @@
-# prettyprint the tab.1
-# name the output file tab.1.*.map, where 'map' is the measure
-
 BEGIN{
-     # f = "../../viz/tab.1"
-     # f = "../../viz/tab.1.rand"
-     f = "../../viz/tab.1.rand.map"
+
+     if (ARGC < 2)
+     {
+	  print "usage: awk -f tab.1.pretty.awk <file> [hide]"
+	  print "e.g. awk -f tab.1.pretty.awk ../../viz/tab.1 hide"
+	  print "e.g. awk -f tab.1.pretty.awk ../../viz/tab.1.rand hid"
+	  print "e.g. awk -f tab.1.pretty.awk ../../viz/tab.1.rand.map hidden"
+	  exit
+     }
+
+     f = ARGV[1]
+
+     hide = 0
+     if (ARGC > 2)
+     {
+	  if(ARGV[2] ~ /hid/)
+	       hide = 1
+     }
+
      if (f ~ /rand/)
-	  # h = "A B C D E F G H I J"
-	  h = "t6 ziff2 t678-fr fbis t8 t7 ziff3 fr94 t678 ziff1"
+     {
+	  if (hide)
+	       h = "A B C D E F G"
+	  else
+	       h = "t8 t678-fr ziff1 t6 fr94 ziff2 t7"
+     }
      else
-	  h = "t678 t678-fr t6 t7 t8 fbis fr94 ziff1 ziff2 ziff3"
+	  h = "t6 t7 t8 t678-fr fr94 ziff1 ziff2"
+
      n = split(h, a, " ")
      h1 = sprintf("%-4s %-11s %-8s", "stem", "model", "measure")
      for (i=1; i<=n; i++)
