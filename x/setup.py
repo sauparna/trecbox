@@ -51,7 +51,6 @@ qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
 
 def exp(opt):
-
     s = SysTerrier(env)
     # {"runid": "index topic qrel"}
     tag = {"t6": "t678 t678 t6",
