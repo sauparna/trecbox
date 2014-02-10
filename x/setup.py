@@ -50,6 +50,47 @@ qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
          "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
 
+
+def exp1(opt):
+
+    # t6,7,8 using 50 topics each
+
+    models = ["bm25","dfree","dirichletlm",
+              "lemurtf_idf","pl2", "tf_idf"]
+    stems = ["n", "p"]
+
+    s = SysTerrier(env)
+    # {"runid": "index topic qrel"}
+    tag = {"t6": "t678 t678 t6",
+           "t7": "t678 t678 t7",
+           "t8": "t678 t678 t8"}
+    if opt == "i":
+        print "Not indexing. Use existing ones."
+        sys.exit(0)
+        # pull out the index names
+        a = []
+        for i in tag.values():
+            a.append(i.split()[0])
+        index = list(set(a))
+        for i in index:
+            for j in stems:
+                s.index(i+"."+j,  doc[i], ["stop", j])
+    elif opt == "r":
+        for i in tag.keys():
+            i_ = tag[i].split()
+            t = Topics(topics[i_[1]])
+            q = t.query("terrier", "d")
+            for j in stems:
+                for k in models:
+                    s.retrieve(i_[0]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
+    elif opt == "e":
+        for i in tag.keys():
+            i_ = tag[i].split()
+            for j in stems:
+                for k in models:
+                    s.evaluate(i+"."+j+"."+k, qrels[i_[2]])
+
+
 def exp(opt):
     s = SysTerrier(env)
     # {"runid": "index topic qrel"}
@@ -93,7 +134,8 @@ def main(argv):
             and os.path.exists(env["runs"]) 
             and os.path.exists(env["evals"])):
         print "Either of index, runs or evals directory doesn't exist."
-    exp(argv[1])
+    #exp(argv[1])
+    exp1(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)

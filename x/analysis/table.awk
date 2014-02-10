@@ -9,9 +9,6 @@
 # set separated by a double white space)
 #
 # t678.n.bb2  map:0.1531 gm_map:0.0413 Rprec:0.1966 P_5:0.3640 P_10:0.3260
-function knuth_shuffle(u, n)
-{
-}
 
 BEGIN {
      # TODO: consider using or dropping
