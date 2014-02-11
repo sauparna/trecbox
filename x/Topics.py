@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import string, re, sys
+import re, sys
 
 class Topics():
 
