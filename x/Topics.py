@@ -74,7 +74,9 @@ class Topics():
     def __wipe_punctuations(self, soup):
         for i in soup.find_all(True):
             if i.string:
-                i.string = str(i.string).translate(None, string.punctuation)
+                # the regex is identical to the value of Python's
+                # string.punctiation constant
+                i.string = re.sub("[!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~]", " ", i.string)
         return soup
 
     def __hack_n_hew(self):
