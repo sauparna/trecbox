@@ -155,7 +155,7 @@ class SysIndri():
         return o_file
 
         
-    def index(self, doc, itag, opt):
+    def index(self, itag, doc, opt):
 
         o_dir  = os.path.join(self.env["index"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir, opt)
