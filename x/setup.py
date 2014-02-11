@@ -50,6 +50,124 @@ qrels = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
          "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
          "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
 
+def test1(opt):
+    env = {
+        "doc"     : os.path.join(home, "doc"),
+        "topics"  : os.path.join(home, "topics"),
+        "qrels"   : os.path.join(home, "qrels"),
+        "treceval": os.path.join(home, "trec_eval.9.0"),
+        "lucene"  : os.path.join(home, "lucene.TREC"),
+        "terrier" : os.path.join(home, "terrier-3.5"),
+        "indri"   : os.path.join(home, "indri-5.6"),
+        "utils"   : os.path.join(home, "utils"),
+        "index"   : os.path.join(root, "index.test1"),
+        "runs"    : os.path.join(root, "runs.test1"),
+        "evals"   : os.path.join(root, "evals.test1"),
+        "attic"   : os.path.join(root, "attic")
+        }
+    
+    doc = {"test1": os.path.join(env["doc"], "test1"),
+           "t678": os.path.join(env["doc"], "trec678")}
+
+    topics = {"test1": os.path.join(env["topics"], "topics.test1"),
+              "t8": os.path.join(env["topics"], "topics.401-450")}
+
+    qrels = {"test1": os.path.join(env["qrels"], "qrels.test1"),
+             "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc")}
+
+    models = ["tf_idf", "lemurtf_idf"]
+    stems = ["n", "p"]
+
+    # s = SysIndri(env)
+
+    # s.index("test1b.n", doc["test1"], ["stop", "n"])
+    # t = Topics(topics["test1"])
+    # q = t.query("indri", "d")
+    # s.retrieve("test1b.n", "test1b.n", q)
+    # s.evaluate("test1b.n", qrels["test1"])
+
+    # s.index("t678b.n", doc["t678"], ["stop", "n"])
+    # s.index("t678b.p", doc["t678"], ["stop", "p"])
+    # t = Topics(topics["t8"])
+    # q = t.query("indri", "d")
+    # s.retrieve("t678b.n", "t678b.n", q)
+    # s.retrieve("t678b.p", "t678b.p", q)
+    # s.evaluate("t678b.n", qrels["t8"])
+    # s.evaluate("t678b.p", qrels["t8"])
+
+    s = SysLucene(env)
+
+    # s.index("test1c.n", doc["test1"], ["stop", "n"])
+    # t = Topics(topics["test1"])
+    # q = t.query("lucene", "d")
+    # s.retrieve("test1c.n", "test1c.n", "bm25", q)
+    # s.evaluate("test1c.n", qrels["test1"])
+
+    # s.index("t678c.n", doc["t678"], ["stop", "n"])
+    # s.index("t678c.p", doc["t678"], ["stop", "p"])
+    t = Topics(topics["t8"])
+    q = t.query("lucene", "d")
+    s.retrieve("t678c.n", "t678c.n", "bm25", q)
+    s.retrieve("t678c.p", "t678c.p", "bm25", q)
+    s.evaluate("t678c.n", qrels["t8"])
+    s.evaluate("t678c.p", qrels["t8"])
+
+def test(opt):
+
+    env = {
+        "doc"     : os.path.join(home, "doc"),
+        "topics"  : os.path.join(home, "topics"),
+        "qrels"   : os.path.join(home, "qrels"),
+        "treceval": os.path.join(home, "trec_eval.9.0"),
+        "lucene"  : os.path.join(home, "lucene.TREC"),
+        "terrier" : os.path.join(home, "terrier-3.5"),
+        "indri"   : os.path.join(home, "indri-5.6"),
+        "utils"   : os.path.join(home, "utils"),
+        "index"   : os.path.join(root, "index.test1"),
+        "runs"    : os.path.join(root, "runs.test1"),
+        "evals"   : os.path.join(root, "evals.test1"),
+        "attic"   : os.path.join(root, "attic")
+        }
+    
+    doc = {"test1": os.path.join(env["doc"], "test1"),
+           "t678a": os.path.join(env["doc"], "trec678")}
+
+    topics = {"test1": os.path.join(env["topics"], "topics.test1"),
+              "t8": os.path.join(env["topics"], "topics.401-450")}
+
+    qrels = {"test1": os.path.join(env["qrels"], "qrels.test1"),
+             "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc")}
+
+    models = ["tf_idf", "lemurtf_idf"]
+    stems = ["n", "p"]
+
+    s = SysTerrier(env)
+    # {"runid": "index topic qrel"}
+    tag = {"t8": "t678 t8 t8"}
+    if opt == "i":
+        # pull out the index names
+        a = []
+        for i in tag.values():
+            a.append(i.split()[0])
+        index = list(set(a))
+        for i in index:
+            for j in stems:
+                s.index(i+"."+j,  doc[i], ["stop", j])
+    elif opt == "r":
+        for i in tag.keys():
+            i_ = tag[i].split()
+            t = Topics(topics[i_[1]])
+            q = t.query("terrier", "d")
+            for j in stems:
+                for k in models:
+                    s.retrieve(i_[0]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
+    elif opt == "e":
+        for i in tag.keys():
+            i_ = tag[i].split()
+            for j in stems:
+                for k in models:
+                    s.evaluate(i+"."+j+"."+k, qrels[i_[2]])
+
 
 def exp1(opt):
 
@@ -135,7 +253,9 @@ def main(argv):
             and os.path.exists(env["evals"])):
         print "Either of index, runs or evals directory doesn't exist."
     #exp(argv[1])
-    exp1(argv[1])
+    # exp1(argv[1])
+    # test(argv[1])
+    test1(argv[1])
     
 if __name__ == "__main__":
    main(sys.argv)
