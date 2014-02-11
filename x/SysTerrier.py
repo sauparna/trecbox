@@ -30,6 +30,7 @@ class SysTerrier():
         # opt is a fixed length list, so check for it
 
         p = ["NoOp", "NoOp"]
+
         stopwords = ""
 
         if opt[0] != "None":
