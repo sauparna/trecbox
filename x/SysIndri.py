@@ -164,6 +164,15 @@ class SysIndri():
                                  i_file])
 
     def retrieve(self, itag, rtag, m, q):
+
+        # NOTE: Indri doesn't need to be told to stem query terms. If
+        # the index is stemmed, the queries go through the same
+        # stemmer. Below is a quote from David Fisher's response found
+        # in the Indri forums. The documentation does not make this
+        # clear.
+        # http://sourceforge.net/p/lemur/discussion/836442/thread/0f00c8e5/
+        # "If you stem your index when you build it, query terms are
+        # automatically stemmed when the query is run. ..."
         
         i_dir = os.path.join(self.env["index"], itag)
         i_file = self.__query_params_file(rtag, q)
