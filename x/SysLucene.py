@@ -23,7 +23,7 @@ class SysLucene():
         return o_file
 
 
-    def index(self, doc, itag, opt):
+    def index(self, itag, doc, opt):
 
         stemmer = "None"
         stopwords = "None"
