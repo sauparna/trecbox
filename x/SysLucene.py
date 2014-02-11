@@ -6,8 +6,8 @@ class SysLucene():
         self.env = env
         self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
                             "tfidf": "default", "lm": "lm"}
-        self.stemmer_map = {"porter": "porter", "krovetz": "krovetz", 
-                            "snowball": "snowball", "sstemmer": "sstemmer"}
+        self.stemmer_map = {"p": "porter", "k": "krovetz", 
+                            "s": "snowball", "s1": "sstemmer"}
         self.jar = os.path.join(self.env["lucene"], "bin/lucene.TREC.jar")
         self.lib = os.path.join(self.env["lucene"], "lib/*")
 
@@ -24,9 +24,11 @@ class SysLucene():
 
 
     def index(self, itag, doc, opt):
+        
+        print itag
 
-        stemmer = "None"
-        stopwords = "None"
+        stemmer = ""
+        stopwords = ""
 
         if opt[0] != "None":
             stopwords = os.path.join(self.env["utils"], opt[0])
@@ -50,6 +52,8 @@ class SysLucene():
 
     def retrieve(self, itag, rtag, m, q):
 
+        print rtag
+
         i_dir = os.path.join(self.env["index"], itag)
         i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.env["runs"], rtag)
@@ -71,6 +75,8 @@ class SysLucene():
 
 
     def evaluate(self, rtag, qrels):
+
+        print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
