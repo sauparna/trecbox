@@ -157,13 +157,17 @@ class SysIndri():
         
     def index(self, itag, doc, opt):
 
+        print itag
+
         o_dir  = os.path.join(self.env["index"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir, opt)
             
         subprocess.check_output([os.path.join(self.env["indri"], "buildindex/IndriBuildIndex"),
                                  i_file])
 
-    def retrieve(self, itag, rtag, m, q):
+    def retrieve(self, itag, rtag, q):
+
+        print rtag
 
         # NOTE: Indri doesn't need to be told to stem query terms. If
         # the index is stemmed, the queries go through the same
@@ -188,6 +192,8 @@ class SysIndri():
                     ))
     
     def evaluate(self, rtag, qrels):
+
+        print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
