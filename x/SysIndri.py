@@ -31,7 +31,7 @@ class SysIndri():
     def __init__(self, env):
 
         self.env = env
-        self.stemmer_map = {"porter": "porter", "krovetz": "krovetz"}
+        self.stemmer_map = {"p": "porter", "k": "krovetz"}
 
     def __shapeup_xml(self, l):
 
