@@ -14,11 +14,13 @@ BEGIN {
      # TODO: consider using or dropping
      # getline root <"../config"
 
-     L = 84  # number of systems, also the number of lines in each file
+     #L = 84  # number of systems, also the number of lines in each file
+     L = 12
      M = 7   # number of test collections
      N = 5   # number of measures
 
-     names = "t6 t7 t8 t678-fr fr94 ziff1 ziff2"
+     # names = "t6 t7 t8 t678-fr fr94 ziff1 ziff2"
+     names = "t6 t7 t8"
      M = split(names, f, " ")
 
      measures = "map gm_map Rprec P_5 P_10"

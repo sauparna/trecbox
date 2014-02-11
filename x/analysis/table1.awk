@@ -12,6 +12,7 @@ BEGIN{
 	  print "Usage: awk -f table1.awk <measures> <file>"
 	  print "measures is the list of measures separated by commas with no space between them"
 	  print "use the following strings: map, gm_map, Rprec, P_5, P_10"
+          print "(concatenated by commas with no spaces)"
 	  print "e.g. awk -f table1.awk map,Rprec,P_5 tab"
 	  print "e.g. awk -f table1.awk map,gm_map,Rprec,P_5,P_10 tab.rand"
 	  exit
@@ -41,7 +42,7 @@ BEGIN{
 	  {
 	       # m[i] is a measure string, m_i[] holds the start indeces
 	       #
-	       # hop in steps of 5 across a line, picking the measure
+	       # hop by 'step' across a line, picking the measure
 	       # values and string it together in s
 
 	       for (j = m_i[m[i]]; j <= NF; j += 5)
