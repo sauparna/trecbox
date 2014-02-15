@@ -105,6 +105,7 @@ def test1(opt):
 
     # s.index("t678c.n", doc["t678"], ["stop", "n"])
     # s.index("t678c.p", doc["t678"], ["stop", "p"])
+
     t = Topics(topics["t8"])
     q = t.query("lucene", "d")
     s.retrieve("t678c.n", "t678c.n", "bm25", q)
