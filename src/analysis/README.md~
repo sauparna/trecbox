@@ -1,0 +1,2 @@
+usage:
+awk -f ../x/analysis/select.awk t678.* | awk -f ../x/analysis/gather.awk

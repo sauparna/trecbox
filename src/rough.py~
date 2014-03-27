@@ -1,0 +1,35 @@
+import sys, subprocess
+
+def f(argv):
+    out = "empty"
+    try:
+        #out = subprocess.check_output(["ls", "-l", "/home/palchowdhury/ir/exp/index/x"], stderr=subprocess.STDOUT)
+        out = subprocess.check_output(["ls", "-l", "/home/palchowdhury/ir/exp/index/"])
+    except subprocess.CalledProcessError as e:
+        out = str(e.returncode) + "\n" + str(e.cmd) + "\n" + str(e.output) + "\n"
+
+    print out
+
+def main(argv):
+    models = ["bb2","bm25","dfi0","dfr_bm25","dfree","dirichletlm",
+              "dlh","dlh13","dph","hiemstra_lm","ifb2","in_expb2",
+              "in_expc2","inb2","inl2","js_kls","lemurtf_idf",
+              "lgd", "pl2", "tf_idf","xsqra_m"]
+
+    model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25", 
+                 "dfree": "DFRee", "dirichletlm": "DirichletLM", "dlh": "DLH", 
+                 "dlh13": "DLH13", "dph": "DPH", "hiemstra_lm": "Hiemstra_LM", 
+                 "ifb2": "IFB2", "in_expb2": "In_expB2", "in_expc2": "In_expC2", 
+                 "inb2": "InB2", "inl2": "InL2", "js_kls": "Js_KLs", 
+                 "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
+                 "tf_idf": "TF_IDF", "xsqra_m": "XSqrA_M"}
+
+    print len(models)
+    print len(model_map.keys())
+    print len(model_map.values())
+
+    # for k in models:
+    #     print k
+
+if __name__ == "__main__":
+    main(sys.argv)

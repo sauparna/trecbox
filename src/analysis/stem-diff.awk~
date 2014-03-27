@@ -1,0 +1,29 @@
+# runs through a tab0.1.<measure> type, diffing the values across stemmers
+BEGIN{
+     f = "../../viz/tab0.1.map"
+     c = 1
+     while(getline <f)
+     {
+	  if (c == 1)
+	  {
+	       for (i=4; i<=NF; i++)
+		    v[i-3] = $i
+	       for (i=1; i<=n; i++)
+		    s = s " " u[i]
+	       printf("%-2s %-18s %5s%s\n", $1, $2, $3, s)
+	  }
+	  if (c == 4)
+	  {
+	       printf("\n")
+	       c = 1
+	  }
+	  else
+	  {
+	       for (i=4,n=1; i<=NF; i++,n++)
+		    u[i-3] = ($i - v[i-3])/v[i-3] * 100
+	       for (i=1; i<=n; i++)
+		    s = s " " u[i]
+	       printf("%-2s %-18s %5s%s\n", $1, $2, $3, s)
+	  }
+     }
+}

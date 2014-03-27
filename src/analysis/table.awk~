@@ -1,0 +1,13 @@
+# prints all 5 measures for all 84 systems for all 7 test collections
+# NOTE: the above figures may change
+
+{
+     f[2] = {"../../viz/t678.measures", "../../viz/t6.measures"}
+     a[2] = {"", ""}
+     for (i=1; i<=3; i++) {
+	  for (j=1; j<=2; j++) {
+	       getline a[j] <f[j]
+	  }
+	  print "LINE " i ":" a[0] " " a[1]
+     }
+}
