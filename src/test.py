@@ -6,7 +6,7 @@ from Topics import Topics
 
 # bootstrap the environment ('config' is usually left out of version control)
 path = []
-with open("config", "r") as f:
+with open("config.test", "r") as f:
     path = f.readlines()
 
 home = path[0].rstrip("\n")
