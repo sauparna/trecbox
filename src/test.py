@@ -4,8 +4,11 @@ from SysIndri import *
 from SysLucene import *
 from Topics import Topics
 
-# bootstrap the environment ('config' is usually left out of version control)
+# bootstrap the environment ('config' is usually left out of version
+# control)
+
 path = []
+
 with open("config.test", "r") as f:
     path = f.readlines()
 

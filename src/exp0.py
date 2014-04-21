@@ -4,9 +4,9 @@ from SysIndri import *
 from SysLucene import *
 from Topics import Topics
 
-def init():
+def init(config):
     path = []
-    with open("config.exp0", "r") as f:
+    with open(config, "r") as f:
         path = f.readlines()
     home = path[0].rstrip("\n")
     out  = path[1].rstrip("\n")
@@ -29,30 +29,21 @@ def init():
         env[k] = os.path.join(out, out_map[k])
     return env
 
-def exp0(opt):
-
-    env = init();
-
+def exp0(opt, env):
     models = ["bm25","dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
-
     stems  = ["n", "p"]
-
     doc    = {"t678": os.path.join(env["doc"], "trec678"),
               "t678-fr": os.path.join(env["doc"], "trec678-fr"),
               "fr94": os.path.join(env["doc"], "cd4/fr94"),
               "ziff": os.path.join(env["doc"], "ziff")}
-
     topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
               "t123": os.path.join(env["topics"], "topics.1-150")}
-
     qrels  = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
               "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
               "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc"),
               "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
               "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
-
     s = SysTerrier(env)
-
     # {"runid": "index topic qrel"}
     tag = {"t6": "t678 t678 t6",
            "t7": "t678 t678 t7",
@@ -61,7 +52,6 @@ def exp0(opt):
            "fr94": "fr94 t678 t678",
            "ziff1": "ziff t123 ziff",
            "ziff2": "ziff t123 ziff"}
-
     if opt == "i":
         # pull out the index names
         a = []
@@ -91,13 +81,16 @@ def main(argv):
     if len(argv) != 2:
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
+
+    env = init("config.exp0");
+
     if not (os.path.exists(env["index"]) 
             and os.path.exists(env["runs"]) 
             and os.path.exists(env["evals"])):
         print "Either one of index, runs or evals directory doesn't exist."
         sys.exit(0)
 
-    exp0(argv[1])
+    exp0(argv[1], env)
     
 if __name__ == "__main__":
    main(sys.argv)
