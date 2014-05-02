@@ -7,45 +7,37 @@ from Topics import Topics
 # bootstrap the environment ('config' is usually left out of version
 # control)
 
-path = []
+def init(config):
+    path = []
+    with open(config, "r") as f:
+        path = f.readlines()
+    home = path[0].rstrip("\n")
+    out  = path[1].rstrip("\n")
+    home_map = {"doc"     : "doc",
+                "topics"  : "topics",
+                "qrels"   : "qrels",
+                "treceval": "trec_eval.9.0",
+                "lucene"  : "lucene.TREC",
+                "terrier" : "terrier-3.5",
+                "indri"   : "indri-5.6",
+                "utils"   : "utils"}
+    out_map = {"index" : "index",
+               "runs"  : "runs",
+               "evals" : "evals",
+               "attic" : "attic"}
+    env = {}
+    for k in home_map.keys():
+        env[k] = os.path.join(home, home_map[k])
+    for k in out_map.keys():
+        env[k] = os.path.join(out, out_map[k])
+    return env
 
-with open("config.test", "r") as f:
-    path = f.readlines()
-
-home = path[0].rstrip("\n")
-out = path[1].rstrip("\n")
-
-home_map = {"doc"     : "doc",
-            "topics"  : "topics",
-            "qrels"   : "qrels",
-            "treceval": "trec_eval.9.0",
-            "lucene"  : "lucene.TREC",
-            "terrier" : "terrier-3.5",
-            "indri"   : "indri-5.6",
-            "utils"   : "utils"
-            }
-
-out_map = {"index" : "index",
-           "runs"  : "runs",
-           "evals" : "evals",
-           "attic" : "attic"
-           }
-
-env = {}
-
-for k in home_map.keys():
-    env[k] = os.path.join(home, home_map[k])
-for k in out_map.keys():
-    env[k] = os.path.join(out, out_map[k])
-
-# dfrweightingmodel, idf don't work. See logs in w or attic
-models = ["bm25","dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
-stems = ["n", "p"]
-doc = {"test": os.path.join(env["doc"], "test/short")}
-topics = {"test": os.path.join(env["topics"], "test")}
-qrels = {"test": os.path.join(env["qrels"], "test")}
-
-def test(opt):
+def test(opt, env):
+    models = ["bm25","dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
+    stems = ["n", "p"]
+    doc = {"test": os.path.join(env["doc"], "test/short")}
+    topics = {"test": os.path.join(env["topics"], "test")}
+    qrels = {"test": os.path.join(env["qrels"], "test")}
     s = SysTerrier(env)
     # {"runid": "index topic qrel"}
     tag = {"test": "test test test"}
@@ -79,12 +71,13 @@ def main(argv):
     if len(argv) != 2:
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
+    env = init("config.test");
     if not (os.path.exists(env["index"]) 
             and os.path.exists(env["runs"]) 
             and os.path.exists(env["evals"])):
         print "Either one of index, runs or evals directory doesn't exist."
         sys.exit(0)
-    test(argv[1])
+    test(argv[1], env)
     
 if __name__ == "__main__":
    main(sys.argv)

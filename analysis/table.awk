@@ -1,14 +1,33 @@
+# formats evals into a table where a row is composed of the following
+# pieces:
+#
+# runid       map    gm_map Rprec  P_5    P_10
+# t8 p tf_idf 0.1767 0.0534 0.2104 0.4000 0.3667
+#
+# Usage: awk -f table.awk path/to/evals/*
+
 BEGIN {
-   c = 0
    s[""] = ""
+   printf("%s %s %s %s %s %s %s %s", "testcol", "stem", "model", 
+	  "map", "gm_map", "Rprec", "P_5", "P_10")
 }
 {
-    if ($1 ~ /^(map|Rprec|P_10|P_5|gm_map)/ && $2 ~ /all/) {
-	s[FILENAME] = s[FILENAME] $1 ":" $3 " "
+    # NOTE: the measures are printed in a row from left to right for
+    # each run in the order it appears in the eval files. For
+    # convenience the regex pattern lists the measure names in that
+    # same order.
+
+    if ($1 ~ /^(map|gm_map|Rprec|P_5|P_10)$/ && $2 ~ /all/) {
+	runid = FILENAME
+	sub(/.*\//, "", runid)
+	s[runid] = s[runid] $3 " "
     }
 }
 END {
     for (f in s) {
-	print f " " s[f]
+	n = split(f, a, /\./)
+	for (i=1; i<=n; i++)
+	    printf("%s ", a[i])
+	printf("%s\n", s[f])
     }
 }
