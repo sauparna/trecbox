@@ -35,8 +35,8 @@ def exp0(opt, env):
 
     stems  = ["n", "p"]
 
-    doc    = {"t678":    os.path.join(env["doc"], "trec678"),
-              "t678-fr": os.path.join(env["doc"], "trec678-fr"),
+    doc    = {"t678":    os.path.join(env["doc"], "t678"),
+              "t678-fr": os.path.join(env["doc"], "t678-fr"),
               "fr94":    os.path.join(env["doc"], "cd4/fr94"),
               "ziff":    os.path.join(env["doc"], "ziff")}
 
