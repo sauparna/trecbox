@@ -32,17 +32,17 @@ def init(config):
 def exp0(opt, env):
     models = ["bm25","dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
     stems  = ["n", "p"]
-    doc    = {"t678": os.path.join(env["doc"], "trec678"),
+    doc    = {"t678":    os.path.join(env["doc"], "trec678"),
               "t678-fr": os.path.join(env["doc"], "trec678-fr"),
-              "fr94": os.path.join(env["doc"], "cd4/fr94"),
-              "ziff": os.path.join(env["doc"], "ziff")}
+              "fr94":    os.path.join(env["doc"], "cd4/fr94"),
+              "ziff":    os.path.join(env["doc"], "ziff")}
     topics = {"t678": os.path.join(env["topics"], "topics.301-450"),
               "t123": os.path.join(env["topics"], "topics.1-150")}
-    qrels  = {"t678": os.path.join(env["qrels"], "qrels.trec678.adhoc"),
-              "t6": os.path.join(env["qrels"], "qrels.trec6.adhoc"),
-              "t7": os.path.join(env["qrels"], "qrels.trec7.adhoc"),
-              "t8": os.path.join(env["qrels"], "qrels.trec8.adhoc"),
-              "ziff": os.path.join(env["qrels"], "qrels.trec12.adhoc")}
+    qrels  = {"t678": os.path.join(env["qrels"],  "qrels.trec678.adhoc"),
+              "t6":   os.path.join(env["qrels"],  "qrels.trec6.adhoc"),
+              "t7":   os.path.join(env["qrels"],  "qrels.trec7.adhoc"),
+              "t8":   os.path.join(env["qrels"],  "qrels.trec8.adhoc"),
+              "ziff": os.path.join(env["qrels"],  "qrels.trec12.adhoc")}
     s = SysTerrier(env)
     # {"runid": "index topic qrel"}
     tag = {"t6": "t678 t678 t6",
