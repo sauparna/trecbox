@@ -47,7 +47,8 @@ def exp0(opt, env):
               "t6":   os.path.join(env["qrels"],  "qrels.301-350"),
               "t7":   os.path.join(env["qrels"],  "qrels.351-400"),
               "t8":   os.path.join(env["qrels"],  "qrels.401-450"),
-              "ziff": os.path.join(env["qrels"],  "qrels.1-150")}
+              "t123": os.path.join(env["qrels"],  "qrels.1-150")}
+
     s = SysTerrier(env)
 
     # {"runid": "index topic qrel"}
@@ -56,8 +57,8 @@ def exp0(opt, env):
            "t8": "t678 t678 t8",
            "t678-fr": "t678-fr t678 t678",
            "fr94": "fr94 t678 t678",
-           "ziff1": "ziff t123 ziff",
-           "ziff2": "ziff t123 ziff"}
+           "ziff1": "ziff t123 t123",
+           "ziff2": "ziff t123 t123"}
 
     if opt == "i":
         # pull out the index names
