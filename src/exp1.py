@@ -30,13 +30,13 @@ def init(config):
     return env
 
 def exp1(opt, env):
-    models = ["bm25","dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
+    models = ["bm25", "dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
     stems  = ["n", "p"]
     doc    = {"t123": os.path.join(env["doc"], "cd12"),
               "t4":   os.path.join(env["doc"], "cd23"),
               "t5":   os.path.join(env["doc"], "cd24"),
               "t678": os.path.join(env["doc"], "cd45-cr")}
-    topics = {"t123": os.path.join(env["topics"], "t123.1-150")
+    topics = {"t123": os.path.join(env["topics"], "t123.51-200")
               "t4":   os.path.join(env["topics"], "topics.201-250"),
               "t5":   os.path.join(env["topics"], "topics.251-300"),
               "t678": os.path.join(env["topics"], "t678.301-450")}
@@ -47,13 +47,10 @@ def exp1(opt, env):
 
     s = SysTerrier(env)
     # {"runid": "index topic qrel"}
-    tag = {"t6": "t678 t678 t6",
-           "t7": "t678 t678 t7",
-           "t8": "t678 t678 t8",
-           "t678-fr": "t678-fr t678 t678",
-           "fr94": "fr94 t678 t678",
-           "ziff1": "ziff t123 ziff",
-           "ziff2": "ziff t123 ziff"}
+    tag = {"t123": "t123 t123 t123",
+           "t4": "t4 t4 t4",
+           "t5": "t5 t5 t5",
+           "t678": "t678 t678 t678"}
     if opt == "i":
         # pull out the index names
         a = []

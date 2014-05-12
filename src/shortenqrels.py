@@ -22,21 +22,24 @@ def main(argv):
 
     spin = ["|","/","-","|","-","\\"]
 
-    l_t123 = open(os.path.join(home, "ir/qrels/qrels.1-150")).readlines()
+    l_t12 = open(os.path.join(home, "ir/qrels/t12.qrels.1-100.cd12")).readlines()
+
     ziff1  = open(os.path.join(home, "ir/qrels/qrels.ziff1"), "w")
     ziff2  = open(os.path.join(home, "ir/qrels/qrels.ziff2"), "w")
-    for i in range(len(l_t123)):
+    for i in range(len(l_t12)):
         print spin[i%5] + "\r",
-        q = int(l_t123[i].split()[0])
+        q = int(l_t12[i].split()[0])
         if q in qid["ziff1"]:
-            ziff1.write(l_t123[i])
+            ziff1.write(l_t12[i])
         if q in qid["ziff2"]:
-            ziff2.write(l_t123[i])
+            ziff2.write(l_t12[i])
     ziff2.close()
     ziff1.close()
-    del(l_t123)
+
+    del(l_t12)
 
     l_t678  = open(os.path.join(home, "ir/qrels/qrels.301-450")).readlines()
+
     fr94    = open(os.path.join(home, "ir/qrels/qrels.fr94"), "w")
     t678_fr = open(os.path.join(home, "ir/qrels/qrels.t678-fr"), "w")
     t6      = open(os.path.join(home, "ir/qrels/qrels.t6"), "w")
@@ -60,6 +63,7 @@ def main(argv):
     t6.close()
     t678_fr.close()
     fr94.close()
+
     del(l_t678)
 
 if __name__ == "__main__":
