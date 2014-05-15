@@ -30,59 +30,47 @@ def init(config):
     return env
 
 def exp1(opt, env):
+
+    # exp matrix, each row depicts:
+    # runid: doc topic qrel
+    matrix = {"t123": ["cd12", "51-200", "51-200.cd12"],
+              "t4":   ["cd23", "201-250", "201-250.cd23"],
+              "t5":   ["cd24", "251-300", "251-200.cd24"],
+              "t678": ["cd45-cr", "301-450", "301-450.cd45-cr"]}
+    qid_mask = {"t123": [""],
+                  "t4": [""],
+                  "t5": [""],
+                  "t678": [""]}
     models = ["bm25", "dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
     stems  = ["n", "p"]
 
-    doc    = {"fr94": os.path.join(env["doc"], "cd4/fr94"),
-              "t678": os.path.join(env["doc"], "cd45-cr"),
-              "t678-fr": os.path.join(env["doc"], "cd45-cr-fr"),
-              "ziff": os.path.join(env["doc"], "ziff")}
-
-    topics = {"t12": os.path.join(env["topics"], "t12.1-100"),
-              "t6": os.path.join(env["topics"], "topics.301-350"),
-              "t7": os.path.join(env["topics"], "topics.351-400"),
-              "t8": os.path.join(env["topics"], "topics.401-450"),
-              "t678": os.path.join(env["topics"], "topics.301-450")}
-
-    qrels  = {"t12": os.path.join(env["qrels"], "t12.qrels.1-100.cd12"),
-              "t6":   os.path.join(env["qrels"], "qrels.301-350.cd45"),
-              "t7":   os.path.join(env["qrels"], "qrels.351-400.cd45-cr"),
-              "t8":   os.path.join(env["qrels"], "qrels.401-450.cd45-cr"),
-              "t678": os.path.join(env["qrels"], "t678.301-450.cd45-cr")}
-
     s = SysTerrier(env)
-    # {"runid": "index topic qrel"}
-    tag = {"fr94": "fr94 t678 t678",
-           "t6": "t678 t6 t6",
-           "t7": "t678 t7 t7",
-           "t8": "t678 t8 t8",
-           "t678": "t678 t678 t678",
-           "t678-fr": "t678-fr t678 t678",
-           "ziff": "ziff t12 t12"}
+
     if opt == "i":
-        # pull out the index names
-        a = []
-        for i in tag.values():
-            a.append(i.split()[0])
-        index = list(set(a))
-        for i in index:
+        doc = []
+        for i in matrix.keys():
+            d.append(matrix[i][0])
+        doc = list(set(doc))
+        for d in doc:
+        d_path = os.path.join(env["doc"], d)
             for j in stems:
-                s.index(i+"."+j,  doc[i], ["stop", j])
+                s.index(d+"."+j,  d_path, ["stop", j])
     elif opt == "r":
-        for i in tag.keys():
-            i_ = tag[i].split()
-            t = Topics(topics[i_[1]])
-            qid = open(os.path.join(env["topics"],  i+".qid"), "r").read().splitlines()
+        for i in matrix.keys():
+            d = matrix[i][0]
+            t_path = os.path.join(env["topic"], matrix[i][1])
+            t = Topics(t_path)
+            qid = open(t_path + ".qid", "r").read().splitlines()
             q = t.query("terrier", "d", qid)
             for j in stems:
                 for k in models:
-                    s.retrieve(i_[0]+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
+                    s.retrieve(d+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
     elif opt == "e":
-        for i in tag.keys():
-            i_ = tag[i].split()
+        for i in matrix.keys():
+            qrel = os.path.join(env["qrel"], matrix[i][2])
             for j in stems:
                 for k in models:
-                    s.evaluate(i+"."+j+"."+k, qrels[i_[2]])
+                    s.evaluate(i+"."+j+"."+k, qrel)
 
 def main(argv):
     if len(argv) != 2:
