@@ -16,7 +16,8 @@ class SysTerrier():
                           "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
                           "tf_idf": "TF_IDF", "xsqra_m": "XSqrA_M"}
 
-        self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer", "s": "EnglishSnowballStemmer"}
+        self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
+                            "s": "EnglishSnowballStemmer"}
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
@@ -133,7 +134,7 @@ class SysTerrier():
         # neater. It so happens, and I know not why, that terrier
         # needs to be told what to 'process' and what to 'skip'
         # simultaniously. 'process' this, this and this, does not
-        # imply not doing anything about them.
+        # imply 'not processing' the others.
 
         try:
             log = subprocess.check_output(
