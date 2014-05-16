@@ -47,13 +47,13 @@ def exp1(opt, env):
             doc.append(matrix[i][0])
         doc = list(set(doc))
         for d in doc:
-        d_path = os.path.join(env["doc"], d)
+            d_path = os.path.join(env["doc"], d)
             for j in stems:
                 s.index(d+"."+j, d_path, ["stop", j])
     elif opt == "r":
         for i in matrix.keys():
             d = matrix[i][0]
-            t_path = os.path.join(env["topic"], matrix[i][1])
+            t_path = os.path.join(env["topics"], matrix[i][1])
             t = Topics(t_path)
             q = t.query("terrier", "d")
             for j in stems:
@@ -61,7 +61,7 @@ def exp1(opt, env):
                     s.retrieve(d+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
     elif opt == "e":
         for i in matrix.keys():
-            qrel_path = os.path.join(env["qrel"], matrix[i][2])
+            qrel_path = os.path.join(env["qrels"], matrix[i][2])
             for j in stems:
                 for k in models:
                     s.evaluate(i+"."+j+"."+k, qrel_path)
