@@ -34,7 +34,7 @@ def exp1(opt, env):
     # runid: doc topic qrel
     matrix = {"t123": ["cd12", "51-200", "51-200.cd12"],
               "t4":   ["cd23", "201-250", "201-250.cd23"],
-              "t5":   ["cd24", "251-300", "251-200.cd24"],
+              "t5":   ["cd24", "251-300", "251-300.cd24"],
               "t678": ["cd45-cr", "301-450", "301-450.cd45-cr"]}
     models = ["bm25", "dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"]
     stems  = ["n", "p"]
