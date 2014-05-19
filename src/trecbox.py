@@ -74,6 +74,8 @@ def main(argv):
 
     env = init("config.exp1b");
     exp = init1("exp1b")
+
+    # DEBUG
     # print json.dumps(exp, sort_keys=True, indent=4 * ' ')
 
     if not (os.path.exists(env["index"]) 
