@@ -14,8 +14,27 @@ best this experiment be discarded.
 runid 	 doc		topic		qrel			exp notes
 ----- 	 -----		-----		-----			---------
 t123  	 cd12  		51-200   	51-200.cd12		Label: exp1
-t4    	 cd23    	201-250  	201-250.cd23		full qrels
-t5    	 cd24    	251-300	 	251-300.cd24		compare with paper
+t4    	 cd23    	201-250  	201-250.cd23		full qrels.
+t5    	 cd24    	251-300	 	251-300.cd24		To compare with paper.
+t678  	 cd45-cr  	301-450	 	301-450.cd45-cr		result: eval breaks 
+	 							due to duplicate:
+								CR93E-11. See notes.
+
+
+Not interesting at all. Using full qrels is incorrect.		Label: exp1a
+    		   	      	   	    			cd4-cr, thus,
+								cd24-cr and cd45-cr.
+								full qrels.
+
+t1	 cd12		51-100		51-100.cd12		Label: exp1b
+t2	 cd12		101-150		101-150.cd12
+t3	 cd12		151-200		151-200.cd12
+t123  	 cd12  		51-200   	51-200.cd12
+t4    	 cd23    	201-250  	201-250.cd23
+t5    	 cd24    	251-300	 	251-300.cd24
+t6	 cd45		301-350		301-350.cd45
+t7	 cd45-cr	351-400		351-400.cd45-cr
+t8	 cd45-cr	401-450		401-450.cd45-cr
 t678  	 cd45-cr  	301-450	 	301-450.cd45-cr
 
 ziff1 	 ziff12		ziff1 (30)	1-100.cd12		Label: exp2
@@ -23,7 +42,7 @@ ziff2 	 ziff12		ziff2 (30)	1-100.cd12		Full qrels
 t678  	 cd45-cr  	301-450 (30)	301-450	
 t678-fr  cd45-cr-fr 	301-450 (30)	301-450
 fr94  	 fr94    	301-450 (30)	301-450	
-t6    	 cd45  ?	301-350	(30)	301-350
+t6    	 cd45-cr	301-350	(30)	301-350
 t7    	 cd45-cr	351-400	(30)	351-400
 t8    	 cd45-cr  	401-450	(30)	401-450
 
