@@ -76,7 +76,7 @@ class SysTerrier():
 
     def index(self, itag, doc, opt):
 
-        print itag
+        # print itag
 
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_file  = self.__write_doclist(itag, doc)
@@ -112,7 +112,7 @@ class SysTerrier():
 
     def retrieve(self, itag, rtag, opt, m, q):
 
-        print rtag
+        # print rtag
 
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_dir = os.path.join(self.path["index"], itag)
@@ -158,7 +158,7 @@ class SysTerrier():
 
     def evaluate(self, rtag, qrels):
 
-        print rtag
+        # print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
 
