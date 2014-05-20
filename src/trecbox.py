@@ -76,7 +76,7 @@ def main(argv):
         print "usage: python setup.py <i|r|e>"
         sys.exit(0)
 
-    layout, path = init("exp1b", "conf");
+    layout, path = init("exp1c", "conf");
     run(argv[1], layout, path)
     
 if __name__ == "__main__":

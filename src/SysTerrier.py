@@ -81,6 +81,12 @@ class SysTerrier():
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_file  = self.__write_doclist(itag, doc)
         o_dir   = os.path.join(self.path["index"], itag)
+
+        # Terrier needs to be fed one. The output directories, if
+        # there were any, have already been backed up.
+
+        os.mkdir(o_dir)
+
         log     = ""
 
         try:
