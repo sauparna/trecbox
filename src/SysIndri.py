@@ -28,9 +28,9 @@ from bs4 import BeautifulSoup
 class SysIndri():
 
 
-    def __init__(self, env):
+    def __init__(self, path):
 
-        self.env = env
+        self.path = path
         self.stemmer_map = {"p": "porter", "k": "krovetz"}
 
     def __shapeup_xml(self, l):
@@ -101,7 +101,7 @@ class SysIndri():
         # add stopfile
         if opt[0] != "None":
             T_stopwords = soup.new_tag("stopwords")
-            T_stopwords.string = os.path.join(self.env["utils"], opt[0])
+            T_stopwords.string = os.path.join(self.path["util"], opt[0])
             soup.parameters.append(T_stopwords)
             
         # add stemmer
@@ -115,7 +115,7 @@ class SysIndri():
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
 
-        o_file = os.path.join(self.env["index"], ".".join([itag, "indri"]))
+        o_file = os.path.join(self.path["index"], ".".join([itag, "indri"]))
 
         with open(o_file, "w") as f:
             f.write(self.__shapeup_xml(soup.prettify().split("\n")[1:]))
@@ -144,7 +144,7 @@ class SysIndri():
             T_query.append(T_text)
             soup.parameters.append(T_query)
 
-        o_file = os.path.join(self.env["runs"], ".".join([rtag, "indri"]))
+        o_file = os.path.join(self.path["run"], ".".join([rtag, "indri"]))
 
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
@@ -159,10 +159,11 @@ class SysIndri():
 
         print itag
 
-        o_dir  = os.path.join(self.env["index"], itag)
+        o_dir  = os.path.join(self.path["index"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir, opt)
             
-        subprocess.check_output([os.path.join(self.env["indri"], "buildindex/IndriBuildIndex"),
+        subprocess.check_output([os.path.join(self.path["indri"], 
+                                              "buildindex/IndriBuildIndex"),
                                  i_file])
 
     def retrieve(self, itag, rtag, q):
@@ -178,13 +179,13 @@ class SysIndri():
         # "If you stem your index when you build it, query terms are
         # automatically stemmed when the query is run. ..."
         
-        i_dir = os.path.join(self.env["index"], itag)
+        i_dir = os.path.join(self.path["index"], itag)
         i_file = self.__query_params_file(rtag, q)
-        o_file = os.path.join(self.env["runs"], rtag)
+        o_file = os.path.join(self.path["run"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.env["indri"], "runquery/IndriRunQuery"),
+                    [os.path.join(self.path["indri"], "runquery/IndriRunQuery"),
                      i_file,
                      "-index=" + i_dir,
                      "-count=1000",
@@ -198,12 +199,12 @@ class SysIndri():
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
 
-        i_file = os.path.join(self.env["runs"], rtag)
-        o_file = os.path.join(self.env["evals"], rtag)
+        i_file = os.path.join(self.path["run"], rtag)
+        o_file = os.path.join(self.path["eval"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.env["treceval"], "trec_eval"),
+                    [os.path.join(self.path["treceval"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file]))

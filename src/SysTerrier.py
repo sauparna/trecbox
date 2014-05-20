@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 
 class SysTerrier():
 
-    def __init__(self, env):
-        self.env = env
+    def __init__(self, path):
+        self.path = path
         #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
 
         self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25", 
@@ -21,7 +21,7 @@ class SysTerrier():
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
-        o_file = os.path.join(self.env["index"], ".".join([itag, "terrier"]))
+        o_file = os.path.join(self.path["index"], ".".join([itag, "terrier"]))
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
@@ -36,7 +36,7 @@ class SysTerrier():
 
         if opt[0] != "None":
             p[0] = "Stopwords"
-            stopwords = os.path.join(self.env["utils"], opt[0])
+            stopwords = os.path.join(self.path["util"], opt[0])
 
         if opt[1] in self.stemmer_map.keys():
             p[1] = self.stemmer_map[opt[1]]
@@ -63,7 +63,7 @@ class SysTerrier():
             T_top.append(T_text)
             soup.trick.append(T_top)
         
-        o_file = os.path.join(self.env["runs"], ".".join([rtag, "terrier"]))
+        o_file = os.path.join(self.path["run"], ".".join([rtag, "terrier"]))
 
         # Drop the XML declaration and no more tricks please. Write it
         # out.
@@ -80,22 +80,12 @@ class SysTerrier():
 
         pipeline, stopwords = self.__build_termpipeline(opt)
         i_file  = self.__write_doclist(itag, doc)
-        o_dir   = os.path.join(self.env["index"], itag)
-
-        # backup existing index to an attic by time stamping it
-
-        if os.path.exists(o_dir):
-            os.rename(o_dir, os.path.join(self.env["attic"], 
-                                          "-".join([itag,str(time.time())])))
-
-        # needed, or else Terrier complains
-        os.mkdir(o_dir)
-
-        log = ""
+        o_dir   = os.path.join(self.path["index"], itag)
+        log     = ""
 
         try:
            log =  subprocess.check_output(
-               [os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
+               [os.path.join(self.path["terrier"], "bin/trec_terrier.sh"),
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
@@ -110,7 +100,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.env["index"], itag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
         with open(o_log, "w") as f:
             f.write(log)
 
@@ -119,9 +109,9 @@ class SysTerrier():
         print rtag
 
         pipeline, stopwords = self.__build_termpipeline(opt)
-        i_dir = os.path.join(self.env["index"], itag)
+        i_dir = os.path.join(self.path["index"], itag)
         i_file = self.__query_file(rtag, q)
-        o_dir = self.env["runs"]
+        o_dir = self.path["run"]
         o_file = rtag
         log = ""
 
@@ -138,7 +128,7 @@ class SysTerrier():
 
         try:
             log = subprocess.check_output(
-                [os.path.join(self.env["terrier"], "bin/trec_terrier.sh"),
+                [os.path.join(self.path["terrier"], "bin/trec_terrier.sh"),
                  "-r",
                  "-Dterrier.index.path=" + i_dir,
                  "-Dtrec.topics=" + i_file,
@@ -156,7 +146,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.env["runs"], rtag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["run"], rtag + ".log"))
         with open(o_log, "w") as f:
             f.write(log)
 
@@ -166,12 +156,12 @@ class SysTerrier():
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
 
-        i_file = os.path.join(self.env["runs"], rtag)
-        o_file = os.path.join(self.env["evals"], rtag)
+        i_file = os.path.join(self.path["run"], rtag)
+        o_file = os.path.join(self.path["eval"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.env["treceval"], "trec_eval"),
+                    [os.path.join(self.path["treceval"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file]))

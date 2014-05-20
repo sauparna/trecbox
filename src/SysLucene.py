@@ -2,19 +2,19 @@ import sys, os, subprocess
 
 class SysLucene():
 
-    def __init__(self, env):
-        self.env = env
+    def __init__(self, path):
+        self.path = path
         self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
                             "tfidf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter", "k": "krovetz", 
                             "s": "snowball", "s1": "sstemmer"}
-        self.jar = os.path.join(self.env["lucene"], "bin/lucene.TREC.jar")
-        self.lib = os.path.join(self.env["lucene"], "lib/*")
+        self.jar = os.path.join(self.path["lucene"], "bin/lucene.TREC.jar")
+        self.lib = os.path.join(self.path["lucene"], "lib/*")
 
 
     def __query_file(self, rtag, q):
 
-        o_file = os.path.join(self.env["runs"], ".".join([rtag, "lucene"]))
+        o_file = os.path.join(self.path["run"], ".".join([rtag, "lucene"]))
 
         with open(o_file, "w") as f:
             for num in q.keys():
@@ -31,12 +31,12 @@ class SysLucene():
         stopwords = ""
 
         if opt[0] != "None":
-            stopwords = os.path.join(self.env["utils"], opt[0])
+            stopwords = os.path.join(self.path["util"], opt[0])
 
         if opt[1] in self.stemmer_map.keys():
             stemmer = self.stemmer_map[opt[1]]
 
-        o_dir = os.path.join(self.env["index"], itag)
+        o_dir = os.path.join(self.path["index"], itag)
 
         #java -cp "lucene.TREC/lib/*:lucene.TREC/bin/lucene.TREC.jar" IndexTREC 
         #-docs lucene.TREC/src
@@ -54,9 +54,9 @@ class SysLucene():
 
         print rtag
 
-        i_dir = os.path.join(self.env["index"], itag)
+        i_dir = os.path.join(self.path["index"], itag)
         i_file = self.__query_file(rtag, q)
-        o_file = os.path.join(self.env["runs"], rtag)
+        o_file = os.path.join(self.path["run"], rtag)
 
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
         #-queries /path/to/title-queries.301-450 -simfn default > default.out
@@ -81,12 +81,12 @@ class SysLucene():
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
 
-        i_file = os.path.join(self.env["runs"], rtag)
-        o_file = os.path.join(self.env["evals"], rtag)
+        i_file = os.path.join(self.path["run"], rtag)
+        o_file = os.path.join(self.path["eval"], rtag)
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.env["treceval"], "trec_eval"),
+                    [os.path.join(self.path["treceval"], "trec_eval"),
                      "-q", 
                      qrels,
                      i_file]))
