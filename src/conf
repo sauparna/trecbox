@@ -1,0 +1,17 @@
+{"base"  : "/home/palchowdhury/ir",
+ "o_base": "",
+ "in" : {"doc"  : "doc",
+         "topic": "topic",
+         "qrel" : "qrel",
+         "util" : "util",
+	 "attic" : "attic",
+         "treceval": "trec_eval.9.0",
+         "lucene"  : "lucene.TREC",
+         "terrier" : "terrier-3.5",
+         "indri"   : "indri-5.6"
+         },
+ "out": {"index": "index",
+         "run"  : "run",
+         "eval" : "eval"
+        }
+}
