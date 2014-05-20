@@ -8,9 +8,22 @@ document collections are paths
 topics are objects
 qrels are files
 
-index(), retrieve() and evaluate() overwrites previous data
-SysTerrier.index() takes care to move an existing index to the attic
-TODO: this asymmetry could be resolved.
+Two files, conf and expXYZ encodes the paths and experiment layout in
+JSON. Typically, call init() and run() one after the other.
+
+layout, path = init(expXYZ, conf)
+run(opt, layout, path)
+
+The file name 'expXYZ' is also the output directory name for that
+experiment. If one exists already, it is time-stamped and moved to the
+attic. A fresh directory-tree is planted where all indexing, retrieval
+and eval output go.
+
+    expXYZ
+       |
+ -------------
+|      |      |
+index  run    eval
 
 topic
  data:
