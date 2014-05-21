@@ -45,7 +45,7 @@ def checks(s30):
 def init():
     home = os.environ["HOME"]
     setlist = [os.path.join(home, "ir/topic/fr94.30"),
-               os.path.join(home, "ir/topic/t678-fr.30"),
+               os.path.join(home, "ir/topic/t678-cr-fr.30"),
                os.path.join(home, "ir/topic/t6.30"),
                os.path.join(home, "ir/topic/t7.30"),
                os.path.join(home, "ir/topic/t8.30")]
@@ -70,7 +70,7 @@ def write_out_sets(s30, setlist):
           #  --------        --------
           # |        |      |        | 
           # 30       39     51       30
-          # fr94     |      |        t678-fr
+          # fr94     |      |        t678-cr-fr
           #           ------ 
           #              |
           #              90
@@ -106,7 +106,7 @@ def tree1(env):
     return s30
 
 # NOTE: tree2 is incorrect, because the 30 selected from the 120 to
-# form the t678-fr set may contain an fr topic from the 39 that went
+# form the t678-cr-fr set may contain an fr topic from the 39 that went
 # into the 120.
 
 # layout of topic set construction
@@ -122,10 +122,10 @@ def tree1(env):
           #           ---------- 
           #              |
           #             120
-          #  ----------------
-          # |        |   |   |
-          # 30       30  30  30
-          # t678-fr  t6  t7  t8     
+          #  -------------------
+          # |           |   |   |
+          # 30          30  30  30
+          # t678-cr-fr  t6  t7  t8     
 
 def tree2(env):
     fr94 = env["fr94"]
