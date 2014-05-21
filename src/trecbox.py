@@ -13,6 +13,7 @@ def backup(path, name):
     # time-stamp and stow away an existing experiment directory
     os.rename(path["o_base"], os.path.join(path["attic"], 
                                            name + "-" + str(time.time())))
+    
         
 def create_dir(path):
     os.mkdir(path["o_base"])
@@ -124,16 +125,16 @@ def main(argv):
         print "Exiting."
         sys.exit(0)
     
-    if opt == 0:
-        backup(path, name)
-        create_dir(path)
-        index(layout, path, s)
-        retrieve(layout, path, s)
-        evaluate(layout, path, s)
         sys.exit(0)
 
     if os.path.exists(path["o_base"]):
         print "Experiment '" + name + "' exists."
+        if opt == 0:
+            backup(path, name)
+            create_dir(path)
+            index(layout, path, s)
+            retrieve(layout, path, s)
+            evaluate(layout, path, s)
         if opt == 1:
             print "Backing up before proceeding."
             backup(path, name)
@@ -146,6 +147,10 @@ def main(argv):
     else:
         print "Experiment '" + name + "' doesn't exist."
         create_dir(path)
+        if opt == 0:
+            index(layout, path, s)
+            retrieve(layout, path, s)
+            evaluate(layout, path, s)
         if opt == 1:
             index(layout, path, s)
         elif opt == 2:
