@@ -50,7 +50,7 @@ def init():
                os.path.join(home, "ir/topic/t7.30"),
                os.path.join(home, "ir/topic/t8.30")]
     fr94 = read_qid(os.path.join(home, "ir/topic/fr94.69"))
-    t678 = read_qid(os.path.join(home, "ir/topic/t678.150"))
+    t678 = read_qid(os.path.join(home, "ir/topic/t678-cr.150"))
     env = {"setlist": setlist, "fr94": fr94, "t678": t678}
     return env
 
