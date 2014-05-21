@@ -1,3 +1,7 @@
+# Constructs the 30-topic sets from 150 topics fromt TREC 6, 7 and 8.
+# Usage: python tset.py
+# Output is written to ~/ir/topic
+
 import sys, os
 from random import *
 
@@ -40,13 +44,13 @@ def checks(s30):
     
 def init():
     home = os.environ["HOME"]
-    setlist  = [os.path.join(home, "ir/topics/fr94.qid"),
-                os.path.join(home, "ir/topics/t678-fr.qid"),
-                os.path.join(home, "ir/topics/t6.qid"),
-                os.path.join(home, "ir/topics/t7.qid"),
-                os.path.join(home, "ir/topics/t8.qid")]
-    fr94 = read_qid(os.path.join(home, "ir/topics/fr94.69.qid"))
-    t678 = read_qid(os.path.join(home, "ir/topics/t678.qid"))
+    setlist = [os.path.join(home, "ir/topic/fr94.30"),
+               os.path.join(home, "ir/topic/t678-fr.30"),
+               os.path.join(home, "ir/topic/t6.30"),
+               os.path.join(home, "ir/topic/t7.30"),
+               os.path.join(home, "ir/topic/t8.30")]
+    fr94 = read_qid(os.path.join(home, "ir/topic/fr94.69"))
+    t678 = read_qid(os.path.join(home, "ir/topic/t678.150"))
     env = {"setlist": setlist, "fr94": fr94, "t678": t678}
     return env
 
@@ -101,6 +105,10 @@ def tree1(env):
 
     return s30
 
+# NOTE: tree2 is incorrect, because the 30 selected from the 120 to
+# form the t678-fr set may contain an fr topic from the 39 that went
+# into the 120.
+
 # layout of topic set construction
 
           #             150
@@ -147,6 +155,7 @@ def tree2(env):
 def main(argv):
     env = init()
     s30 = tree1(env)
+    print s30
     write_out_sets(s30, env["setlist"])
 
 if __name__ == "__main__":
