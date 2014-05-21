@@ -13,8 +13,6 @@ def backup(path, name):
     # time-stamp and stow away an existing experiment directory
     os.rename(path["o_base"], os.path.join(path["attic"], 
                                            name + "-" + str(time.time())))
-    
-        
 def create_dir(path):
     os.mkdir(path["o_base"])
     os.mkdir(path["index"])
