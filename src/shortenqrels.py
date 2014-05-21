@@ -1,9 +1,13 @@
 # Read in a set of qids, and shorten a qrel to only those topics which
-# are in this set.
+# are in this set. This however shouldn't be necessary. If a query is
+# not used for retrieval, eval doesn't see it at all, whether the query has
+# relevance information in the qrel or not.
+
+# Usage: python shortenqrels.py
 
 import sys, os
 
-def read_qid(f):
+def get_qid_list(f):
     l = open(f, "r").read().splitlines()
     l_ = []
     for i in range(len(l)):
@@ -11,60 +15,57 @@ def read_qid(f):
     return l_
 
 def main(argv):
-    home    = os.environ["HOME"]
-    qid = {"ziff1":   read_qid(os.path.join(home, "ir/topics/ziff1.qid")),
-           "ziff2":   read_qid(os.path.join(home, "ir/topics/ziff2.qid")),
-           "fr94":    read_qid(os.path.join(home, "ir/topics/fr94.qid")),
-           "t678-fr": read_qid(os.path.join(home, "ir/topics/t678-fr.qid")),
-           "t6":      read_qid(os.path.join(home, "ir/topics/t6.qid")),
-           "t7":      read_qid(os.path.join(home, "ir/topics/t7.qid")),
-           "t8":      read_qid(os.path.join(home, "ir/topics/t8.qid"))}
+    home = os.environ["HOME"]
+    qid = {"ziff1":   get_qid_list(os.path.join(home, "ir/topic/ziff1.30")),
+           "ziff2":   get_qid_list(os.path.join(home, "ir/topic/ziff2.30")),
+           "fr94":    get_qid_list(os.path.join(home, "ir/topic/fr94.30")),
+           "t678-cr-fr": get_qid_list(os.path.join(home, "ir/topic/t678-cr-fr.30")),
+           "t6":      get_qid_list(os.path.join(home, "ir/topic/t6.30")),
+           "t7":      get_qid_list(os.path.join(home, "ir/topic/t7.30")),
+           "t8":      get_qid_list(os.path.join(home, "ir/topic/t8.30"))}
 
-    spin = ["|","/","-","|","-","\\"]
-
-    l_t12 = open(os.path.join(home, "ir/qrels/t12.qrels.1-100.cd12")).readlines()
-
-    ziff1  = open(os.path.join(home, "ir/qrels/qrels.ziff1"), "w")
-    ziff2  = open(os.path.join(home, "ir/qrels/qrels.ziff2"), "w")
-    for i in range(len(l_t12)):
-        print spin[i%5] + "\r",
-        q = int(l_t12[i].split()[0])
+    i_ziff  = open(os.path.join(home, "ir/qrel/1-100.cd12")).readlines()
+    o_ziff1 = open(os.path.join(home, "ir/qrel/ziff1.cd12.30"), "w")
+    o_ziff2 = open(os.path.join(home, "ir/qrel/ziff2.cd12.30"), "w")
+    for i in range(len(i_ziff)):
+        q = int(i_ziff[i].split()[0])
         if q in qid["ziff1"]:
-            ziff1.write(l_t12[i])
+            o_ziff1.write(i_ziff[i])
         if q in qid["ziff2"]:
-            ziff2.write(l_t12[i])
-    ziff2.close()
-    ziff1.close()
+            o_ziff2.write(i_ziff[i])
+    o_ziff2.close()
+    o_ziff1.close()
+    del(i_ziff)
 
-    del(l_t12)
-
-    l_t678  = open(os.path.join(home, "ir/qrels/qrels.301-450")).readlines()
-
-    fr94    = open(os.path.join(home, "ir/qrels/qrels.fr94"), "w")
-    t678_fr = open(os.path.join(home, "ir/qrels/qrels.t678-fr"), "w")
-    t6      = open(os.path.join(home, "ir/qrels/qrels.t6"), "w")
-    t7      = open(os.path.join(home, "ir/qrels/qrels.t7"), "w")
-    t8      = open(os.path.join(home, "ir/qrels/qrels.t8"), "w")
-    for i in range(len(l_t678)):
-        print spin[i%5] + "\r",
-        q = int(l_t678[i].split()[0])
-        if q in qid["fr94"]:
-            fr94.write(l_t678[i])
-        if q in qid["t678-fr"]:
-            t678_fr.write(l_t678[i])
+    i_t678 = open(os.path.join(home, "ir/qrel/301-450.cd45")).readlines()
+    o_t6   = open(os.path.join(home, "ir/qrel/t6.cd45.30"), "w")
+    for i in range(len(i_t678)):
+        q = int(i_t678[i].split()[0])
         if q in qid["t6"]:
-            t6.write(l_t678[i])
-        if q in qid["t7"]:
-            t7.write(l_t678[i])
-        if q in qid["t8"]:
-            t8.write(l_t678[i])
-    t8.close()
-    t7.close()
-    t6.close()
-    t678_fr.close()
-    fr94.close()
+            o_t6.write(i_t678[i])
+    o_t6.close()
+    del(i_t678)
 
-    del(l_t678)
+    i_t678_cr = open(os.path.join(home, "ir/qrel/301-450.cd45-cr")).readlines()
+    o_fr94    = open(os.path.join(home, "ir/qrel/fr94.cd45-cr.30"), "w")
+    o_t678_fr = open(os.path.join(home, "ir/qrel/t678-cr-fr.cd45.30"), "w")
+    o_t7      = open(os.path.join(home, "ir/qrel/t7.cd45-cr.30"), "w")
+    o_t8      = open(os.path.join(home, "ir/qrel/t8.cd45-cr.30"), "w")
+    for i in range(len(i_t678_cr)):
+        q = int(i_t678_cr[i].split()[0])
+        if q in qid["fr94"]:
+            o_fr94.write(i_t678_cr[i])
+        if q in qid["t678-cr-fr"]:
+            o_t678_fr.write(i_t678_cr[i])
+        if q in qid["t7"]:
+            o_t7.write(i_t678_cr[i])
+        if q in qid["t8"]:
+            o_t8.write(i_t678_cr[i])
+    o_t8.close()
+    o_t7.close()
+    o_t678_fr.close()
+    o_fr94.close()
+    del(i_t678_cr)
 
 if __name__ == "__main__":
     main(sys.argv)
