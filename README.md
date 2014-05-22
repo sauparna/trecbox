@@ -36,3 +36,20 @@ stop and stem is passed as as a pair of strings in a list ["stopfile", "stemmer"
 
 stopfile names a file in env["utils"] dir, and stemmer names a
 stemmer. Use "None" to skip to exclude stopping or stemming.
+
+conf
+====
+
+The configuration file is a JSON, that lays out the paths for the 'in'
+and 'out' directories. 'in' defines those directories that are not
+created at the time of running an experiment using trecbox. 'out' are
+the places where the output files of the experiment go. However, the
+'index' directory is sort of both 'in' and 'out' by nature. Since
+trecbox keeps indexes at 'base' and not 'o_base' and does not
+re-create one if it exists, 'index' is placed amongst the 'in'
+paths. trecbox does create an index the first time it encounters one
+and places it in base/index.
+
+conf is seeded with the base path and init() constructs paths and
+updates the rest of the values. And before passing it onto index(),
+retrieve() or evaluate() it flattens it out to a linear key-val dict.
