@@ -3,11 +3,10 @@ import re, sys
 
 class Topics():
 
-    def __init__(self, f, f1=None):
+    def __init__(self, f):
         self.file = f
-        self.qid_f = f1
 
-    def query(self, opt, mode="t"):
+    def query(self, opt, mode="t", t_qid=None):
 
         # Usually, query() should return a malleable form of the query
         # text, read in from a file on disk. For indri, lucene and
@@ -21,8 +20,8 @@ class Topics():
         opt = opt.lower()
         mode = mode.lower()
         qlist = []
-        if self.qid_f != None:
-            qlist = open(self.qid_f, "r").read().splitlines()
+        if t_qid != None:
+            qlist = open(t_qid, "r").read().splitlines()
             qlist = list(set(qlist))
         soup = self.__hack_n_hew()
 
