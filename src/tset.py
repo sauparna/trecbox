@@ -1,4 +1,4 @@
-# Constructs the 30-topic sets from 150 topics fromt TREC 6, 7 and 8.
+# Constructs the 30-topic sets from the 150 TREC 6, 7 and 8 topics.
 # Usage: python tset.py
 # Output is written to ~/ir/topic
 
@@ -44,13 +44,13 @@ def checks(s30):
     
 def init():
     home = os.environ["HOME"]
-    setlist = [os.path.join(home, "ir/topic/fr94.30"),
-               os.path.join(home, "ir/topic/t678-cr-fr.30"),
-               os.path.join(home, "ir/topic/t6.30"),
-               os.path.join(home, "ir/topic/t7.30"),
-               os.path.join(home, "ir/topic/t8.30")]
+    setlist = [os.path.join(home, "ir/topic/301-450.fr.30"),
+               os.path.join(home, "ir/topic/301-450-fr.30"),
+               os.path.join(home, "ir/topic/301-450.a.30"),
+               os.path.join(home, "ir/topic/301-450.b.30"),
+               os.path.join(home, "ir/topic/301-450.c.30")]
     fr94 = read_qid(os.path.join(home, "ir/topic/fr94.69"))
-    t678 = read_qid(os.path.join(home, "ir/topic/t678-cr.150"))
+    t678 = read_qid(os.path.join(home, "ir/topic/301-450.150"))
     env = {"setlist": setlist, "fr94": fr94, "t678": t678}
     return env
 
@@ -70,14 +70,14 @@ def write_out_sets(s30, setlist):
           #  --------        --------
           # |        |      |        | 
           # 30       39     51       30
-          # fr94     |      |        t678-cr-fr
+          # fr94     |      |        301-450-fr
           #           ------ 
           #              |
           #              90
           #         -----------
           #        |     |     |
           #        30    30    30
-          #        t6    t7    t8
+          #        a     b     c
 
 def tree1(env):
     fr94 = env["fr94"]
@@ -106,8 +106,8 @@ def tree1(env):
     return s30
 
 # NOTE: tree2 is incorrect, because the 30 selected from the 120 to
-# form the t678-cr-fr set may contain an fr topic from the 39 that went
-# into the 120.
+# form the t678-cr-fr set may still contain an fr topic from the 39
+# that went into the 120.
 
 # layout of topic set construction
 
@@ -125,7 +125,7 @@ def tree1(env):
           #  -------------------
           # |           |   |   |
           # 30          30  30  30
-          # t678-cr-fr  t6  t7  t8     
+          # t678-cr-fr  a   b   c
 
 def tree2(env):
     fr94 = env["fr94"]
@@ -155,7 +155,6 @@ def tree2(env):
 def main(argv):
     env = init()
     s30 = tree1(env)
-    print s30
     write_out_sets(s30, env["setlist"])
 
 if __name__ == "__main__":
