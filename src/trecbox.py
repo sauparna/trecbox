@@ -15,14 +15,11 @@ def backup(path, name):
                                            name + "-" + str(time.time())))
 def create_dir(path):
     os.mkdir(path["o_base"])
-    os.mkdir(path["index"])
     os.mkdir(path["run"])
     os.mkdir(path["eval"])
 
 def init(f, f1, name):
-
     path = json.loads(open(f1, "r").read())
-
     path["o_base"] = os.path.join(path["base"], name)
     for k in path["in"].keys():
         path["in"][k] = os.path.join(path["base"], path["in"][k])
@@ -39,7 +36,6 @@ def init(f, f1, name):
     # print json.dumps(path, sort_keys=True, indent=4 * ' ')
 
     layout = json.loads(open(f, "r").read())
-
     s = None
     if layout["system"] == "terrier":
         s = SysTerrier(path)
@@ -66,9 +62,14 @@ def index(layout, path, s):
     for d in doc:
         d_path = os.path.join(path["doc"], d)
         for j in stems:
-            spin("indexing", c, n)
-            s.index(d+"."+j, d_path, ["stop", j])
+            spin("INDEX:", c, n)
+            itag = d+"."+j
+            if os.path.exists(os.path.join(path["index"], itag)):
+                print "\rINDEX: " + itag + " exists, skipping it."
+                continue
+            s.index(itag, d_path, ["stop", j])
             c+=1
+    print
 
 def retrieve(layout, path, s):
     matrix = layout["matrix"]
@@ -83,9 +84,10 @@ def retrieve(layout, path, s):
         q = t.query("terrier", "d")
         for j in stems:
             for k in models:
-                spin("retrieving", c, n)
+                spin("RETRIEVE:", c, n)
                 s.retrieve(d+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
                 c+=1
+    print
 
 def evaluate(layout, path, s):
     matrix = layout["matrix"]
@@ -97,36 +99,32 @@ def evaluate(layout, path, s):
         qrel_path = os.path.join(path["qrel"], matrix[i][2])
         for j in stems:
             for k in models:
-                spin("evaluating", c, n)
+                spin("EVALUATE:", c, n)
                 s.evaluate(i+"."+j+"."+k, qrel_path)
                 c+=1
+    print
 
 def main(argv):
 
     if len(argv) != 3:
-        print "Usage: python trecbox.py <layout file> <conf file>"
+        print "USAGE: python trecbox.py <layout file> <conf file>"
         sys.exit(0)
-
     exp   = argv[1]
     name  = os.path.basename(argv[1])
     conf  = argv[2]
-
     layout, path, s = init(exp, conf, name);
-
     opt = int(raw_input("0. all\n1. index\n2. retreive\n3. evaluate\n4. quit\n?"))
 
     if opt not in [0,1,2,3,4]:
-        print "Unknown option. Exiting."
+        print "ERROR: Unknown option."
         sys.exit(0)
 
     if opt == 4:
-        print "Exiting."
-        sys.exit(0)
-    
+        print "EXIT"
         sys.exit(0)
 
     if os.path.exists(path["o_base"]):
-        print "Experiment '" + name + "' exists."
+        print "INFO: '" + name + "' exists."
         if opt == 0:
             backup(path, name)
             create_dir(path)
@@ -134,7 +132,7 @@ def main(argv):
             retrieve(layout, path, s)
             evaluate(layout, path, s)
         if opt == 1:
-            print "Backing up before proceeding."
+            print "INFO: Backing up before proceeding."
             backup(path, name)
             create_dir(path)
             index(layout, path, s)
@@ -143,7 +141,7 @@ def main(argv):
         elif opt == 3:
             evaluate(layout, path, s)
     else:
-        print "Experiment '" + name + "' doesn't exist."
+        print "INFO: '" + name + "' doesn't exist."
         create_dir(path)
         if opt == 0:
             index(layout, path, s)
@@ -152,11 +150,11 @@ def main(argv):
         if opt == 1:
             index(layout, path, s)
         elif opt == 2:
-            print "index > retrieve"
+            print "INFO: index + retrieve"
             index(layout, path, s)
             retrieve(layout, path, s)
         elif opt == 3:
-            print "index > retrieve > evaluate"
+            print "INFO: index + retrieve + evaluate"
             index(layout, path, s)
             retrieve(layout, path, s)
             evaluate(layout, path, s)
