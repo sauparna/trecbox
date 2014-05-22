@@ -16,8 +16,8 @@ def get_qid_list(f):
 
 def main(argv):
     home = os.environ["HOME"]
-    qid = {"ziff1": get_qid_list(os.path.join(home, "ir/topic/ziff1.30")),
-           "ziff2": get_qid_list(os.path.join(home, "ir/topic/ziff2.30")),
+    qid = {"ziff1": get_qid_list(os.path.join(home, "ir/topic/1-100.1.30")),
+           "ziff2": get_qid_list(os.path.join(home, "ir/topic/1-100.2.30")),
            "t-fr" : get_qid_list(os.path.join(home, "ir/topic/301-450-fr.30")),
            "t.fr" : get_qid_list(os.path.join(home, "ir/topic/301-450.fr.30")),
            "t.a"  : get_qid_list(os.path.join(home, "ir/topic/301-450.a.30")),
@@ -26,8 +26,8 @@ def main(argv):
 
     i_ziff  = open(os.path.join(home, "ir/qrel/1-100.cd12")).readlines()
 
-    o_ziff1 = open(os.path.join(home, "ir/qrel/ziff1.cd12.30"), "w")
-    o_ziff2 = open(os.path.join(home, "ir/qrel/ziff2.cd12.30"), "w")
+    o_ziff1 = open(os.path.join(home, "ir/qrel/1-100.1.cd12.30"), "w")
+    o_ziff2 = open(os.path.join(home, "ir/qrel/1-100.2.cd12.30"), "w")
     for i in range(len(i_ziff)):
         q = int(i_ziff[i].split()[0])
         if q in qid["ziff1"]:
@@ -39,17 +39,25 @@ def main(argv):
 
     del(i_ziff)
 
+    i_t678_cr_fr = open(os.path.join(home, "ir/qrel/301-450.cd45-cr-fr")).readlines()
+
+    o_t678_fr = open(os.path.join(home, "ir/qrel/301-450-fr.cd45-cr-fr.30"), "w")
+    for i in range(len(i_t678_cr_fr)):
+        q = int(i_t678_cr_fr[i].split()[0])
+        if q in qid["t-fr"]:
+            o_t678_fr.write(i_t678_cr_fr[i])
+    o_t678_fr.close()
+
+    del(i_t678_cr_fr)
+
     i_t678_cr = open(os.path.join(home, "ir/qrel/301-450.cd45-cr")).readlines()
 
-    o_t678_fr = open(os.path.join(home, "ir/qrel/301-450-fr.cd45-cr.30"), "w")
     o_fr      = open(os.path.join(home, "ir/qrel/301-450.fr.cd45-cr.30"), "w")
     o_a       = open(os.path.join(home, "ir/qrel/301-450.a.cd45-cr.30"), "w")
     o_b       = open(os.path.join(home, "ir/qrel/301-450.b.cd45-cr.30"), "w")
     o_c       = open(os.path.join(home, "ir/qrel/301-450.c.cd45-cr.30"), "w")
     for i in range(len(i_t678_cr)):
         q = int(i_t678_cr[i].split()[0])
-        if q in qid["t-fr"]:
-            o_t678_fr.write(i_t678_cr[i])
         if q in qid["t.fr"]:
             o_fr.write(i_t678_cr[i])
         if q in qid["t.a"]:
@@ -62,7 +70,6 @@ def main(argv):
     o_b.close()
     o_a.close()
     o_fr.close()
-    o_t678_fr.close()
 
     del(i_t678_cr)
 
