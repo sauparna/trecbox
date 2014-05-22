@@ -44,6 +44,8 @@ def checks(s30):
     
 def init():
     home = os.environ["HOME"]
+    # The ordering of elements in setlist is important, don't change
+    # them. They map to elements of s30[] in order.
     setlist = [os.path.join(home, "ir/topic/301-450.fr.30"),
                os.path.join(home, "ir/topic/301-450-fr.30"),
                os.path.join(home, "ir/topic/301-450.a.30"),
