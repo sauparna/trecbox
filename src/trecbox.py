@@ -62,13 +62,12 @@ def index(layout, path, s):
     for d in doc:
         d_path = os.path.join(path["doc"], d)
         for j in stems:
-            spin("INDEX:", c, n)
+            spin("INDEX:", c, n); c+=1
             itag = d+"."+j
             if os.path.exists(os.path.join(path["index"], itag)):
                 print "\rINDEX: " + itag + " exists, skipping it."
                 continue
             s.index(itag, d_path, ["stop", j])
-            c+=1
     print
 
 def retrieve(layout, path, s):
@@ -84,9 +83,8 @@ def retrieve(layout, path, s):
         q = t.query("terrier", "d")
         for j in stems:
             for k in models:
-                spin("RETRIEVE:", c, n)
+                spin("RETRIEVE:", c, n); c+=1
                 s.retrieve(d+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
-                c+=1
     print
 
 def evaluate(layout, path, s):
@@ -99,9 +97,8 @@ def evaluate(layout, path, s):
         qrel_path = os.path.join(path["qrel"], matrix[i][2])
         for j in stems:
             for k in models:
-                spin("EVALUATE:", c, n)
+                spin("EVALUATE:", c, n); c+=1
                 s.evaluate(i+"."+j+"."+k, qrel_path)
-                c+=1
     print
 
 def main(argv):
