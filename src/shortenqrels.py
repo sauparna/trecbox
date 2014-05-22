@@ -46,24 +46,29 @@ def main(argv):
     o_t6.close()
     del(i_t678)
 
+    i_t678_cr_fr = open(os.path.join(home, "ir/qrel/301-450.cd45-cr-fr")).readlines()
+    o_t678_cr_fr = open(os.path.join(home, "ir/qrel/t678-cr-fr.cd45-cr-fr.30"), "w")
+    for i in range(len(i_t678_cr_fr)):
+        q = int(i_t678_cr_fr[i].split()[0])
+        if q in qid["t678-cr-fr"]:
+            o_t678_cr_fr.write(i_t678_cr_fr[i])
+    o_t678_cr_fr.close()
+    del(i_t678_cr_fr)
+
     i_t678_cr = open(os.path.join(home, "ir/qrel/301-450.cd45-cr")).readlines()
     o_fr94    = open(os.path.join(home, "ir/qrel/fr94.cd45-cr.30"), "w")
-    o_t678_fr = open(os.path.join(home, "ir/qrel/t678-cr-fr.cd45.30"), "w")
     o_t7      = open(os.path.join(home, "ir/qrel/t7.cd45-cr.30"), "w")
     o_t8      = open(os.path.join(home, "ir/qrel/t8.cd45-cr.30"), "w")
     for i in range(len(i_t678_cr)):
         q = int(i_t678_cr[i].split()[0])
         if q in qid["fr94"]:
             o_fr94.write(i_t678_cr[i])
-        if q in qid["t678-cr-fr"]:
-            o_t678_fr.write(i_t678_cr[i])
         if q in qid["t7"]:
             o_t7.write(i_t678_cr[i])
         if q in qid["t8"]:
             o_t8.write(i_t678_cr[i])
     o_t8.close()
     o_t7.close()
-    o_t678_fr.close()
     o_fr94.close()
     del(i_t678_cr)
 
