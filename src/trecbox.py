@@ -77,10 +77,19 @@ def retrieve(layout, path, s):
     c = 1
     n = len(matrix.keys()) * len(stems) * len(models)
     for i in matrix.keys():
-        d = matrix[i][0]
-        t_path = os.path.join(path["topic"], matrix[i][1])
+        d  = matrix[i][0]
+        t_ = matrix[i][1].split(":")
+        t_type = len(t_)
+        t_path = os.path.join(path["topic"], t_[0])
         t = Topics(t_path)
-        q = t.query("terrier", "d")
+        if t_type == 1:
+            q = t.query("terrier", "d")
+        elif t_type == 2:
+            qid_path = os.path.join(path["topic"], t_[1])
+            q = t.query("terrier", "d", qid_path)
+        else:
+            print "ERROR: Topic files not specified in layout."
+            sys.exit(0)
         for j in stems:
             for k in models:
                 spin("RETRIEVE:", c, n); c+=1
@@ -123,6 +132,7 @@ def main(argv):
     if os.path.exists(path["o_base"]):
         print "INFO: '" + name + "' exists."
         if opt == 0:
+            print "INFO: Backing up before proceeding."
             backup(path, name)
             create_dir(path)
             index(layout, path, s)
