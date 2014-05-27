@@ -7,9 +7,10 @@
 # Usage: awk -f table.awk path/to/evals/*
 
 BEGIN {
-   s[""] = ""
-   printf("%s %s %s %s %s %s %s %s", "testcol", "stem", "model", 
-	  "map", "gm_map", "Rprec", "P_5", "P_10")
+    s[""] = ""
+    # print header
+    printf("%s %s %s %s %s %s %s %s", "testcol", "stem", "model", 
+	   "map", "gm_map", "Rprec", "P_5", "P_10")
 }
 {
     # NOTE: the measures are printed in a row from left to right for
