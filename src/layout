@@ -8,5 +8,6 @@
 	   },
  "models": ["bm25", "dfi0", "dirichletlm", "lemurtf_idf", "tf_idf"],
  "stems" : ["n", "p"],
- "system": "terrier"
+ "system": "terrier",
+ "q_mode": "d"
 }
