@@ -74,6 +74,8 @@ def retrieve(layout, path, s):
     matrix = layout["matrix"]
     models = layout["models"]
     stems  = layout["stems"]
+    system = layout["system"]
+    q_mode = layout["q_mode"]
     c = 1
     n = len(matrix.keys()) * len(stems) * len(models)
     for i in matrix.keys():
@@ -83,10 +85,10 @@ def retrieve(layout, path, s):
         t_path = os.path.join(path["topic"], t_[0])
         t = Topics(t_path)
         if t_type == 1:
-            q = t.query("terrier", "d")
+            q = t.query(system, q_mode)
         elif t_type == 2:
             qid_path = os.path.join(path["topic"], t_[1])
-            q = t.query("terrier", "d", qid_path)
+            q = t.query(system, q_mode, qid_path)
         else:
             print "ERROR: Topic files not specified in layout."
             sys.exit(0)
