@@ -91,3 +91,16 @@ A sample layout:
 analysis
 ====
 
+trecbox/analysis
+
+tables.awk
+
+Formats evals into a table where a row is composed of the following
+pieces:
+
+testcol stem model map gm_map Rprec P_5 P_10
+t8 p tf_idf 0.1767 0.0534 0.2104 0.4000 0.3667
+...
+...
+
+pretty.awk: Formatted table output.
