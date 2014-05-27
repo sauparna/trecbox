@@ -11,16 +11,20 @@ def spin(s, c, n):
 
 def backup(path, name):
     # time-stamp and stow away an existing experiment directory
-    os.rename(path["o_base"], os.path.join(path["attic"], 
-                                           name + "-" + str(time.time())))
+    old = path["o_base"]
+    new = os.path.join(path["attic"], name + "-" + str(time.time()))
+    os.rename(old, new)
+    return "Backed up " + old + " to "  + new
+
 def create_dir(path):
     os.mkdir(path["o_base"])
     os.mkdir(path["run"])
     os.mkdir(path["eval"])
+    return "Created " + path["o_base"]
 
 def init(f, f1, name):
     path = json.loads(open(f1, "r").read())
-    path["o_base"] = os.path.join(path["base"], name)
+    path["o_base"] = os.path.join(path["base"], path["o_base"], name)
     for k in path["in"].keys():
         path["in"][k] = os.path.join(path["base"], path["in"][k])
     for k in path["out"].keys():
@@ -132,26 +136,23 @@ def main(argv):
         sys.exit(0)
 
     if os.path.exists(path["o_base"]):
-        print "INFO: '" + name + "' exists."
+        print "INFO: Experiment '" + name + "'"
         if opt == 0:
-            print "INFO: Backing up before proceeding."
-            backup(path, name)
-            create_dir(path)
+            print "INFO: " + backup(path, name)
+            print "INFO: " + create_dir(path)
             index(layout, path, s)
             retrieve(layout, path, s)
             evaluate(layout, path, s)
         if opt == 1:
-            print "INFO: Backing up before proceeding."
-            backup(path, name)
-            create_dir(path)
+            print "INFO: " + backup(path, name)
+            print "INFO: " + create_dir(path)
             index(layout, path, s)
         elif opt == 2:
             retrieve(layout, path, s)
         elif opt == 3:
             evaluate(layout, path, s)
     else:
-        print "INFO: '" + name + "' doesn't exist."
-        create_dir(path)
+        print "INFO: " + create_dir(path)
         if opt == 0:
             index(layout, path, s)
             retrieve(layout, path, s)
