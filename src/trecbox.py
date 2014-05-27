@@ -75,23 +75,23 @@ def retrieve(layout, path, s):
     models = layout["models"]
     stems  = layout["stems"]
     system = layout["system"]
-    q_mode = layout["q_mode"]
     c = 1
     n = len(matrix.keys()) * len(stems) * len(models)
     for i in matrix.keys():
         d  = matrix[i][0]
         t_ = matrix[i][1].split(":")
-        t_type = len(t_)
-        t_path = os.path.join(path["topic"], t_[0])
-        t = Topics(t_path)
-        if t_type == 1:
-            q = t.query(system, q_mode)
-        elif t_type == 2:
-            qid_path = os.path.join(path["topic"], t_[1])
-            q = t.query(system, q_mode, qid_path)
-        else:
-            print "ERROR: Topic files not specified in layout."
+        t_parts = len(t_)
+        if t_parts < 2:
+            print "ERROR: Layout doesn't specify topic information correctly."
             sys.exit(0)
+        t_path = os.path.join(path["topic"], t_[0])
+        t_mode = t_[1]
+        t = Topics(t_path)
+        if t_parts == 3:
+            t_qid = os.path.join(path["topic"], t_[1])
+            q = t.query(system, t_mode, t_qid)
+        else:
+            q = t.query(system, t_mode)
         for j in stems:
             for k in models:
                 spin("RETRIEVE:", c, n); c+=1
