@@ -5,8 +5,8 @@ from SysIndri import *
 from SysLucene import *
 from Topics import Topics
 
-def spin(s, c, n):
-    sys.stdout.write("\r" + s + " " + str(c) + "/" + str(n))
+def spin(s):
+    sys.stdout.write("\r" + s)
     sys.stdout.flush()
 
 def backup(path, name):
@@ -66,7 +66,7 @@ def index(layout, path, s):
     for d in doc:
         d_path = os.path.join(path["doc"], d)
         for j in stems:
-            spin("INDEX:", c, n); c+=1
+            spin("INDEX: " + str(c) + "/" + str(n)); c+=1
             itag = d+"."+j
             if os.path.exists(os.path.join(path["index"], itag)):
                 print "\rINDEX: " + itag + " exists, skipped."
@@ -98,7 +98,7 @@ def retrieve(layout, path, s):
             q = t.query(system, t_mode)
         for j in stems:
             for k in models:
-                spin("RETRIEVE:", c, n); c+=1
+                spin("RETRIEVE: " + str(c) + "/" + str(n)); c+=1
                 s.retrieve(d+"."+j,  i+"."+j+"."+k, ["stop", j], k, q)
     print
 
@@ -112,7 +112,7 @@ def evaluate(layout, path, s):
         qrel_path = os.path.join(path["qrel"], matrix[i][2])
         for j in stems:
             for k in models:
-                spin("EVALUATE:", c, n); c+=1
+                spin("EVALUATE: " + str(c) + "/" + str(n)); c+=1
                 s.evaluate(i+"."+j+"."+k, qrel_path)
     print
 
