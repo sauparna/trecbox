@@ -1,5 +1,4 @@
 {"base"  : "/home/palchowdhury/ir",
- "o_base": "",
  "in" : {"doc"  : "doc",
          "topic": "topic",
          "qrel" : "qrel",
@@ -11,7 +10,8 @@
          "indri"   : "indri-5.6",
 	 "index"   : "index"
          },
- "out": {"run"  : "run",
-         "eval" : "eval"
-        }
+ "o_base": "exp",
+ "out"   : {"run"  : "run",
+            "eval" : "eval"
+           }
 }
