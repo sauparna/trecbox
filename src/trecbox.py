@@ -65,7 +65,7 @@ def index(layout, path, s):
             spin("INDEX:", c, n); c+=1
             itag = d+"."+j
             if os.path.exists(os.path.join(path["index"], itag)):
-                print "\rINDEX: " + itag + " exists, skipping it."
+                print "\rINDEX: " + itag + " exists, skipped."
                 continue
             s.index(itag, d_path, ["stop", j])
     print
