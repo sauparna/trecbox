@@ -44,11 +44,14 @@ class Topics():
             q[n] = ""
             for m in list(mode):
                 if m == "t":
-                    q[n] += " " + top.title.string
+                    if top.title != None:
+                        q[n] += " " + top.title.string
                 if m == "d":
-                    q[n] += " " + top.desc.string
+                    if top.desc != None:
+                        q[n] += " " + top.desc.string
                 if m == "n":
-                    q[n] += " " + top.narr.string
+                    if top.narr != None:
+                        q[n] += " " + top.narr.string
             q[n] = q[n].lstrip().rstrip()
 
         return q
