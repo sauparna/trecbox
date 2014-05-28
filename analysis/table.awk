@@ -7,28 +7,27 @@
 # Usage: awk -f table.awk path/to/evals/*
 
 BEGIN {
-    s[""] = ""
-    # print header
-    printf("%s %s %s %s %s %s %s %s", "testcol", "stem", "model", 
-	   "map", "gm_map", "Rprec", "P_5", "P_10")
+    s[""]  = ""
 }
 {
     # NOTE: the measures are printed in a row from left to right for
     # each run in the order it appears in the eval files. For
     # convenience the regex pattern lists the measure names in that
     # same order.
-
+    
     if ($1 ~ /^(map|gm_map|Rprec|P_5|P_10)$/ && $2 ~ /all/) {
 	runid = FILENAME
 	sub(/.*\//, "", runid)
-	s[runid] = s[runid] $3 " "
+	s[runid] = s[runid] $3 " "	    
     }
 }
 END {
-    for (f in s) {
-	n = split(f, a, /\./)
+    printf("# %s %s %s %s %s %s %s %s", "testcol", "stem", "model", 
+	   "map", "gm_map", "Rprec", "P_5", "P_10")
+    for (k in s) {
+	n = split(k, a, /\./)
 	for (i=1; i<=n; i++)
 	    printf("%s ", a[i])
-	printf("%s\n", s[f])
+	printf("%s\n", s[k])
     }
 }

@@ -67,3 +67,14 @@ t8    	 cd45-cr  	401-450	(30)	t8.cd45-cr.30
 NOTE
 '.30' at the end of a qrel file name indicates that these qrels were
 shortened by the 30-topic sets.
+
+
+Errors in the first set of experiments done in January.
+
+1. Qrels weren't shortened.
+2. Used topics 1-150 as the TREC 123 topics.
+3. There was confusion about the correct qrel being used for TREC 1,
+   2, 3. Mixed up adhoc and routing.
+4. What was labeled TREC 6, 7 and 8 separately, was actually a random
+   sample from the 150 topics of TREC 6, 7, 8 together. Therefore, the
+   qrels were not appropriate.
