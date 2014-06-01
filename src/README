@@ -47,7 +47,10 @@ t5    	 cd24    	251-300	 	251-300.cd24		Label: 1c
 								topic 'title', except
 								for t4 which has no
 								't'. So 'd' is used.
-
+								
+								Label: 1e
+								1d using Lemur
+ 
 ziff1 	 ziff12		ziff1 (30)	1-100.cd12		Label: 2
 ziff2 	 ziff12		ziff2 (30)	1-100.cd12		
 t678-fr  cd45-cr-fr 	301-450 (30)	301-450.cd45-cr-fr
