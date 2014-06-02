@@ -157,18 +157,27 @@ class SysIndri():
         
     def index(self, itag, doc, opt):
 
-        print itag
+        # print itag
 
         o_dir  = os.path.join(self.path["index"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir, opt)
-            
-        subprocess.check_output([os.path.join(self.path["indri"], 
-                                              "buildindex/IndriBuildIndex"),
-                                 i_file])
+        log = ""
+        
+        try:
+            log = subprocess.check_output([os.path.join(self.path["indri"], 
+                                                        "bin/IndriBuildIndex"),
+                                           i_file])
+        except subprocess.CalledProcessError as e:
+            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+        
+        o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
+        with open(o_log, "w") as f:
+            f.write(log)
 
-    def retrieve(self, itag, rtag, q):
+    def retrieve(self, itag, rtag, opt, m, q):
 
-        print rtag
+        # NOTE: Unused parameters 'opt' and 'm'. Kept to maintain parity with other system retrieve() calls.
+        # print rtag
 
         # NOTE: Indri doesn't need to be told to stem query terms. If
         # the index is stemmed, the queries go through the same
@@ -185,7 +194,7 @@ class SysIndri():
 
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.path["indri"], "runquery/IndriRunQuery"),
+                    [os.path.join(self.path["indri"], "bin/IndriRunQuery"),
                      i_file,
                      "-index=" + i_dir,
                      "-count=1000",
@@ -194,7 +203,7 @@ class SysIndri():
     
     def evaluate(self, rtag, qrels):
 
-        print rtag
+        # print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file

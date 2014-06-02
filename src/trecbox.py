@@ -1,6 +1,7 @@
 import sys, os
 import simplejson as json
 from SysTerrier import *
+
 from SysIndri import *
 from SysLucene import *
 from Topics import Topics

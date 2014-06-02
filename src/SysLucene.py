@@ -25,7 +25,7 @@ class SysLucene():
 
     def index(self, itag, doc, opt):
         
-        print itag
+        # print itag
 
         stemmer = ""
         stopwords = ""
@@ -41,22 +41,36 @@ class SysLucene():
         #java -cp "lucene.TREC/lib/*:lucene.TREC/bin/lucene.TREC.jar" IndexTREC 
         #-docs lucene.TREC/src
 
-        subprocess.check_output(["java",
-                                 "-cp", self.jar + ":" + self.lib,
-                                 "IndexTREC",
-                                 "-index", o_dir,
-                                 "-docs", doc,
-                                 "-stop", stopwords,
-                                 "-stem", stemmer])
+        log = ""
+
+        try:
+            log = subprocess.check_output(["java",
+                                           "-Xmx1024m",
+                                           "-cp", self.jar + ":" + self.lib,
+                                           "IndexTREC",
+                                           "-index", o_dir,
+                                           "-docs", doc,
+                                           "-stop", stopwords,
+                                           "-stem", stemmer],
+                                          stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+
+        o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
+        with open(o_log, "w") as f:
+            f.write(log)
 
 
-    def retrieve(self, itag, rtag, m, q):
+    def retrieve(self, itag, rtag, opt, m, q):
 
-        print rtag
+        # NOTE: Unused parameter 'opt'. Kept to maintain parity with other system retrieve() calls.
+
+        # print rtag
 
         i_dir = os.path.join(self.path["index"], itag)
         i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.path["run"], rtag)
+        log = ""
 
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
         #-queries /path/to/title-queries.301-450 -simfn default > default.out
@@ -76,7 +90,7 @@ class SysLucene():
 
     def evaluate(self, rtag, qrels):
 
-        print rtag
+        # print rtag
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
