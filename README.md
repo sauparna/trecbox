@@ -39,6 +39,10 @@ stop and stem is passed as as a pair of strings in a list ["stopfile", "stemmer"
 stopfile names a file in env["utils"] dir, and stemmer names a
 stemmer. Use "None" to skip to exclude stopping or stemming.
 
+Didn't find a way to specify a retrieval model for Indri. Note that SysIndri.retrieve() does not take a model as a parameter. Accordingly don't encode any more than one model for a Indri layout. By convention, 'lemur' is used.
+
+The retrieve() functions for the three systems, Terrier, Indri and Lucene take the same number of parameters but may not use all. Terrier makes us of opt, m. Indri doesn't use opt or m, as it does stopping and stemming during indexing and not during retrieval. I haven't found a way to specify a m for Indri. Lucene needs m but not opt, for similar reasons. 
+
 conf
 ====
 
