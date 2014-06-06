@@ -7,10 +7,10 @@
          "treceval": "trec_eval.9.0",
          "lucene"  : "lucene.TREC",
          "terrier" : "terrier-3.5",
-         "indri"   : "indri-5.6",
+         "indri"   : "indri",
 	 "index"   : "index"
          },
- "o_base": "exp",
+ "o_base": "privcolls/exp",
  "out"   : {"run"  : "run",
             "eval" : "eval"
            }
