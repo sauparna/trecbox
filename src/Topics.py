@@ -6,7 +6,7 @@ class Topics():
     def __init__(self, f):
         self.file = f
 
-    def query(self, opt, mode="t", t_qid=None):
+    def query(self, opt, mode="t", qlist=None):
 
         # Usually, query() should return a malleable form of the query
         # text, read in from a file on disk. For indri, lucene and
@@ -20,9 +20,6 @@ class Topics():
         opt = opt.lower()
         mode = mode.lower()
         qlist = []
-        if t_qid != None:
-            qlist = open(t_qid, "r").read().splitlines()
-            qlist = list(set(qlist))
         soup = self.__hack_n_hew()
 
         # If ever you want to prettyprint the soup without the tricks

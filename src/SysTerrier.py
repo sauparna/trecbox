@@ -78,15 +78,17 @@ class SysTerrier():
 
         # print itag
 
-        pipeline, stopwords = self.__build_termpipeline(opt)
-        i_file  = self.__write_doclist(itag, doc)
-        o_dir   = os.path.join(self.path["index"], itag)
+        # Terrier needs to be be fed a o_dir, but do nothing if one exists.
+        o_dir = os.path.join(self.path["index"], itag)
 
-        # Terrier needs to be fed one. The output directories, if
-        # there were any, have already been backed up.
+        if os.path.exists(o_dir):
+            print "index() skipped " + itag
+            return
 
         os.mkdir(o_dir)
 
+        pipeline, stopwords = self.__build_termpipeline(opt)
+        i_file  = self.__write_doclist(itag, doc)
         log     = ""
 
         try:
@@ -114,12 +116,21 @@ class SysTerrier():
 
         # print rtag
 
-        pipeline, stopwords = self.__build_termpipeline(opt)
-        i_dir = os.path.join(self.path["index"], itag)
-        i_file = self.__query_file(rtag, q)
-        o_dir = self.path["run"]
+        o_dir  = self.path["run"]
         o_file = rtag
-        log = ""
+        i_dir  = os.path.join(self.path["index"], itag)
+        i_file = self.__query_file(rtag, q)
+        log    = ""
+
+        if not os.path.exists(i_dir):
+            print "retrieve() didn't find index " + itag
+            return
+
+        if os.path.exists(os.path.join(o_dir, o_file)):
+            print "retrieve() found and skipped " + rtag
+            return
+
+        pipeline, stopwords = self.__build_termpipeline(opt)
 
         # terrier is fed a topic file where all the text resides
         # within the <text> and </text> tags, because picking topic
@@ -160,11 +171,18 @@ class SysTerrier():
 
         # print rtag
 
-        # trec_eval -q QREL_file Retrieval_Results > eval_output
-
-        i_file = os.path.join(self.path["run"], rtag)
         o_file = os.path.join(self.path["eval"], rtag)
+        i_file = os.path.join(self.path["run"], rtag)
 
+        if not os.path.exists(i_file):
+            print "evaluate() didn't find run " + itag
+            return
+
+        if os.path.exists(o_file):
+            print "evaluate() found and skipped " + rtag
+            return
+        
+        # trec_eval -q QREL_file Retrieval_Results > eval_output
         with open(o_file, "w") as f:
             f.write(subprocess.check_output(
                     [os.path.join(self.path["treceval"], "trec_eval"),
