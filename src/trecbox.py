@@ -19,7 +19,8 @@ def init(cf, pf):
             os.makedirs(path["out"][k])
 
     # flatten the path dict before passing it on to systems
-    path.update(dict(path["in"].items() + path["out"].items()))
+    path.update(path["in"])
+    path.update(path["out"])
     del(path["in"])
     del(path["out"])
 
@@ -29,13 +30,13 @@ def init(cf, pf):
 def main(argv):
 
     if len(argv) != 3:
-        print "USAGE: python trecbox.py <conf file> <plan file> "
+        print("USAGE: python trecbox.py <conf file> <plan file>")
         sys.exit(0)
     
     plan, path = init(argv[1], argv[2]);
 
-    # print json.dumps(plan, sort_keys=True, indent=4 * ' ')
-    # print json.dumps(path, sort_keys=True, indent=4 * ' ')
+    # print(json.dumps(plan, sort_keys=True, indent=4 * ' '))
+    # print(json.dumps(path, sort_keys=True, indent=4 * ' '))
     # sys.exit(0)
 
     irsys_ = {"terrier": SysTerrier(path), 
@@ -59,11 +60,11 @@ def main(argv):
         qr = os.path.join(path["qrel"], matrix[i][2])
         for s in stems:
             itag = d + "." + s
-            print itag
+            print(itag)
             irsys.index(itag, dp, ["stop", s])
             for m in models:
                 rtag = i + "." + s + "." + m
-                print rtag
+                print(rtag)
                 irsys.retrieve(itag,  rtag, ["stop", s], m, q)
                 irsys.evaluate(rtag, qr)
 

@@ -35,7 +35,7 @@ class Topics():
         for top in soup.find_all("top"):
             # lower (older) qids are padded with zeros, as in '002'
             # int() drops these leading zeros
-            n = unicode(int(top.num.string.lstrip().rstrip()))
+            n = str(int(top.num.string.lstrip().rstrip()))
             if qlist and (n not in qlist):
                 continue
             q[n] = ""

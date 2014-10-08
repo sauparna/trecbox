@@ -22,7 +22,7 @@ class SysTerrier():
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
         o_file = os.path.join(self.path["index"], ".".join([itag, "terrier"]))
-        with open(o_file, "w") as f:
+        with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
 
@@ -76,13 +76,13 @@ class SysTerrier():
 
     def index(self, itag, doc, opt):
 
-        # print itag
+        # print(itag)
 
         # Terrier needs to be be fed a o_dir, but do nothing if one exists.
         o_dir = os.path.join(self.path["index"], itag)
 
         if os.path.exists(o_dir):
-            print "index() skipped " + itag
+            print("index(): found, so skipping " + itag)
             return
 
         os.mkdir(o_dir)
@@ -109,12 +109,12 @@ class SysTerrier():
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
-        with open(o_log, "w") as f:
+        with open(o_log, "w+b") as f:
             f.write(log)
 
     def retrieve(self, itag, rtag, opt, m, q):
 
-        # print rtag
+        # print(rtag)
 
         o_dir  = self.path["run"]
         o_file = rtag
@@ -123,11 +123,11 @@ class SysTerrier():
         log    = ""
 
         if not os.path.exists(i_dir):
-            print "retrieve() didn't find index " + itag
+            print("retrieve(): didn't find index " + itag)
             return
 
         if os.path.exists(os.path.join(o_dir, o_file)):
-            print "retrieve() found and skipped " + rtag
+            print("retrieve(): found, so skipping " + rtag)
             return
 
         pipeline, stopwords = self.__build_termpipeline(opt)
@@ -164,26 +164,26 @@ class SysTerrier():
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.path["run"], rtag + ".log"))
-        with open(o_log, "w") as f:
+        with open(o_log, "w+b") as f:
             f.write(log)
 
     def evaluate(self, rtag, qrels):
 
-        # print rtag
+        # print(rtag)
 
         o_file = os.path.join(self.path["eval"], rtag)
         i_file = os.path.join(self.path["run"], rtag)
 
         if not os.path.exists(i_file):
-            print "evaluate() didn't find run " + itag
+            print("evaluate(): didn't find run " + rtag)
             return
 
         if os.path.exists(o_file):
-            print "evaluate() found and skipped " + rtag
+            print("evaluate(): found, so skipping " + rtag)
             return
         
         # trec_eval -q QREL_file Retrieval_Results > eval_output
-        with open(o_file, "w") as f:
+        with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
                     [os.path.join(self.path["treceval"], "trec_eval"),
                      "-q",

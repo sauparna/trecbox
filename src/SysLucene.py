@@ -5,7 +5,7 @@ class SysLucene():
     def __init__(self, path):
         self.path = path
         self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
-                            "tfidf": "default", "lm": "lm"}
+                            "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter", "k": "krovetz", 
                             "s": "snowball", "s1": "sstemmer"}
         self.jar = os.path.join(self.path["lucene"], "bin/lucene.TREC.jar")
@@ -25,7 +25,7 @@ class SysLucene():
 
     def index(self, itag, doc, opt):
         
-        # print itag
+        # print(itag)
 
         stemmer = ""
         stopwords = ""
@@ -37,6 +37,10 @@ class SysLucene():
             stemmer = self.stemmer_map[opt[1]]
 
         o_dir = os.path.join(self.path["index"], itag)
+
+        if os.path.exists(o_dir):
+            print("index(): found, so skipping " + itag)
+            return
 
         #java -cp "lucene.TREC/lib/*:lucene.TREC/bin/lucene.TREC.jar" IndexTREC 
         #-docs lucene.TREC/src
@@ -57,7 +61,7 @@ class SysLucene():
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
-        with open(o_log, "w") as f:
+        with open(o_log, "w+b") as f:
             f.write(log)
 
 
@@ -65,17 +69,25 @@ class SysLucene():
 
         # NOTE: Unused parameter 'opt'. Kept to maintain parity with other system retrieve() calls.
 
-        # print rtag
+        # print(rtag)
 
         i_dir = os.path.join(self.path["index"], itag)
         i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.path["run"], rtag)
         log = ""
 
+        if not os.path.exists(i_dir):
+            print("retrieve(): didn't find index " + itag)
+            return
+
+        if os.path.exists(os.path.join(o_file)):
+            print("retrieve(): found, so skipping " + rtag)
+            return
+
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
         #-queries /path/to/title-queries.301-450 -simfn default > default.out
 
-        with open(o_file, "w") as f:
+        with open(o_file, "w+b") as f:
             f.write(
                 subprocess.check_output(
                     ["java",
@@ -90,7 +102,7 @@ class SysLucene():
 
     def evaluate(self, rtag, qrels):
 
-        # print rtag
+        # print(rtag)
 
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
@@ -98,7 +110,15 @@ class SysLucene():
         i_file = os.path.join(self.path["run"], rtag)
         o_file = os.path.join(self.path["eval"], rtag)
 
-        with open(o_file, "w") as f:
+        if not os.path.exists(i_file):
+            print("evaluate(): didn't find run " + rtag)
+            return
+
+        if os.path.exists(o_file):
+            print("evaluate(): found, so skipping " + rtag)
+            return
+
+        with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
                     [os.path.join(self.path["treceval"], "trec_eval"),
                      "-q", 
