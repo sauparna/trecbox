@@ -8,16 +8,16 @@ class SysTerrier():
         self.path = path
         #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
 
-        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfr_bm25": "DFR_BM25", 
+        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfrbm25": "DFR_BM25", 
                           "dfree": "DFRee", "dirichletlm": "DirichletLM", "dlh": "DLH", 
-                          "dlh13": "DLH13", "dph": "DPH", "hiemstra_lm": "Hiemstra_LM", 
-                          "ifb2": "IFB2", "in_expb2": "In_expB2", "in_expc2": "In_expC2", 
-                          "inb2": "InB2", "inl2": "InL2", "js_kls": "Js_KLs", 
-                          "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
+                          "dlh13": "DLH13", "dph": "DPH", "hiemstralm": "Hiemstra_LM", 
+                          "ifb2": "IFB2", "inexpb2": "In_expB2", "inexpc2": "In_expC2", 
+                          "inb2": "InB2", "inl2": "InL2", "jskls": "Js_KLs", 
+                          "lemurtfidf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
                           "tfidf1": "TFIDF1", "tfidf2": "TFIDF2", "tfidf3": "TFIDF3",
                           "tfidf4": "TFIDF4", "tfidf5": "TFIDF5", "tfidf6": "TFIDF6",
                           "sersimple": "SERSIMPLE", "serbm25": "SERBM25", "dhgb": "DHGB",
-                          "xsqra_m": "XSqrA_M"}
+                          "xsqram": "XSqrA_M", "tfidf": "TF_IDF"}
 
         self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
                             "s": "EnglishSnowballStemmer"}
