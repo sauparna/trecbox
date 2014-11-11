@@ -13,8 +13,10 @@ class SysTerrier():
                           "dlh13": "DLH13", "dph": "DPH", "hiemstra_lm": "Hiemstra_LM", 
                           "ifb2": "IFB2", "in_expb2": "In_expB2", "in_expc2": "In_expC2", 
                           "inb2": "InB2", "inl2": "InL2", "js_kls": "Js_KLs", 
-                          "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", "tf": "TF",
-                          "tf_idf": "TF_IDF", "tf_idf0": "TF_IDF0", "tf_idf1": "TF_IDF1", "tf_idf2": "TF_IDF2", 
+                          "lemurtf_idf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
+                          "tfidf1": "TFIDF1", "tfidf2": "TFIDF2", "tfidf3": "TFIDF3",
+                          "tfidf4": "TFIDF4", "tfidf5": "TFIDF5", "tfidf6": "TFIDF6",
+                          "sersimple": "SERSIMPLE", "serbm25": "SERBM25", "dhgb": "DHGB",
                           "xsqra_m": "XSqrA_M"}
 
         self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
