@@ -16,7 +16,10 @@ class SysTerrier():
                           "lemurtfidf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
                           "tfidf1": "TFIDF1", "tfidf2": "TFIDF2", "tfidf3": "TFIDF3",
                           "tfidf4": "TFIDF4", "tfidf5": "TFIDF5", "tfidf6": "TFIDF6",
-                          "sersimple": "SERSIMPLE", "serbm25": "SERBM25", "dhgb": "DHGB",
+                          "tfidf7": "TFIDF7", "tfidf8": "TFIDF8", "tfidf9": "TFIDF9",
+                          "sersimple": "SERSIMPLE", "sersimple1": "SERSIMPLE1", 
+                          "sersimple2": "SERSIMPLE2", "serbm25": "SERBM25", 
+                          "dhgb": "DHGB", "dhgb1": "DHGB1", "dhgb2": "DHGB2",
                           "xsqram": "XSqrA_M", "tfidf": "TF_IDF"}
 
         self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
