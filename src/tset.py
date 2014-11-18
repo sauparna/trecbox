@@ -1,6 +1,6 @@
 # Constructs the 30-topic sets from the 150 TREC 6, 7 and 8 topics.
 # Usage: python tset.py
-# Output is written to ~/ir/topic
+# Output is written to current directory
 
 import sys, os
 from random import *
@@ -46,14 +46,15 @@ def init():
     home = os.environ["HOME"]
     # The ordering of elements in setlist is important, don't change
     # them. They map to elements of s30[] in order.
-    setlist = [os.path.join(home, "ir/topic/301-450.fr.30"),
-               os.path.join(home, "ir/topic/301-450-fr.30"),
-               os.path.join(home, "ir/topic/301-450.a.30"),
-               os.path.join(home, "ir/topic/301-450.b.30"),
-               os.path.join(home, "ir/topic/301-450.c.30")]
-    fr94 = read_qid(os.path.join(home, "ir/topic/fr94.69"))
+    setlist = ["301-450.fr.30",
+               "301-450-fr.30",
+               "301-450.a.30",
+               "301-450.b.30",
+               "301-450.c.30"]
+    fr69 = read_qid(os.path.join(home, "ir/topic/fr94.69"))
+    fr30 = read_qid(os.path.join(home, "ir/topic/fr94.30.no0"))
     t678 = read_qid(os.path.join(home, "ir/topic/301-450.150"))
-    env = {"setlist": setlist, "fr94": fr94, "t678": t678}
+    env  = {"setlist": setlist, "fr69": fr69, "t678": t678, "fr30": fr30}
     return env
 
 def write_out_sets(s30, setlist):
@@ -62,6 +63,58 @@ def write_out_sets(s30, setlist):
         with open(setlist[i], "w") as f:
             for i in range(len(l)):
                 f.write(str(l[i]) + "\n")
+
+# TREE3 layout of topic set construction
+#
+# Some FR topics have zero relevant docs, so the 30 fr topics were
+# chosen so that they have at least 5 relevant documents. The rest of
+# the 120 topics were randomly partitioned into sets of 30 as shown in
+# the tree below.
+
+
+          #             150
+          #       --------------
+          #      |              |
+          #      69             81
+          #  --------        --------
+          # |        |      |        | 
+          # 30       39     51       30
+          # fr       |      |        301-450-fr
+          # no 0      ------ 
+          #              |
+          #              90
+          #         -----------
+          #        |     |     |
+          #        30    30    30
+          #        a     b     c
+
+def tree3(env):
+    fr69 = env["fr69"]
+    t678 = env["t678"]
+    fr30 = env["fr30"]
+    s30  = ["", "", "", "", ""]
+
+    s150 = set(t678)
+    s69  = set(fr69)
+    
+    s81 = s150 - s69
+
+    #s30[0] = set(knuth_shuffle(list(s69))[:30])
+    s30[0] = set(fr30)
+    s39 = s69 - s30[0]
+
+    s30[1] = set(knuth_shuffle(list(s81))[:30])
+    s51 = s81 - s30[1]
+    
+    s90 = s39 | s51
+    
+    s30[2] = set(knuth_shuffle(list(s90))[:30])
+    s60 = s90 - s30[2]
+
+    s30[3] = set(knuth_shuffle(list(s60))[:30])
+    s30[4] = s60 - s30[3]
+
+    return s30
 
 # layout of topic set construction
 
@@ -82,12 +135,12 @@ def write_out_sets(s30, setlist):
           #        a     b     c
 
 def tree1(env):
-    fr94 = env["fr94"]
+    fr69 = env["fr69"]
     t678 = env["t678"]
     s30 = ["", "", "", "", ""]
 
     s150 = set(t678)
-    s69 = set(fr94)
+    s69 = set(fr69)
     
     s81 = s150 - s69
 
@@ -130,12 +183,12 @@ def tree1(env):
           # t678-cr-fr  a   b   c
 
 def tree2(env):
-    fr94 = env["fr94"]
+    fr69 = env["fr69"]
     t678 = env["t678"]
     s30 = ["", "", "", "", ""]
 
     s150 = set(t678)
-    s69 = set(fr94)
+    s69 = set(fr69)
     
     s81 = s150 - s69
 
@@ -156,7 +209,7 @@ def tree2(env):
 
 def main(argv):
     env = init()
-    s30 = tree1(env)
+    s30 = tree3(env)
     write_out_sets(s30, env["setlist"])
 
 if __name__ == "__main__":
