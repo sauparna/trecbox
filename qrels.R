@@ -10,18 +10,19 @@ qrelsplot = function(in_d, out_d, MAX)
     path = list.files(path=in_d, full.names=T)
     n = length(name)
     tab = vector("list", n)
-    mlt = vector("list", n)
-    plt = vector("list", n)
+
     for(i in 1:n){
         tab[[i]] = read.table(path[i], header=T)
-
-        oname = paste(basename(path[i]), "r", "plot", "pdf", sep=".")
+        ## tab[[i]] = tab[[i]][order(tab[[i]]$total),]
+        ## row.names(tab[[i]]) = 1:nrow(tab[[i]])
+        oname = paste(basename(path[i]), "R", "plot", "pdf", sep=".")
         ofile = paste(out_d, oname, sep="/")
+
         pdf(ofile)
-        print(barplot(tab[[i]]$r, ylim=c(0,MAX), names.arg=tab[[i]]$id, xlab="Topic ID", ylab="# relevant docs"))
+        print(barplot(tab[[i]]$total, ylim=c(0,MAX), names.arg=tab[[i]]$QID, xlab="Topic ID", ylab="# relevant", las=2, cex.names=0.5))
         dev.off()
 
-        oname = paste(basename(path[i]), "r", "tex", sep=".")
+        oname = paste(basename(path[i]), "R", "tex", sep=".")
         ofile = paste(out_d, oname, sep="/")
         print(xtable(tab[[i]], caption=basename(path[i])), type="latex", file=ofile)
     }

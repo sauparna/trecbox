@@ -1,7 +1,5 @@
 # qrels stats, possibly plottable
 # Usage: qrels.py <qrels file>
-# Holds stuff in two dicts. The first has the entire list, the second the
-# r and nr counts keyed by topic ID.
 
 import sys
 import collections
@@ -9,62 +7,79 @@ import fileinput
 import os
 import simplejson as json
 
-# def build_dict(f):
-#     d = collections.OrderedDict()
-#     for l in fileinput.input(f):
-#         f_ = os.path.basename(fileinput.filename())
-#         a_ = [a__.rstrip().lstrip() for a__ in l.split()]
-#         if f_ not in d:
-#             d[f_] = collections.OrderedDict()
-#         if a_[0] not in d[f_]:
-#             d[f_][a_[0]] = collections.OrderedDict()
-#         d[f_][a_[0]][a_[2]] = int(a_[3])
-#     return d
+# expected DOCNO prefixes from TREC 1-8 Adhoc test collections.
+prefix = ["WS", "FR", "AP", "DO", "ZF", "SJ",
+          "PT", "FT", "CR", "FB", "LA"]
 
-def read_qrels(f):
+def slurp(f):
     d = collections.OrderedDict()
     with open(f, "r") as fp:
         for l in fp:
-            a_ = [a__.rstrip().lstrip() for a__ in l.split()]
-            if a_[0] not in d:
-                d[a_[0]] = {}
-            d[a_[0]][a_[2]] = int(a_[3])
+            qid, _, doc, rel = [a.rstrip().lstrip() for a in l.split()]
+            qid = int(qid)
+            rel = int(rel)
+            dset = doc[:2]
+            if dset not in prefix:
+                print("Bad " + dset + "(" + doc + "), something wrong!")
+                sys.exit(0)
+            if qid not in d:
+                d[qid] = collections.OrderedDict()
+            if dset not in d[qid]:
+                d[qid][dset] = collections.OrderedDict()
+            d[qid][dset][doc] = rel
     return d
 
-# def summarize(d):
-#     d_ = collections.OrderedDict()
-#     for f in d:
-#         for q in d[f]:
-            
-
-def count_qrels(d):
+def count(d):
     d_ = collections.OrderedDict()
-    for q in d:
-        if q not in d_:
-            d_[q] = {}
-        r = nr = 0
-        for docno in d[q]:
-            j = d[q][docno]
-            if j == 0:
-                nr += 1
-            else:
-                r+=1
-        d_[q]["nr"] = nr
-        d_[q]["r"] = r
+    for qid in d:
+        if qid not in d_:
+            d_[qid] = collections.OrderedDict()
+        r = 0
+        for dset in d[qid]:
+            r_ = 0
+            for doc in d[qid][dset]:
+                r_ += d[qid][dset][doc]
+            r += r_
+            d_[qid][dset] = r_
+        d_[qid]["total"] = r
     return d_
 
-def print_rplot(d):
-    fmt = "{} {} {}"
-    print(fmt.format("id", "r", "nr"))
-    for q in d:
-        print(fmt.format(q, d[q]["r"], d[q]["nr"]))
+def table(d):
+    pos = {}
+    fmt_ = "{:<6d}"
+    fmt1_ = "{:<6}"
+    fmt = fmt_
+    fmt1 = fmt1_
+    header = ["QID"]
+    
+    # Bootstrap the header, the header format and the row
+    # format. Though dicts are ordered, and qrels are sorted, the dset
+    # strings are mapped to integers (pos) which would be used later
+    # to index into a list (row) that holds the rel counts.
+
+    for qid in d:
+        i = 1 # Note that element 0 in header[] is already used.
+        for dset in d[qid]:
+            pos[dset] = i
+            i += 1
+            header.append(dset)
+            fmt += fmt_
+            fmt1 += fmt1_
+        break
+    
+    print(fmt1.format(*header))
+
+    for qid in d:
+        row = [0] * len(header)
+        row[0] = qid
+        for dset in d[qid]:
+            row[pos[dset]] = d[qid][dset]
+        print(fmt.format(*row))
 
 def main(argv):
-    d = read_qrels(argv[1])
-    #d = build_dict(argv[1:])
-    d_ = count_qrels(d)
-    #print(json.dumps(d, indent=2))
-    print_rplot(d_)
+    d = slurp(argv[1])
+    d_ = count(d)
+    table(d_)
 
 if __name__ == "__main__":
     main(sys.argv)
