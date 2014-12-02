@@ -3,13 +3,15 @@
 # Flattens the TREC documents. It reads and writes out the entire TREC
 # cd 1-5 corpus in neater format.
 # Usage: flatten.py <TREC doc dir> <offsets file> <output dir>
+
 import sys
 import simplejson as json
 import os
+import uuid
 
 def main(argv):
     d_in = argv[1]
-    f_offsets = argv[2]
+    i_offsets = argv[2]
     d_out = argv[3]
 
     if os.path.exists(d_out):
@@ -17,41 +19,59 @@ def main(argv):
         sys.exit()
 
     os.mkdir(d_out)
-    MAX = 10
+
     c   = 0
-    c_  = 0
-    od  = ""
     opened = ""
     i_fp = None
+    o_fp = None
+    pos = 0
 
-    i_fp1 = open(f_offsets, "r")
+    o_offsets = "/tmp/offsets." + str(uuid.uuid4())
+
+    o_fp1 = open(o_offsets, "w")
+    i_fp1 = open(i_offsets, "r")
+
     for l in i_fp1:
-        # print(c+1, end="\r")
-        if (c % MAX) == 0:
-            c_ = int(c / MAX)
-            od = os.path.join(d_out, str(c_))
-            print(od)
-            os.mkdir(od)
-        d,i_f,_,_,t = [l__.rstrip().lstrip() for l__ in l.split()]
+
+        print(c+1, end="\r")
+        docno,fname,_,_,t = [l__.rstrip().lstrip() for l__ in l.split()]
         b,e = [int(n) for n in t.split(":")]
 
-        if i_f != opened:
-            opened = i_f
+        if fname != opened:
+            opened = fname
+            pos = 0
             if i_fp:
                 i_fp.close()
-            i_f_ = os.path.join(d_in, i_f)
-            print(i_f_)
+            i_f_ = os.path.join(d_in, fname)
             i_fp = open(i_f_, "rb")
+            o_dir = os.path.join(d_out, os.path.dirname(fname))
+            if not os.path.exists(o_dir):
+                os.makedirs(o_dir)
+            if o_fp:
+                o_fp.close()
+            o_f_ = os.path.join(d_out, fname)
+            o_fp = open(o_f_, "wb")
+
         i_fp.seek(b)
-        txt = i_fp.read(e - b + 1)
+        txt = bytearray(i_fp.read(e - b + 1))
+        txt = txt.lstrip().rstrip()
+        txt.append(10)
 
-        o_f = os.path.join(od, d)
-        o_fp = open(o_f, "wb")
-        o_fp.write(txt)
-        o_fp.close()
+        sep = ("[[" + docno + "]]\n").encode()
+        n = o_fp.write(sep)
+        n1 = o_fp.write(txt)
 
+        u = pos + 2; v = pos + n -  3 - 1
+        x = pos + n; y = pos + n + n1 - 2
+        o_str = docno + " " + fname + " " + str(u) + ":" + str(v) + " " + str(x) + ":"+ str(y) + "\n"
+        o_fp1.write(o_str)
+        pos += n + n1
         c += 1
+
+    i_fp.close()
+    o_fp.close()
     i_fp1.close()
+    o_fp1.close()
     print(c)
 
 if __name__ == "__main__":
