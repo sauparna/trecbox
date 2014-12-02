@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-# Given a set of TREC DOCNO's, bundle a corpus out of TREC CDs.
+# Given a set of TREC DOCNOs, bundle a corpus out of TREC CDs.
 # input tuple [DOCNO, file, b1:b2, b3:b4, b5:b6]
 #
-# b_i pairs are DOC, DOCNO, TEXT offsets in order output is a file
-# each for a TREC DOC, a 1000 thousand such in a folder.
+# b_i pairs are DOC, DOCNO, TEXT offsets (in order)
+#
+# output is a file each for a TREC DOC, a 1000 thousand such in a
+# folder.
 #
 # Usage: bundle.py trec.offsets <DOCNO list> <out dir>
 #
