@@ -1,0 +1,53 @@
+Meta-analysis
+-------------
+
+var   f()
+---   ------
+y    A  m1 - m2
+     B  ln(m1) - ln(m2)
+
+v    A  (n1 + n2)/(n1 * n2) * sp ^ 2
+        s1 ^ 2 / n1 + s2 ^ 2 / n2 
+     B  (1 / (n1 * m1 ^ 2) + 1 / (n2 * m2 ^ 2)) * sp ^ 2
+
+e    v ^ 0.5
+
+FE model
+--------
+w = 1 / v
+M = sum(w * y) / sum(w)
+V = 1 / sum(w)
+E = V ^ 0.5
+
+RE model
+--------
+w = 1 / (v + T^2)
+M = sum(w * y) / sum(w)
+V = 1 / sum(w)
+E = V ^ 0.5
+
+--------
+sp  = (((n1 - 1) * s1^2 + (n2 - 1) * s2^2)/(n1 - 1 + n2 - 1)) ^ 0.5
+T^2 = (Q - df) / C
+Q   = sum(w * y^2) - (sum(w * y) ^ 2) / sum(w)
+df  = #studies - 1
+C   = sum(w) - sum(w^2) / sum(w)
+CI  = M +- 1.96 * E
+Z   = M / E
+p1  = 1 - PHI(+-|Z|)
+p2  = 2 * (1 - PHI(|Z|))
+
+# bitmap                                                                       
+# doc stem algorithm measure score                                             
+# d s a m t                                                                    
+# 0 0 1 1 0                                                                    
+
+# # bigmap                                                                     
+# doc       = []                                                               
+# stemming  = [0 "n", 1 "p"]                                                   
+# algorithm = [0 "bm25",  1 "sersimple", 2 "dhgb3",                            
+#              3 "tfidf", 4 "tfidf2",    5 "tfidf8", 6 "tfidf9", ],            
+# measure   = [0 "map", 1 "bpref"]                                             
+# topic     = []                                                               
+
+ggplot(tab1, aes(x=topic, y=score, fill=testcol)) + geom_bar(stat="identity", width=1) + facet_wrap(~testcol)
