@@ -101,7 +101,7 @@ class SysIndri():
         # add stopfile
         if opt[0] != "None":
             T_stopwords = soup.new_tag("stopwords")
-            T_stopwords.string = os.path.join(self.path["util"], opt[0])
+            T_stopwords.string = os.path.join(self.path["MISC"], opt[0])
             soup.parameters.append(T_stopwords)
             
         # add stemmer
@@ -115,7 +115,7 @@ class SysIndri():
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
 
-        o_file = os.path.join(self.path["index"], ".".join([itag, "indri"]))
+        o_file = os.path.join(self.path["INDEX"], ".".join([itag, "indri"]))
 
         with open(o_file, "w") as f:
             f.write(self.__shapeup_xml(soup.prettify().split("\n")[1:]))
@@ -144,7 +144,7 @@ class SysIndri():
             T_query.append(T_text)
             soup.parameters.append(T_query)
 
-        o_file = os.path.join(self.path["run"], ".".join([rtag, "indri"]))
+        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "indri"]))
 
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
@@ -159,7 +159,7 @@ class SysIndri():
 
         # print(itag)
 
-        o_dir  = os.path.join(self.path["index"], itag)
+        o_dir  = os.path.join(self.path["INDEX"], itag)
         i_file = self.__index_params_file(itag, doc, o_dir, opt)
         log = ""
 
@@ -168,13 +168,13 @@ class SysIndri():
             return
         
         try:
-            log = subprocess.check_output([os.path.join(self.path["indri"], 
+            log = subprocess.check_output([os.path.join(self.path["INDRI"], 
                                                         "bin/IndriBuildIndex"),
                                            i_file])
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
         
-        o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["INDEX"], itag + ".log"))
         with open(o_log, "w+b") as f:
             f.write(log)
 
@@ -194,9 +194,9 @@ class SysIndri():
         # "If you stem your index when you build it, query terms are
         # automatically stemmed when the query is run. ..."
         
-        i_dir = os.path.join(self.path["index"], itag)
+        i_dir = os.path.join(self.path["INDEX"], itag)
         i_file = self.__query_params_file(rtag, q)
-        o_file = os.path.join(self.path["run"], rtag)
+        o_file = os.path.join(self.path["RUNS"], rtag)
 
         if not os.path.exists(i_dir):
             print("retrieve(): didn't find index " + itag)
@@ -208,7 +208,7 @@ class SysIndri():
 
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.path["indri"], "bin/IndriRunQuery"),
+                    [os.path.join(self.path["INDRI"], "bin/IndriRunQuery"),
                      i_file,
                      "-index=" + i_dir,
                      "-count=1000",
@@ -222,8 +222,8 @@ class SysIndri():
         # trec_eval -q QREL_file Retrieval_Results > eval_output
         # call trec_eval and dump output to a file
 
-        i_file = os.path.join(self.path["run"], rtag)
-        o_file = os.path.join(self.path["eval"], rtag)
+        i_file = os.path.join(self.path["RUNS"], rtag)
+        o_file = os.path.join(self.path["EVALS"], rtag)
 
         if not os.path.exists(i_file):
             print("evaluate(): didn't find run " + rtag)
@@ -235,7 +235,7 @@ class SysIndri():
 
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.path["treceval"], "trec_eval"),
+                    [os.path.join(self.path["TRECEVAL"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file]))

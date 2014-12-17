@@ -6,38 +6,11 @@ from SysLucene import *
 from Topics import Topics
 
 def init(cf, pf):
-    # bootstrap paths
-    # the name of the plan file will be the name of the output directory
-
-    plan = json.loads(open(pf, "r").read())
-
     name = os.path.basename(pf)
+    plan = json.loads(open(pf, "r").read())
     path = json.loads(open(cf, "r").read())
-    i_exp = os.path.join(path["i_base"], path["in"]["exp"])
-    if not os.path.exists(i_exp):
-        print("Error: Experiment " + name + " doesn't exist in " + i_exp)
-        print("Quitting.")
-    
-    for k in path["in"]:
-        path["in"][k] = os.path.join(path["i_base"], path["in"][k])
-
-    # overwrite
-    path["in"]["topic"] = os.path.join(i_exp, name, "topics")
-    path["in"]["qrel"]  = os.path.join(i_exp, name, "qrels")
-    path["in"]["doc"]  = os.path.join(i_exp, name, "docs")
-
-    path["o_base"] = os.path.join(path["o_base"], name)
-    for k in path["out"]:
-        path["out"][k] = os.path.join(path["o_base"], path["out"][k])
-        if not os.path.exists(path["out"][k]):
-            os.makedirs(path["out"][k])
-
-    # flatten the path dict before passing it on to systems
-    path.update(path["in"])
-    path.update(path["out"])
-    del(path["in"])
-    del(path["out"])
-
+    k_   = ["DOCS", "TOPICS", "QRELS", "MISC", "INDEX", "RUNS", "EVALS"]
+    path.update({k: os.path.join(path["EXP"], name, path[k]) for k in k_})
     return path, plan
 
 def main(argv):
@@ -63,15 +36,15 @@ def main(argv):
 
     for i in matrix:
         d  = matrix[i][0]
-        dp = os.path.join(path["doc"], d)
+        dp = os.path.join(path["DOCS"], d)
         t_ = matrix[i][1].split(":")
-        tf = os.path.join(path["topic"], t_[0])
+        tf = os.path.join(path["TOPICS"], t_[0])
         ql = None;
         if len(t_) == 3:
-            qf = os.path.join(path["topic"], t_[2])
+            qf = os.path.join(path["TOPICS"], t_[2])
             ql = list(set(open(qf, "r").read().splitlines()))
         q  = Topics(tf).query(plan["system"], t_[1], ql)
-        qr = os.path.join(path["qrel"], matrix[i][2])
+        qr = os.path.join(path["QRELS"], matrix[i][2])
         for s in stems:
             itag = d + "." + s
             print(itag)

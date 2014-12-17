@@ -27,7 +27,7 @@ class SysTerrier():
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
-        o_file = os.path.join(self.path["index"], ".".join([itag, "terrier"]))
+        o_file = os.path.join(self.path["INDEX"], ".".join([itag, "docs"]))
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
@@ -42,7 +42,7 @@ class SysTerrier():
 
         if opt[0] != "None":
             p[0] = "Stopwords"
-            stopwords = os.path.join(self.path["util"], opt[0])
+            stopwords = os.path.join(self.path["MISC"], opt[0])
 
         if opt[1] in self.stemmer_map.keys():
             p[1] = self.stemmer_map[opt[1]]
@@ -69,7 +69,7 @@ class SysTerrier():
             T_top.append(T_text)
             soup.trick.append(T_top)
         
-        o_file = os.path.join(self.path["run"], ".".join([rtag, "terrier"]))
+        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "topics"]))
 
         # Drop the XML declaration and no more tricks please. Write it
         # out.
@@ -85,7 +85,7 @@ class SysTerrier():
         # print(itag)
 
         # Terrier needs to be be fed a o_dir, but do nothing if one exists.
-        o_dir = os.path.join(self.path["index"], itag)
+        o_dir = os.path.join(self.path["INDEX"], itag)
 
         if os.path.exists(o_dir):
             print("index(): found, so skipping " + itag)
@@ -99,7 +99,7 @@ class SysTerrier():
 
         try:
            log =  subprocess.check_output(
-               [os.path.join(self.path["terrier"], "bin/trec_terrier.sh"),
+               [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
@@ -114,7 +114,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["index"], itag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["INDEX"], itag + ".log"))
         with open(o_log, "w+b") as f:
             f.write(log)
 
@@ -122,9 +122,9 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_dir  = self.path["run"]
+        o_dir  = self.path["RUNS"]
         o_file = rtag
-        i_dir  = os.path.join(self.path["index"], itag)
+        i_dir  = os.path.join(self.path["INDEX"], itag)
         i_file = self.__query_file(rtag, q)
         log    = ""
 
@@ -151,7 +151,7 @@ class SysTerrier():
 
         try:
             log = subprocess.check_output(
-                [os.path.join(self.path["terrier"], "bin/trec_terrier.sh"),
+                [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
                  "-r",
                  "-Dterrier.index.path=" + i_dir,
                  "-Dtrec.topics=" + i_file,
@@ -169,7 +169,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["run"], rtag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["RUNS"], rtag + ".log"))
         with open(o_log, "w+b") as f:
             f.write(log)
 
@@ -177,8 +177,8 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_file = os.path.join(self.path["eval"], rtag)
-        i_file = os.path.join(self.path["run"], rtag)
+        o_file = os.path.join(self.path["EVALS"], rtag)
+        i_file = os.path.join(self.path["RUNS"], rtag)
 
         if not os.path.exists(i_file):
             print("evaluate(): didn't find run " + rtag)
@@ -188,10 +188,10 @@ class SysTerrier():
             print("evaluate(): found, so skipping " + rtag)
             return
         
-        # trec_eval -q QREL_file Retrieval_Results > eval_output
+        # trec_eval -q qrels run > eval_output
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.path["treceval"], "trec_eval"),
+                    [os.path.join(self.path["TRECEVAL"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file]))

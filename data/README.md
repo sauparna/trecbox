@@ -1,3 +1,9 @@
+fbis.trec678.adhoc.topics
+98 FBIS topics for TRECs 6, 7, 8, with more than 1 relevant document
+
+fr.trec678.adhoc.topics
+49 FR topics for TRECs 6, 7, 8 with more than 1 relevant document
+
 On TREC document structure
 ----
 
