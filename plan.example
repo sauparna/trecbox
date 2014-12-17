@@ -1,0 +1,11 @@
+{"matrix": {"t678t":   ["cd45-cr",
+	    	        "301-450:t",
+		        "301-450.cd45-cr"],
+	    "t678d":   ["cd45-cr",
+	    	        "301-450:d",
+		        "301-450.cd45-cr"]
+	    },
+ "models": ["bm25", "dirichletlm"],
+ "stems" : ["n", "p"],
+ "system": "terrier"
+}
