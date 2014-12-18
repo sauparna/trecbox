@@ -26,34 +26,43 @@ def main(argv):
     # print(json.dumps(plan, sort_keys=True, indent=2))
     # sys.exit(0)
 
-    irsys_ = {"terrier": SysTerrier(path), 
-              "indri"  : SysIndri(path), 
-              "lucene" : SysLucene(path)}
+    systems = {"terrier": SysTerrier(path), 
+               "indri"  : SysIndri(path), 
+               "lucene" : SysLucene(path)}
+    
     matrix = plan["matrix"]
     models = plan["models"]
     stems  = plan["stems"]
-    irsys  = irsys_[plan["system"]]
+    system = systems[plan["system"]]
 
-    for i in matrix:
-        d  = matrix[i][0]
-        dp = os.path.join(path["DOCS"], d)
-        t_ = matrix[i][1].split(":")
-        tf = os.path.join(path["TOPICS"], t_[0])
-        ql = None;
+    for testcol in matrix:
+        docs    = matrix[testcol][0]
+        docsp   = os.path.join(path["DOCS"], docs)
+        t_      = matrix[testcol][1].split(":")
+        topicsf = t_[0]
+        topicsp = os.path.join(path["TOPICS"], topicsf)
+        qrelsf  = matrix[testcol][2]
+        qrelsp  = os.path.join(path["QRELS"], qrelsf)
+        
+        part = "d"
+        qsubsetf = qsubsetp = qsubsetl = None
+        if len(t_) == 2:
+            part = t_[1]
         if len(t_) == 3:
-            qf = os.path.join(path["TOPICS"], t_[2])
-            ql = list(set(open(qf, "r").read().splitlines()))
-        q  = Topics(tf).query(plan["system"], t_[1], ql)
-        qr = os.path.join(path["QRELS"], matrix[i][2])
-        for s in stems:
-            itag = d + "." + s
+            qsubsetf = t_[2]
+            qsubsetp = os.path.join(path["TOPICS"], qsubsetf)
+            qsubsetl = list(set(open(qsubsetp, "r").read().splitlines()))
+
+        query = Topics(topicsp).query(plan["system"], part, qsubsetl)
+        for stemmer in stems:
+            itag = docs + "." + stemmer
             print(itag)
-            irsys.index(itag, dp, ["stop", s])
-            for m in models:
-                rtag = i + "." + s + "." + m
+            system.index(itag, docsp, ["stop", stemmer])
+            for model in models:
+                rtag = testcol + "." + stemmer + "." + model
                 print(rtag)
-                irsys.retrieve(itag,  rtag, ["stop", s], m, q)
-                irsys.evaluate(rtag, qr)
+                system.retrieve(itag,  rtag, ["stop", stemmer], model, query)
+                system.evaluate(rtag, qrelsp)
 
 if __name__ == "__main__":
    main(sys.argv)
