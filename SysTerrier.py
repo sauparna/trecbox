@@ -97,6 +97,10 @@ class SysTerrier():
         i_file  = self.__write_doclist(itag, doc)
         log     = ""
 
+        # This is the suggested string for disk 4 and 5
+        # -DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
+        # The 'skip' settings below does away with all across disks 1,2,4,5.
+
         try:
            log =  subprocess.check_output(
                [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
@@ -107,8 +111,8 @@ class SysTerrier():
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
-                "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
-                "-DTrecDocTags.skip=DOCHDR",
+                "-DTrecDocTags.process=TEXT",
+                "-DTrecDocTags.skip=DOCHDR,H3,DOCTITLE,HEADLINE,TTL,TITLE,HEAD,HL",
                 "-DTrecDocTags.casesensitive=true"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
