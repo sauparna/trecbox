@@ -3,7 +3,6 @@
 
 import sys
 import collections
-import fileinput
 import os
 import simplejson as json
 
@@ -77,6 +76,7 @@ def table(d):
         print(fmt.format(*row))
 
 def main(argv):
+    # USAGE: qrels.py <qrels file>
     d = slurp(argv[1])
     d_ = count(d)
     table(d_)
