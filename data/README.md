@@ -1,3 +1,11 @@
+trec.offsets.old - byte offsets into original TREC corpus on disks 1-5
+DOCNO file DOC DOCNO TEXT
+
+trec.offsets - byte offsets into cleaner corpus
+DOCNO file DOCNO TEXT
+
+When using flatten pass it the old offsets file.
+
 On TREC document structure
 ----
 
