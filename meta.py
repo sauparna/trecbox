@@ -7,15 +7,27 @@ from collections import OrderedDict as od
 import simplejson as json
 import os
 
+def print_summary(s, f=None):
+    # s = [M, V, E, Z, L, U]
+    fp = None
+    if f:
+        fp = open(f, "w")
+    fmt = "{:>7} {:>7} {:>7} {:>7} {:>7} {:>7}"
+    print(fmt.format("M", "V", "E", "Z", "L", "U"), file=fp)
+    fmt = "{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}"
+    print(fmt.format(*s), file=fp)
+    if fp:
+        fp.close()
+    
 def print_datatab(tab, f=None):
     fp = None
     if f:
         fp = open(f, "w")
     fmt = "{:>10} {:>5} {:>7}"
-    print(fmt.format("testcol", "topic", "score"))
+    print(fmt.format("testcol", "topic", "score"), file=fp)
     fmt = "{:>10} {:>5} {:>7.4f}"
     for i in range(len(tab)):
-        print(fmt.format(tab[i][0], tab[i][1], tab[i][2]))
+        print(fmt.format(tab[i][0], tab[i][1], tab[i][2]), file=fp)
     if fp:
         fp.close()
 
@@ -79,24 +91,24 @@ def gobble(files):
         # evals[f][m][t] = s
     return evals
 
-# bitmap
+# # BITMAP
 # doc stem algorithm measure score
 # d s a m t
 # 0 0 1 1 0
 
-# # bigmap 
+# # BIGMAP
 # doc       = []
 # stemming  = [0 "n", 1 "p"]
 # algorithm = [0 "bm25",  1 "sersimple", 2 "dhgb3",
-#              3 "tfidf", 4 "tfidf2",    5 "tfidf8", 6 "tfidf9", ],
+#              3 "tfidf", 4 "tfidf2",    5 "tfidf8", 6 "tfidf9"],
 # measure   = [0 "map", 1 "bpref"]
 # topic     = []
 
 bigmap = [[],
           ["n", "p"],
-          ["bm25",  "sersimple", "dhgb3",
-           "tfidf", "tfidf2",    "tfidf8", "tfidf9", ],
-          ["map", "bpref"],
+          ["bm25", "sersimple", "dhgb3",
+           "tfidf", "tfidf2", "tfidf8", "tfidf9"],
+          ["map"],
           []
          ]
 
@@ -215,21 +227,42 @@ def summary(tab, model="RE"):
     return [M, V, E, Z, L, U]
 
 def main(argv):
-    # Usage: meta.py path/to/evals/* 
+
+    # Usage: meta.py path/to/evals/*
+
     evals = gobble(argv[1:])
     #print(json.dumps(evals, indent=2))
     # print(len(evals))
 
-    t1 = table(evals, "01110") # n.bm25.map
-    t2 = table(evals, "02110") # p.bm25.map
-    t,s = compute(avector(t1), avector(t2))
+    # # DEBUG
+    # tag  = ["n.p.bm25"]
+    # code = [["01110", "02110"]]
 
-    # print_datatab(t1)
-    # print_datatab(t2)
-    print_metatab(t)
+    plan = [["n.p.bm25",         "01110", "02110"], 
+            ["sersimple.tfidf8", "02110", "02510"], 
+            ["tfidf8.tfidf9",    "02510", "02610"],
+            ["tfidf8.tfidf2",    "02510", "02410"],
+            ["tfidf8.dhgb3",     "02510", "02310"]]
 
-    print(s)
-    sys.exit(0)
+    for i in range(len(plan)):
+
+        tag = plan[i][0]
+
+        t1_ = tag + "." + "v1"
+        t2_ = tag + "." + "v2"
+        t_  = tag + "." + "meta"
+        s_  = tag + "." + "summary"
+
+        t1 = table(evals, plan[i][1])
+        t2 = table(evals, plan[i][2])
+
+        print_datatab(t1, t1_)
+        print_datatab(t2, t2_)
+
+        t,s = compute(avector(t1), avector(t2))
+
+        print_metatab(t, t_)
+        print_summary(s, s_)
 
 if __name__ == "__main__":
     main(sys.argv)
