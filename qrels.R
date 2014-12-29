@@ -1,10 +1,10 @@
 # Given a directory of tables, it outputs bar plots of relevance
-# counts in another output directory. The third arg MAX is the maximum
-# x-axis value of the plots.
+# counts in another output directory. The third arg YMAX is the maximum
+# y-axis value of the plots.
 
 library(xtable)
 
-qrelsplot = function(in_d, out_d, MAX, sort=0)
+qrelsplot = function(in_d, out_d, YMAX, sort=0)
 {
     name = list.files(path=in_d)
     path = list.files(path=in_d, full.names=T)
@@ -21,9 +21,8 @@ qrelsplot = function(in_d, out_d, MAX, sort=0)
         ofile = paste(out_d, oname, sep="/")
 
         pdf(ofile)
-        print(barplot(tab[[i]]$total, ylim=c(0,MAX), names.arg=tab[[i]]$QID, xlab="Topic ID", ylab="# relevant", las=2, cex.names=0.5))
+        print(barplot(tab[[i]]$total, ylim=c(0,YMAX), names.arg=tab[[i]]$QID, xlab="Topic ID", ylab="# relevant", las=2, cex.names=0.5))
         dev.off()
-
         oname = paste(basename(path[i]), "R", "tex", sep=".")
         ofile = paste(out_d, oname, sep="/")
         print(xtable(tab[[i]], caption=basename(path[i])), type="latex", file=ofile)
