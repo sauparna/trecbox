@@ -45,7 +45,9 @@ def main(argv):
         qrelsp  = os.path.join(path["QRELS"], qrelsf)
         
         part = "d"
-        qsubsetf = qsubsetp = qsubsetl = None
+        qsubsetf = None
+        qsubsetp = None
+        qsubsetl = None
         if len(t_) == 2:
             part = t_[1]
         if len(t_) == 3:
