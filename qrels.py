@@ -4,7 +4,7 @@
 # total is the count of the total relevant (sum(DOCi))
 # bin is a lable for the bin in which this fellow is
 # bins are <= 5, 10, 50, 100 and > 100.
-#
+# bin labels are [5, 10, 50, 100, -1]]
 # Usage: qrels.py <qrels file>
 
 import sys
