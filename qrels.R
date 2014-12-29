@@ -4,7 +4,7 @@
 
 library(xtable)
 
-qrelsplot = function(in_d, out_d, MAX)
+qrelsplot = function(in_d, out_d, MAX, sort=0)
 {
     name = list.files(path=in_d)
     path = list.files(path=in_d, full.names=T)
@@ -13,7 +13,9 @@ qrelsplot = function(in_d, out_d, MAX)
 
     for(i in 1:n){
         tab[[i]] = read.table(path[i], header=T)
-        ## tab[[i]] = tab[[i]][order(tab[[i]]$total),]
+        if(sort == 1){
+            tab[[i]] = tab[[i]][order(tab[[i]]$total),]
+        }
         ## row.names(tab[[i]]) = 1:nrow(tab[[i]])
         oname = paste(basename(path[i]), "R", "plot", "pdf", sep=".")
         ofile = paste(out_d, oname, sep="/")
