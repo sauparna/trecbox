@@ -19,8 +19,8 @@ meta_analysis = function(in_d, out_d)
 
     # calculate ES and write to file
 
-    es.D[[i]] = escalc(data=tab[[i]], measure="MD",  m1i=m1,sd1i=s1,n1i=n1, m2i=m2,sd2i=s2,n2i=n2, append=T, var.names=c("y_", "v_"))
-    es.R[[i]] = escalc(data=tab[[i]], measure="ROM", m1i=m1,sd1i=s1,n1i=n1, m2i=m2,sd2i=s2,n2i=n2, append=T, var.names=c("y_", "v_"))
+    es.D[[i]] = escalc(data=tab[[i]], measure="MD",  m1i=m2,sd1i=s2,n1i=n2, m2i=m1,sd2i=s1,n2i=n1, append=T, var.names=c("y_", "v_"))
+    es.R[[i]] = escalc(data=tab[[i]], measure="ROM", m1i=m2,sd1i=s2,n1i=n2, m2i=m1,sd2i=s1,n2i=n1, append=T, var.names=c("y_", "v_"))
 
     oname = paste(basename(path[i]), "D.RE", "tex", sep=".")
     ofile = paste(out_d, oname, sep="/")
@@ -52,14 +52,14 @@ meta_analysis = function(in_d, out_d)
     oname = paste(basename(path[i]), "D.RE", "pdf", sep=".")
     ofile = paste(out_d, oname, sep="/")
     pdf(ofile)
-    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol, xlim=c(0.5, -0.5), alim=c(-0.31,0.31)))
+    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), refline=0, slab=es.R[[i]]$testcol, mlab="m2-m1, RE", xlab=basename(path[i]), xlim=c(-0.5, 0.5), alim=c(-0.3,0.3)))
     #print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol))
     dev.off()
     
     oname = paste(basename(path[i]), "R.RE", "pdf", sep=".")
     ofile = paste(out_d, oname, sep="/")
     pdf(ofile)
-    print(forest.rma(ma.R.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol, xlim=c(8, -6), alim=c(-3.5,3.5)))
+    print(forest.rma(ma.R.RE[[i]], digit=c(2, 2),  refline=0, slab=es.R[[i]]$testcol, mlab="log(m2/m1), RE", xlab=basename(path[i]), xlim=c(-3, 1.5), alim=c(-2.5,2.5)))
     #print(forest.rma(ma.R.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol))
     dev.off()
   }

@@ -98,10 +98,10 @@ def gobble(files):
 
 # # BIGMAP
 # doc       = []
-# stemming  = [0 "n", 1 "p"]
-# algorithm = [0 "bm25",  1 "sersimple", 2 "dhgb3",
-#              3 "tfidf", 4 "tfidf2",    5 "tfidf8", 6 "tfidf9"],
-# measure   = [0 "map", 1 "bpref"]
+# stemming  = [1 "n",     2 "p"]
+# algorithm = [1 "bm25",  2 "sersimple", 3 "dhgb3",
+#              4 "tfidf", 5 "tfidf2",    6 "tfidf8", 7 "tfidf9"],
+# measure   = [1 "map",   2 "bpref"]
 # topic     = []
 
 bigmap = [[],
@@ -238,23 +238,26 @@ def main(argv):
     # tag  = ["n.p.bm25"]
     # code = [["01110", "02110"]]
 
-    plan = [["n.p.bm25",         "01110", "02110"], 
-            ["sersimple.tfidf8", "02110", "02510"], 
-            ["tfidf8.tfidf9",    "02510", "02610"],
-            ["tfidf8.tfidf2",    "02510", "02410"],
-            ["tfidf8.dhgb3",     "02510", "02310"]]
+    plan = [["NBM25.PBM25",     "nbm25.pbm25",      "01110", "02110"], 
+            ["SERSIMPLE.TFIDF", "sersimple.tfidf8", "02210", "02610"], 
+            ["TFIDF.TFIDF1",    "tfidf8.tfidf9",    "02610", "02710"],
+            ["TFIDF.TFIDF2",    "tfidf8.tfidf2",    "02610", "02510"],
+            ["TFIDF.TFIDF3",    "tfidf8.dhgb3",     "02610", "02310"]]
 
     for i in range(len(plan)):
 
-        tag = plan[i][0]
+        pre = plan[i][0]
+        tag = plan[i][1]
+        
+        p1,p2 = tag.split(".")
 
-        t1_ = tag + "." + "v1"
-        t2_ = tag + "." + "v2"
-        t_  = tag + "." + "meta"
-        s_  = tag + "." + "summary"
+        t1_ = pre + "." + p1 + "." + "v1"
+        t2_ = pre + "." + p2 + "." + "v2"
+        t_  = pre + "." + "meta"
+        s_  = pre + "." + "summary"
 
-        t1 = table(evals, plan[i][1])
-        t2 = table(evals, plan[i][2])
+        t1 = table(evals, plan[i][2])
+        t2 = table(evals, plan[i][3])
 
         print_datatab(t1, t1_)
         print_datatab(t2, t2_)
