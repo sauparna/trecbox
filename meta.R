@@ -52,7 +52,7 @@ meta_analysis = function(in_d, out_d)
     oname = paste(basename(path[i]), "D.RE", "pdf", sep=".")
     ofile = paste(out_d, oname, sep="/")
     pdf(ofile)
-    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol, xlim=c(8, -6), alim=c(-3.5,3.5)))
+    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol, xlim=c(0.5, -0.5), alim=c(-0.31,0.31)))
     #print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol))
     dev.off()
     
