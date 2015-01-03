@@ -6,6 +6,14 @@ DOCNO file DOCNO TEXT
 
 When using flatten pass it the old offsets file.
 
+TREC CD 1-5 document sources
+
+CD1  AP DOE FR WSJ ZIFF 
+CD2  AP FR WSJ ZIFF
+CD3  AP PAT SJM ZIFF
+CD4  CR FR FT
+CD5  FBIS LA
+
 On TREC document structure
 ----
 
