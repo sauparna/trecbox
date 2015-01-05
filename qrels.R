@@ -24,21 +24,22 @@ qrelsplot = function(in_d, out_d, YMAX, sort=0)
         ofile = paste(out_d, oname, sep="/")
         df = tab[[i]]
 
-        #bp = barplot(tab[[i]]$total, ylim=c(0,YMAX), names.arg=tab[[i]]$QID, xlab="Topic ID", ylab="# relevant", las=2, cex.names=0.5)
+        ## bp = barplot(tab[[i]]$total, ylim=c(0,YMAX), names.arg=tab[[i]]$QID, xlab="Topic ID", ylab="# relevant", las=2, cex.names=0.5)
         bp = ggplot(df, aes(x=reorder(factor(QID), total), y=total, fill=factor(bin))) + geom_bar(stat="identity")
         ## bp = bp + scale_fill_discrete(breaks=levels(factor(df$bin)), labels=txt)
-        bp = bp + scale_fill_manual(values=cbPalette, breaks=levels(factor(tab$bin)), labels=txt)
+        ## bp = bp + scale_fill_manual(values=cbPalette, breaks=levels(factor(df$bin)), labels=txt)
         bp = bp + theme(axis.text.x=element_text(angle=90, vjust=0.5, size=2))
         bp = bp + scale_fill_hue(c=45, l=80)
+        bp = bp + scale_y_continuous(limits=c(0,500))
 
         pdf(ofile)
         print(bp)
         dev.off()
 
-        xt = xtable(tab[[i]], caption=basename(path[i])), type="latex", file=ofile
+        ## xt = xtable(tab[[i]], caption=basename(path[i])), type="latex", file=ofile
         
-        oname = paste(basename(path[i]), "R", "tex", sep=".")
-        ofile = paste(out_d, oname, sep="/")
-        print(xt)
+        ## oname = paste(basename(path[i]), "R", "tex", sep=".")
+        ## ofile = paste(out_d, oname, sep="/")
+        ## print(xt)
     }
 }
