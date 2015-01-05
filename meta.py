@@ -1,60 +1,8 @@
 import sys
-import math
-import numpy as np
-import scipy.stats as stats
-import fileinput as fin
-from collections import OrderedDict as od 
-import simplejson as json
 import os
-
-def print_summary(s, f=None):
-    # s = [M, V, E, Z, L, U]
-    fp = None
-    if f:
-        fp = open(f, "w")
-    fmt = "{:>7} {:>7} {:>7} {:>7} {:>7} {:>7}"
-    print(fmt.format("M", "V", "E", "Z", "L", "U"), file=fp)
-    fmt = "{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}"
-    print(fmt.format(*s), file=fp)
-    if fp:
-        fp.close()
-    
-def print_datatab(tab, f=None):
-    fp = None
-    if f:
-        fp = open(f, "w")
-    fmt = "{:>10} {:>5} {:>7}"
-    print(fmt.format("testcol", "topic", "score"), file=fp)
-    fmt = "{:>10} {:>5} {:>7.4f}"
-    for i in range(len(tab)):
-        print(fmt.format(tab[i][0], tab[i][1], tab[i][2]), file=fp)
-    if fp:
-        fp.close()
-
-def print_metatab(tab, f=None):
-    fp = None
-    if f:
-        fp = open(f, "w")
-
-    fmt = "{:>10} {:>7}{:>7}{:>7} {:>7}{:>7}{:>7} {:>7}{:>7}{:>8}{:>8} {:>8}{:>8}"
-    print(fmt.format("testcol", "m1","s1","n1",  "m2","s2","n2",
-                     "y","v","l","u", "w","W"),
-          file=fp)
-
-    for i in range(len(tab)):
-        fmt = "{:>10} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>8.4f}{:>8.4f} {:>8.4f}{:>8.4f}"
-        print(fmt.format(tab[i][0], 
-                         tab[i][1],tab[i][2],int(tab[i][3]), 
-                         tab[i][4],tab[i][5],int(tab[i][6]), 
-                         tab[i][7],tab[i][8],tab[i][9],tab[i][10],
-                         tab[i][11],tab[i][12]), 
-              file=fp)
-
-    if fp:
-        fp.close()
-
-def sd_pooled(s1, s2, n1, n2):
-    return (((n1 - 1) * s1**2 + (n2 - 1) * s2**2)/(n1 - 1 + n2 - 1)) ** 0.5
+import math
+import numpy as NP
+from collections import OrderedDict as OD
 
 def tau2(_y, _w, k):
     _wy2 = []
@@ -74,117 +22,49 @@ def tau2(_y, _w, k):
     T2 = (Q - df) / C
     return T2
 
-def gobble(files):
-    # evals[f.m.t] = s
-    evals = od()
-    for l in fin.input(files):
-        f = os.path.basename(fin.filename())
-        m,t,s = l.split()
-        if t == "all":
+def compute(mat):
+    # mat = [testcol, topic, MAP1, MAP2]
+
+    tab  = []
+    prev = mat[0][0]
+
+    v1 = []
+    v2 = []
+
+    for i in range(len(mat)):
+        if mat[i][0] == prev and i < len(mat)-1:
+            v1.append(mat[i][2])
+            v2.append(mat[i][3])
             continue
-        k = ".".join([f,m,t])
-        evals[k] = float(s)
-        # if f not in evals:
-        #     evals[f] = od()
-        # if m not in evals[f]:
-        #     evals[f][m] = od()
-        # evals[f][m][t] = s
-    return evals
+        if i == len(mat)-1:
+            v1.append(mat[i][2])
+            v2.append(mat[i][3])
+        n1 = len(v1)
+        n2 = len(v2)
+        m1 = NP.mean(v1)
+        m2 = NP.mean(v2)
+        s1 = NP.std(v1, ddof=1) # n-1 in denominator
+        s2 = NP.std(v2, ddof=1)
+        sp = ((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / (n1 - 1 + n2 - 1)
+        y  = math.log(m2 / m1)
+        v  = sp * sp * (1 / (n1 * m1 * m1) + 1 / (n2 * m2 * m2))
+        se = v**0.5
+        l  = y - 1.96 * se
+        u  = y + 1.96 * se
+        w  = 1 / v
+        #          [0      1   2   3   4   5   6  7  8  9  10 11]
+        tab.append([prev, m1, s1, n1, m2, s2, n2, y, v, l, u, w ])
+        prev = mat[i][0]
+        v1 = [mat[i][2]]
+        v2 = [mat[i][3]]
 
-# # BITMAP
-# doc stem algorithm measure score
-# d s a m t
-# 0 0 1 1 0
-
-# # BIGMAP
-# doc       = []
-# stemming  = [1 "n",     2 "p"]
-# algorithm = [1 "bm25",  2 "sersimple", 3 "dhgb3",
-#              4 "tfidf", 5 "tfidf2",    6 "tfidf8", 7 "tfidf9"],
-# measure   = [1 "map",   2 "bpref"]
-# topic     = []
-
-bigmap = [[],
-          ["n", "p"],
-          ["bm25", "sersimple", "dhgb3",
-           "tfidf", "tfidf2", "tfidf8", "tfidf9"],
-          ["map"],
-          []
-         ]
-
-def table(evals, bmp="01110"):
-    # tab = [testcol, topic, score]
-    bitmap = [int(x) for x in list(bmp)]
-
-    pos = []
-    var = []
-    for i in range(len(bitmap)):
-        if bitmap[i] != 0:
-            pos.append(i)
-        else:
-            var.append(i)
-
-    tab = []
-    for k in evals:
-        row = []
-        match = 0
-        part = k.split(".")
-        for i in range(len(pos)):
-            if part[pos[i]] == bigmap[pos[i]][bitmap[pos[i]]-1]:
-                match += 1
-        if match == len(pos):
-            for j in range(len(var)):
-                row.append(part[var[j]])
-            row.append(evals[k])
-            tab.append(row)
-    return tab
-
-# an annotated vector
-def avector(tab):
-    # From [t, q, s] to {t: {q: s}}
-    d = {}
-    for i in range(len(tab)):
-        t = tab[i][0]; q = tab[i][1]; s = tab[i][2]
-        if t not in d:
-            d[t] = {}
-        d[t][q] = s
-    return d
-
-def compute(d1, d2, es="RR", model="RE"):
-    # d = {t: {q: s}}
-
-    tab = []
-    sum_wy = 0.0
-    sum_w  = 0.0
-
-    for t in d1:
-        v1  = np.fromiter(d1[t].values(), np.float)
-        n1  = len(v1)
-        s1  = v1.std(ddof=1)
-        m1  = v1.mean()
-
-        v2  = np.fromiter(d2[t].values(), np.float)
-        n2  = len(v2)
-        s2  = v2.std(ddof=1)
-        m2  = v2.mean()
-
-        s = ((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2)/(n1 - 1 + n2 - 1)
-        y = math.log(m2) - math.log(m1)
-        v = s * (1 / (n1 * m1 * m1) + 1 / (n2 * m2 * m2))
-        l = y - 1.96 * v**0.5
-        u = y + 1.96 * v**0.5
-        w = 1 / v
-        
-        #          [0  1   2   3   4   5   6   7  8  9  10 11]
-        tab.append([t, m1, s1, n1, m2, s2, n2, y, v, l, u, w ])
-
-    # # DEBUG
-    # tab = [["Carroll", 94,22,60,  92,20,60,  0.095, 0.033, 30.352],
-    #        ["Grant",   98,21,65,  92,22,65,  0.277, 0.031, 32.568],
-    #        ["Peck",    98,28,40,  88,26,40,  0.367, 0.050, 20.048],
-    #        ["Donat",   94,19,200, 82,17,200, 0.664, 0.011, 95.111],
-    #        ["Stewart", 98,21,50,  88,22,45,  0.462, 0.043, 23.439],
-    #        ["Young",   96,21,85,  92,22,85,  0.185, 0.023, 42.698]]
+    # # DEBUG                                                                   
+    # tab = [["Carroll", 94,22,60,  92,20,60,  0.095, 0.033, 30.352],           
+    #        ["Grant",   98,21,65,  92,22,65,  0.277, 0.031, 32.568],           
+    #        ["Peck",    98,28,40,  88,26,40,  0.367, 0.050, 20.048],           
+    #        ["Donat",   94,19,200, 82,17,200, 0.664, 0.011, 95.111],           
+    #        ["Stewart", 98,21,50,  88,22,45,  0.462, 0.043, 23.439],           
+    #        ["Young",   96,21,85,  92,22,85,  0.185, 0.023, 42.698]]           
 
     k = len(tab)
 
@@ -202,15 +82,14 @@ def compute(d1, d2, es="RR", model="RE"):
         y = 7
         v = 8
         w = 1 / (tab[i][v] + T2)
-        tab[i].append(w)
+        tab[i].append(T2)             # new element at index 12
+        tab[i].append(w)              # new element at index 13
 
-    ov = summary(tab)
-
-    return tab, ov
+    return tab
 
 def summary(tab, model="RE"):
     y = 7
-    w = 12
+    w = 13
     if model == "FE":
         w = 11
     _wy = []
@@ -224,48 +103,88 @@ def summary(tab, model="RE"):
     Z = M / E
     L = M - 1.96 * E
     U = M + 1.96 * E
-    return [M, V, E, Z, L, U]
+    m = math.exp(M)
+    l = math.exp(L)
+    u = math.exp(U)
 
+    return [M, V, E, Z, L, U, m, l, u]
+
+def print_summary(s, f=None):
+    # s = [M, V, E, Z, L, U]                                                    
+    fp = None
+    if f:
+        fp = open(f, "w")
+    fmt = "{:>7} {:>7} {:>7} {:>7} {:>7} {:>7}  {:>7} {:>7} {:>7}"
+    print(fmt.format("M", "V", "E", "Z", "L", "U", "m", "l", "u"), file=fp)
+    fmt = "{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}  {:>7.4f} {:>7.4f} {:>7.4f}"
+    print(fmt.format(*s), file=fp)
+    if fp:
+        fp.close()
+
+def print_meta(tab, f=None):
+    fp = None
+    if f:
+        fp = open(f, "w")
+    fmt = "{:>10} {:>7}{:>7}{:>7} {:>7}{:>7}{:>7} {:>7}{:>7}{:>8}{:>8} {:>8}{:>8}{:>8}"
+    print(fmt.format("testcol", "m1","s1","n1",  "m2","s2","n2",
+                     "y","v","l","u", "w", "tau2", "W"),
+          file=fp)
+    for i in range(len(tab)):
+        fmt = "{:>10} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>8.4f}{:>8.4f} {:>8.4f}{:>8.4f}{:>8.4f}"
+        print(fmt.format(tab[i][0],
+                         tab[i][1], tab[i][2], int(tab[i][3]),
+                         tab[i][4], tab[i][5], int(tab[i][6]),
+                         tab[i][7], tab[i][8], tab[i][9], tab[i][10],
+                         tab[i][11],tab[i][12],tab[i][13]),
+              file=fp)
+    if fp:
+        fp.close()
+
+def print_matrix(mat, f=None):
+    fp = None
+    if f:
+        fp = open(f, "w")
+    fmt="{:<10} {:<10} {:<10} {:<10}"
+    print(fmt.format("testcol", "topic", "MAP1", "MAP2"), file=fp)
+    for i in range(len(mat)):
+        fmt="{:<10} {:<10} {:<10.4f} {:<10.4f}"
+        print(fmt.format(mat[i][0], mat[i][1], mat[i][2], mat[i][3]), file=fp)
+    if fp:
+        fp.close()
+
+def matrix(f):
+    # returns mat = [testcol, topic, MAP1, MAP2]
+    mat = []
+    with open(f, "r") as fp:
+        next(fp)
+        for l in fp:
+            t,top,m1,m2 = [x.strip() for x in l.split()]
+            mat.append([t, int(top), float(m1), float(m2)])
+    return mat
+        
 def main(argv):
-
-    # Usage: meta.py path/to/evals/*
-
-    evals = gobble(argv[1:])
-    #print(json.dumps(evals, indent=2))
-    # print(len(evals))
+    # USAGE: meta.py <pairs dir> <meta dir>
+    ind     = argv[1]
+    outd    = argv[2]
 
     # # DEBUG
-    # tag  = ["n.p.bm25"]
-    # code = [["01110", "02110"]]
+    # pairs = ["logtfnondl"]
 
-    plan = [["NBM25.PBM25",     "nbm25.pbm25",      "01110", "02110"], 
-            ["SERSIMPLE.TFIDF", "sersimple.tfidf8", "02210", "02610"], 
-            ["TFIDF.TFIDF1",    "tfidf8.tfidf9",    "02610", "02710"],
-            ["TFIDF.TFIDF2",    "tfidf8.tfidf2",    "02610", "02510"],
-            ["TFIDF.TFIDF3",    "tfidf8.dhgb3",     "02610", "02310"]]
+    pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
 
-    for i in range(len(plan)):
+    # mat  = [[testcol, topic, m1, m2], ...]
+    # meta = [[testcol, m1, s1, n1, m2, s2, n2, y, v, l, u, w], ...]
+    # ov   = [M, V, E, Z, L, U, m, l, u]
 
-        pre = plan[i][0]
-        tag = plan[i][1]
-        
-        p1,p2 = tag.split(".")
-
-        t1_ = pre + "." + p1 + "." + "v1"
-        t2_ = pre + "." + p2 + "." + "v2"
-        t_  = pre + "." + "meta"
-        s_  = pre + "." + "summary"
-
-        t1 = table(evals, plan[i][2])
-        t2 = table(evals, plan[i][3])
-
-        print_datatab(t1, t1_)
-        print_datatab(t2, t2_)
-
-        t,s = compute(avector(t1), avector(t2))
-
-        print_metatab(t, t_)
-        print_summary(s, s_)
-
+    for p in pairs:
+        inf  = os.path.join(ind, p, p)
+        outf = os.path.join(outd, p)
+        mat  = matrix(inf)
+        meta = compute(mat)
+        ov   = summary(meta)
+        print_matrix(mat, outf+".v") 
+        print_meta(meta, outf+".m")
+        print_summary(ov, outf+".s")
+ 
 if __name__ == "__main__":
     main(sys.argv)
