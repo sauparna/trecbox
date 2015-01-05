@@ -11,10 +11,10 @@ def tau2(_y, _w, k):
     for i in range(len(_w)):
         w = _w[i]
         y = _y[i]
-        _wy2.append(w * y**2)
+        _wy2.append(w * y * y)
         _wy.append(w * y)
-        _w2.append(w**2)
-    Q  = sum(_wy2) - (sum(_wy)**2) / sum(_w)
+        _w2.append(w * w)
+    Q  = sum(_wy2) - (sum(_wy) * sum(_wy)) / sum(_w)
     df = k - 1
     if Q < df:
         return 0.0
@@ -45,10 +45,10 @@ def compute(mat):
         m2 = NP.mean(v2)
         s1 = NP.std(v1, ddof=1) # n-1 in denominator
         s2 = NP.std(v2, ddof=1)
-        sp = ((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / (n1 - 1 + n2 - 1)
+        sp = math.sqrt(((n1 - 1) * s1 * s1 + (n2 - 1) * s2 * s2) / (n1 - 1 + n2 - 1))
         y  = math.log(m2 / m1)
         v  = sp * sp * (1 / (n1 * m1 * m1) + 1 / (n2 * m2 * m2))
-        se = v**0.5
+        se = math.sqrt(v)
         l  = y - 1.96 * se
         u  = y + 1.96 * se
         w  = 1 / v
@@ -99,7 +99,7 @@ def summary(tab, model="RE"):
        _w.append(tab[i][w])
     M = sum(_wy) / sum(_w)
     V = 1 / sum(_w)
-    E = V**0.5
+    E = math.sqrt(V)
     Z = M / E
     L = M - 1.96 * E
     U = M + 1.96 * E
@@ -130,7 +130,7 @@ def print_meta(tab, f=None):
                      "y","v","l","u", "w", "tau2", "W"),
           file=fp)
     for i in range(len(tab)):
-        fmt = "{:>10} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>8.4f}{:>8.4f} {:>8.4f}{:>8.4f}{:>8.4f}"
+        fmt = "{:>10} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>8.4f}{:>8.4f} {:>8.2f}{:>8.4f}{:>8.2f}"
         print(fmt.format(tab[i][0],
                          tab[i][1], tab[i][2], int(tab[i][3]),
                          tab[i][4], tab[i][5], int(tab[i][6]),
