@@ -163,7 +163,7 @@ def matrix(f):
     return mat
         
 def main(argv):
-    # USAGE: meta.py <pairs dir> <meta dir>
+    # USAGE: meta.py <pairs in dir> <meta out dir>
     ind     = argv[1]
     outd    = argv[2]
 
