@@ -22,16 +22,6 @@ def tau2(_y, _w, k):
     T2 = (Q - df) / C
     return T2
 
-def matrix(pair, testcols, ind):
-    mat = []
-    for t in testcols:
-        inf = os.path.join(ind, pair, t+"."+pair)
-        with open(inf, "r") as fp:
-            for l in fp:
-                top,m1,m2 = [x.strip() for x in l.split()]
-                mat.append([t, int(top), float(m1), float(m2)])
-    return mat
-
 def compute(mat):
     # mat = [testcol, topic, MAP1, MAP2]
 
@@ -161,31 +151,40 @@ def print_matrix(mat, f=None):
         print(fmt.format(mat[i][0], mat[i][1], mat[i][2], mat[i][3]), file=fp)
     if fp:
         fp.close()
+
+def matrix(f):
+    # returns mat = [testcol, topic, MAP1, MAP2]
+    mat = []
+    with open(f, "r") as fp:
+        next(fp)
+        for l in fp:
+            t,top,m1,m2 = [x.strip() for x in l.split()]
+            mat.append([t, int(top), float(m1), float(m2)])
+    return mat
         
 def main(argv):
     # USAGE: meta.py <pairs dir> <meta dir>
     ind     = argv[1]
     outd    = argv[2]
 
-    # DEBUG
-    pairs = ["logtf"]
-    testcols = ["FR", "T6"]
+    # # DEBUG
+    # pairs = ["logtfnondl"]
 
-    # pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
-    # testcols = ["FBIS", "FR", "FT", "LA", "T6", "T7", "T8", "T678"]
+    pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
 
-    # mat  = [testcol, topic, m1, m2]
-    # meta = [testcol, m1, s1, n1, m2, s2, n2, y, v, l, u, w]
-    # ov   = [M, V, E, Z, L, U]
+    # mat  = [[testcol, topic, m1, m2], ...]
+    # meta = [[testcol, m1, s1, n1, m2, s2, n2, y, v, l, u, w], ...]
+    # ov   = [M, V, E, Z, L, U, m, l, u]
 
     for p in pairs:
+        inf  = os.path.join(ind, p, p)
         outf = os.path.join(outd, p)
-        mat  = matrix(p, testcols, ind)
+        mat  = matrix(inf)
         meta = compute(mat)
         ov   = summary(meta)
-        print_matrix(mat, outf+".data") 
-        print_meta(meta, outf+".meta")
-        print_summary(ov, outf+".ov")
+        print_matrix(mat, outf+".v") 
+        print_meta(meta, outf+".m")
+        print_summary(ov, outf+".s")
  
 if __name__ == "__main__":
     main(sys.argv)
