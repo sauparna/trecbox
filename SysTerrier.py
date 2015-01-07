@@ -17,9 +17,11 @@ class SysTerrier():
                           "tfidf1": "TFIDF1", "tfidf2": "TFIDF2", "tfidf3": "TFIDF3",
                           "tfidf4": "TFIDF4", "tfidf5": "TFIDF5", "tfidf6": "TFIDF6",
                           "tfidf7": "TFIDF7", "tfidf8": "TFIDF8", "tfidf9": "TFIDF9",
-                          "sersimple": "SERSIMPLE", "sersimple1": "SERSIMPLE1", 
-                          "sersimple2": "SERSIMPLE2", "serbm25": "SERBM25", 
-                          "dhgb": "DHGB", "dhgb1": "DHGB1", "dhgb2": "DHGB2", "dhgb3": "DHGB3",
+                          "SERSIMPLE" : "SERSIMPLE", "SERSIMPLE1": "SERSIMPLE1", 
+                          "SERSIMPLE2": "SERSIMPLE2", "SERBM25"  : "SERBM25", 
+                          "DHGB": "DHGB", "DHGB1": "DHGB1", "DHGB2": "DHGB2", "DHGB3": "DHGB3",
+                          "TFIDF0" : "TFIDF0", "NOIDF"  : "NOIDF", "NONDL": "NONDL",
+                          "NOLOGTF": "NOLOGTF", "LOGNDL": "LOGNDL",
                           "xsqram": "XSqrA_M", "tfidf": "TF_IDF"}
 
         self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
