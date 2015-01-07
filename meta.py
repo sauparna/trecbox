@@ -2,6 +2,7 @@ import sys
 import os
 import math
 import numpy as NP
+from scipy import stats
 from collections import OrderedDict as OD
 
 def tau2(_y, _w, k):
@@ -106,17 +107,20 @@ def summary(tab, model="RE"):
     m = math.exp(M)
     l = math.exp(L)
     u = math.exp(U)
+    p1 = 1.0 - stats.norm.cdf(-abs(Z), loc=0.0, scale=1.0)
+    p2 = 1.0 + stats.norm.cdf(-abs(Z), loc=0.0, scale=1.0)
+    p  = 2.0 * (1.0 - stats.norm.cdf(abs(Z), loc=0.0, scale=1.0))
 
-    return [M, V, E, Z, L, U, m, l, u]
+    return [M, V, E, Z, L, U, m, l, u, p1, p2, p]
 
 def print_summary(s, f=None):
-    # s = [M, V, E, Z, L, U]                                                    
+    # s = [M, V, E, Z, L, U, m, l, u, p1, p2, p]
     fp = None
     if f:
         fp = open(f, "w")
-    fmt = "{:>7} {:>7} {:>7} {:>7} {:>7} {:>7}  {:>7} {:>7} {:>7}"
-    print(fmt.format("M", "V", "E", "Z", "L", "U", "m", "l", "u"), file=fp)
-    fmt = "{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}  {:>7.4f} {:>7.4f} {:>7.4f}"
+    fmt = "{:>7} {:>7} {:>7} {:>7} {:>7} {:>7}  {:>7} {:>7} {:>7}  {:>7} {:>7} {:>7}"
+    print(fmt.format("M", "V", "E", "Z", "L", "U", "m", "l", "u", "p1", "p2", "p"), file=fp)
+    fmt = "{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}  {:>7.4f} {:>7.4f} {:>7.4f}  {:>7.4f} {:>7.4f} {:>7.4f}"
     print(fmt.format(*s), file=fp)
     if fp:
         fp.close()
@@ -125,30 +129,18 @@ def print_meta(tab, f=None):
     fp = None
     if f:
         fp = open(f, "w")
-    fmt = "{:>10} {:>7}{:>7}{:>7} {:>7}{:>7}{:>7} {:>7}{:>7}{:>8}{:>8} {:>8}{:>8}{:>8}"
+    fmt = "{:>10}  {:>7} {:>7} {:>4}  {:>7} {:>7} {:>4}  {:>8} {:>8} {:>8} {:>8}  {:>8} {:>8} {:>8}"
     print(fmt.format("testcol", "m1","s1","n1",  "m2","s2","n2",
                      "y","v","l","u", "w", "tau2", "W"),
           file=fp)
     for i in range(len(tab)):
-        fmt = "{:>10} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>7d} {:>7.4f}{:>7.4f}{:>8.4f}{:>8.4f} {:>8.2f}{:>8.4f}{:>8.2f}"
+        fmt = "{:>10}  {:>7.4f} {:>7.4f} {:>4d}  {:>7.4f} {:>7.4f} {:>4d}  {:>8.4f} {:>8.4f} {:>8.4f} {:>8.4f}  {:>8.2f} {:>8.4f} {:>8.2f}"
         print(fmt.format(tab[i][0],
                          tab[i][1], tab[i][2], int(tab[i][3]),
                          tab[i][4], tab[i][5], int(tab[i][6]),
                          tab[i][7], tab[i][8], tab[i][9], tab[i][10],
                          tab[i][11],tab[i][12],tab[i][13]),
               file=fp)
-    if fp:
-        fp.close()
-
-def print_matrix(mat, f=None):
-    fp = None
-    if f:
-        fp = open(f, "w")
-    fmt="{:<10} {:<10} {:<10} {:<10}"
-    print(fmt.format("testcol", "topic", "MAP1", "MAP2"), file=fp)
-    for i in range(len(mat)):
-        fmt="{:<10} {:<10} {:<10.4f} {:<10.4f}"
-        print(fmt.format(mat[i][0], mat[i][1], mat[i][2], mat[i][3]), file=fp)
     if fp:
         fp.close()
 
@@ -163,26 +155,26 @@ def matrix(f):
     return mat
         
 def main(argv):
-    # USAGE: meta.py <pairs in dir> <meta out dir>
+    # USAGE: meta.py <pairs dir> <meta dir>
     ind     = argv[1]
     outd    = argv[2]
 
     # # DEBUG
     # pairs = ["logtfnondl"]
 
-    pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
+    # pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
+    pairs = ["stem", "tfidf", "noidf", "nondl", "nologtf", "logndl"]
 
     # mat  = [[testcol, topic, m1, m2], ...]
     # meta = [[testcol, m1, s1, n1, m2, s2, n2, y, v, l, u, w], ...]
     # ov   = [M, V, E, Z, L, U, m, l, u]
 
     for p in pairs:
-        inf  = os.path.join(ind, p, p)
+        inf  = os.path.join(ind, p)
         outf = os.path.join(outd, p)
         mat  = matrix(inf)
         meta = compute(mat)
         ov   = summary(meta)
-        print_matrix(mat, outf+".v") 
         print_meta(meta, outf+".m")
         print_summary(ov, outf+".s")
  
