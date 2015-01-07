@@ -50,19 +50,19 @@ meta_analysis = function(in_d, out_d)
     # Do the meta-analysis and write summary and plot to file
 
     # NOTE: metafor's v_ differs from v
-    ma.D.RE[[i]] = rma.uni(data=es.D[[i]], yi=y, vi=v, tau2=tab[[i]]$tau2, method="DL")
+    ma.D.RE[[i]] = rma.uni(data=es.D[[i]], yi=y_, vi=v_, tau2=tab[[i]]$tau2, method="DL")
     ma.R.RE[[i]] = rma.uni(data=es.R[[i]], yi=y, vi=v, tau2=tab[[i]]$tau2, method="DL")
     ## ma.D.RE[[i]] = rma.uni(data=es.D[[i]], yi=y_, vi=v_, tau2=tab[[i]]$tau2, method="DL")
     ## ma.R.RE[[i]] = rma.uni(data=es.R[[i]], yi=y_, vi=v_, tau2=tab[[i]]$tau2, method="DL")
 
     # summary
-    oname = paste(basename(path[i]), "D.RE", "s", sep=".")
+    oname = paste(basename(path[i]), "D.RE", "s", "txt", sep=".")
     ofile = paste(out_d, oname, sep="/")
     sink(file=ofile)
     print(summary(ma.D.RE[[i]]))
     sink(NULL)
     
-    oname = paste(basename(path[i]), "R.RE", "s", sep=".")
+    oname = paste(basename(path[i]), "R.RE.s", "txt", sep=".")
     ofile = paste(out_d, oname, sep="/")
     sink(file=ofile)
     print(summary(ma.R.RE[[i]]))
@@ -72,15 +72,21 @@ meta_analysis = function(in_d, out_d)
     oname = paste(basename(path[i]), "D.RE", "pdf", sep=".")
     ofile = paste(out_d, oname, sep="/")
     pdf(ofile)
-    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), refline=0, slab=es.R[[i]]$testcol, mlab="m2-m1, RE", xlab=basename(path[i])))
+    print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), refline=0, slab=es.R[[i]]$testcol, mlab="m2-m1, RE", alim=c(-0.1, 0.3), xlim=c(-0.2,0.5), xlab=basename(path[i])))
     #print(forest.rma(ma.D.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol))
     dev.off()
-    
+
     oname = paste(basename(path[i]), "R.RE", "pdf", sep=".")
     ofile = paste(out_d, oname, sep="/")
     pdf(ofile)
-    print(forest.rma(ma.R.RE[[i]], digit=c(2, 2),  refline=0, slab=es.R[[i]]$testcol, mlab="log(m2/m1), RE", xlab=basename(path[i])))
-    #print(forest.rma(ma.R.RE[[i]], digit=c(2, 2), slab=es.R[[i]]$testcol))
+    print(forest.rma(ma.R.RE[[i]], digit=c(2, 2),  refline=0, slab=es.R[[i]]$testcol, mlab="log(m2/m1), RE", alim=c(-4.1, 2.7), xlim=c(5.5,-5.5), xlab=basename(path[i])))
     dev.off()
+
+    oname = paste(basename(path[i]), "R.RE.trans", "pdf", sep=".")
+    ofile = paste(out_d, oname, sep="/")
+    pdf(ofile)
+    print(forest.rma(ma.R.RE[[i]], digit=c(2, 2),  refline=1, slab=es.R[[i]]$testcol, mlab="m2/m1, RE", alim=c(0, 15), xlim=c(22,-4), transf=exp, xlab=basename(path[i])))
+    dev.off()
+
   }
 }
