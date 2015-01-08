@@ -159,11 +159,11 @@ def main(argv):
     ind     = argv[1]
     outd    = argv[2]
 
-    # # DEBUG
-    # pairs = ["logtfnondl"]
+    # DEBUG
+    pairs = ["tfidf"]
 
     # pairs    = ["stemtfidf", "tfidf", "noidf", "nondl", "logtfnondl", "logtf"]
-    pairs = ["stem", "tfidf", "noidf", "nondl", "nologtf", "logndl"]
+    # pairs = ["stem", "tfidf", "noidf", "nondl", "nologtf", "logndl"]
 
     # mat  = [[testcol, topic, m1, m2], ...]
     # meta = [[testcol, m1, s1, n1, m2, s2, n2, y, v, l, u, w], ...]
