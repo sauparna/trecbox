@@ -1,3 +1,4 @@
+from collections import OrderedDict as OD
 from bs4 import BeautifulSoup
 import re, sys
 
@@ -6,23 +7,21 @@ class Topics():
     def __init__(self, f):
         self.file = f
 
-    def query(self, opt, mode="t", qlist=None):
+    def query(self, opt=None, mode="t", qlist=None):
 
         # Usually, query() should return a malleable form of the query
         # text, read in from a file on disk. For indri, lucene and
         # terrier it returns a dict. It's recommended you don't return
-        # paths to a file on disk. If you have made a decision to dump
-        # the stuff in memory to disk at this point and return a path
-        # to the file, it looks bad. Let the systems do whatever they
+        # paths to a file on disk. Let the systems do whatever they
         # want with it.
 
-        q = {}
-        opt = opt.lower()
+        q    = OD()
+        if opt:
+            opt  = opt.lower()
         mode = mode.lower()
-        qlist = []
         soup = self.__hack_n_hew()
 
-        # If ever you want to prettyprint the soup without the tricks
+        # To prettyprint the soup without the tricks
         # print "\n".join(soup.prettify().split("\n")[2:-1])
 
         # indri and lucene can't stand puncs
@@ -35,8 +34,8 @@ class Topics():
         for top in soup.find_all("top"):
             # lower (older) qids are padded with zeros, as in '002'
             # int() drops these leading zeros
-            n = str(int(top.num.string.lstrip().rstrip()))
-            if qlist and (n not in qlist):
+            n = int(top.num.string.lstrip().rstrip())
+            if  qlist and (n not in qlist):
                 continue
             q[n] = ""
             for m in list(mode):
