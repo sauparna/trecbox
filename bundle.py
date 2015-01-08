@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# NOTE: DON'T USE:The idea of a file per <DOC> is bad.
 # Given a set of TREC DOCNOs, bundle a corpus out of TREC CDs.
 # input tuple [DOCNO, file, b1:b2, b3:b4, b5:b6]
 #
