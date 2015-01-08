@@ -64,7 +64,7 @@ class SysTerrier():
         for num in q.keys():
             T_top = soup.new_tag("top")
             T_num = soup.new_tag("num")
-            T_num.string = num
+            T_num.string = str(num)
             T_text = soup.new_tag("text")
             T_text.string = q[num]
             T_top.append(T_num)
