@@ -50,12 +50,15 @@ def main(argv):
         qsubsetl = None
         if len(t_) == 2:
             part = t_[1]
+        qsubsetl = []
         if len(t_) == 3:
             qsubsetf = t_[2]
             qsubsetp = os.path.join(path["TOPICS"], qsubsetf)
-            qsubsetl = list(set(open(qsubsetp, "r").read().splitlines()))
-
+            with open(qsubsetp, "r") as fp:
+                for l in fp:
+                    qsubsetl.append(int(l.strip()))
         query = Topics(topicsp).query(plan["system"], part, qsubsetl)
+        
         for stemmer in stems:
             itag = docs + "." + stemmer
             print(itag)
