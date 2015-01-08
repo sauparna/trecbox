@@ -2,12 +2,15 @@
 
 # Flattens the TREC documents. It reads and writes out the entire TREC
 # cd 1-5 corpus in neater format.
-# Usage: flatten.py <TREC doc dir> <offsets file> <output dir>
+# Usage: flatten.py <TREC doc dir> <offsets.old file> <output dir>
+# NOTE: the offsets of the new flattened document is written to a file in /tmp.
 
 import sys
 import simplejson as json
 import os
 import uuid
+
+LF = 10
 
 def main(argv):
     d_in = argv[1]
@@ -55,7 +58,7 @@ def main(argv):
         i_fp.seek(b)
         txt = bytearray(i_fp.read(e - b + 1))
         txt = txt.lstrip().rstrip()
-        txt.append(10)
+        txt.append(LF)
 
         sep = ("[[" + docno + "]]\n").encode()
         n = o_fp.write(sep)
