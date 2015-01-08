@@ -10,9 +10,9 @@
 # b1:b2 - marks a TREC document, the entire stuff starting from the
 # '<' of the <DOC> tag and ending in '>' of the </DOC> tag.
 #
-# b3:b4 - the DOCNO, inside the <DOCNO> tags, adjusted for the
-# presence of any whitespace between the tag boundaries and the DOCNO
-# string
+# b3:b4 - the DOCNO, inside and excluding the <DOCNO> tags, adjusted
+# for the presence of any whitespace between the tag boundaries and
+# the DOCNO string
 #
 # b5:b6 - the content inside (and exlcuding) the <TEXT> tags.
 #
