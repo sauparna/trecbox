@@ -98,7 +98,7 @@ class Topics():
         
         for c in txt:
             if c == "\n" or c == "\r" or c == "\t":
-                continue
+                c = " "
             elif c == "<":
                 stack1.append(c)
                 in_tag = True
