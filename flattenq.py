@@ -11,15 +11,15 @@ import simplejson as json
 from Topics import Topics
 
 def main(argv):
+
     # USAGE: flattenq.py <TREC query file> <out file>
+
     f = argv[1]
     o = argv[2]
     t = Topics(f)
     qt = t.query(mode="t")
     qd = t.query(mode="d")
     qn = t.query(mode="n")
-
-    # print(json.dumps(qt, indent=2))
 
     o_offsets = "/tmp/offsets." + str(uuid.uuid4())
     o_fp1 = open(o_offsets, "w")
