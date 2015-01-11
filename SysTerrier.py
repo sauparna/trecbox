@@ -22,6 +22,7 @@ class SysTerrier():
                           "DHGB": "DHGB", "DHGB1": "DHGB1", "DHGB2": "DHGB2", "DHGB3": "DHGB3",
                           "TFIDF0" : "TFIDF0", "NOIDF"  : "NOIDF", "NONDL": "NONDL",
                           "NOLOGTF": "NOLOGTF", "LOGNDL": "LOGNDL",
+                          "TFIDFA": "TFIDFA", "TFIDFB": "TFIDFB",  
                           "xsqram": "XSqrA_M", "tfidf": "TF_IDF"}
 
         self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
