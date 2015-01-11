@@ -1,0 +1,18 @@
+trecbox.py  : runs the system; indexes, retrieves and evals
+metapairs.sh: build the meta pairs
+meta.py     : does the meta-analysis, builds full table, one per pair
+metatable.py: gathers all tables into one file
+
+plans=privcolls/5/plans
+evals=privcolls/5/evals
+analysis=privcolls/5/analysis
+
+python3 trecbox/trecbox.py trecbox/conf.local plans/5
+
+bash trecbox/metapairs.sh evals analysis/pairs
+
+python3 trecbox/meta.py analysis/pairs analysis/meta
+
+mv analysis/meta/*.m analysis/meta/tables
+
+bash trecbox/metatable.sh analysis/meta/tables analysis/meta/all.m
