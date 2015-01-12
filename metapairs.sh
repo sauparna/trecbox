@@ -8,12 +8,12 @@ while read line
 do
     map=( ${map[@]} $line )
 done <<EOF
-stem:n.TFIDF0:p.TFIDF0
-tfidf:p.TFIDF0:p.SERSIMPLE
-noidf:p.TFIDF0:p.NOIDF
-nondl:p.TFIDF0:p.NONDL
-nologtf:p.TFIDF0:p.NOLOGTF
-logndl:p.TFIDF0:p.LOGNDL
+stem:n.TFIDFB:p.TFIDFB
+tfidf:p.TFIDFB:p.SERSIMPLE
+noidf:p.TFIDFB:p.NOIDF
+nondl:p.TFIDFB:p.NONDL
+nologtf:p.TFIDFB:p.NOLOGTF
+logndl:p.TFIDFB:p.LOGNDL
 EOF
 
 for str in "${map[@]}"
