@@ -3,7 +3,7 @@
 indir=$1
 outf=$2
 cat /dev/null >$outf
-for f in tfidf stem noidf nondl nologtf nondl
+for f in tfidf stem noidf nondl nologtf logndl
 do
     echo "$f" >>$outf
     cat $indir/$f.m >>$outf
