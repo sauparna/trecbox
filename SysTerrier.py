@@ -100,9 +100,12 @@ class SysTerrier():
         i_file  = self.__write_doclist(itag, doc)
         log     = ""
 
-        # This is the suggested string for disk 4 and 5
+        # This is the suggested string for disk 4 and 5:
+        # http://terrier.org/docs/v3.6/trec_examples.html
         # -DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
-        # The 'skip' settings below does away with all across disks 1,2,4,5.
+        # Use process and skip to normalize across disks 1-5:
+        # "-DTrecDocTags.process=TEXT" 
+        # "-DTrecDocTags.skip=DOCHDR,H3,DOCTITLE,HEADLINE,TTL,TITLE,HEAD,HL"
 
         try:
            log =  subprocess.check_output(
@@ -114,8 +117,7 @@ class SysTerrier():
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
-                "-DTrecDocTags.process=TEXT",
-                "-DTrecDocTags.skip=DOCHDR,H3,DOCTITLE,HEADLINE,TTL,TITLE,HEAD,HL",
+                "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
                 "-DTrecDocTags.casesensitive=true"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
@@ -125,7 +127,7 @@ class SysTerrier():
         with open(o_log, "w+b") as f:
             f.write(log)
 
-    def retrieve(self, itag, rtag, opt, m, q):
+    def retrieve(self, itag, rtag, opt, m, q, qe=None):
 
         # print(rtag)
 
@@ -133,6 +135,11 @@ class SysTerrier():
         o_file = rtag
         i_dir  = os.path.join(self.path["INDEX"], itag)
         i_file = self.__query_file(rtag, q)
+        qe_ctrl = ""
+        qe_ordr = ""
+        if qe:
+            qe_ctrl = "qe:QueryExpansion"
+            qe_ordr = "QueryExpansion"
         log    = ""
 
         if not os.path.exists(i_dir):
@@ -167,6 +174,8 @@ class SysTerrier():
                  "-DTrecQueryTags.process=TOP,NUM,TEXT",
                  "-DTrecQueryTags.skip=",
                  "-DTrecQueryTags.casesensitive=false",
+                 "-Dquerying.postprocesses.controls=" + qe_ctrl,
+                 "-Dquerying.postprocesses.order=" + qe_ordr,
                  "-Dstopwords.filename=" + stopwords,
                  "-Dtermpipelines="      + pipeline,
                  "-Dtrec.model=" + self.model_map[m],
