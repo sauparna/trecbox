@@ -32,6 +32,7 @@ def main(argv):
     
     matrix = plan["matrix"]
     models = plan["models"]
+    stops  = plan["stops"]
     stems  = plan["stems"]
     system = systems[plan["system"]]
 
@@ -58,15 +59,15 @@ def main(argv):
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
         query = Topics(topicsp).query(plan["system"], part, qsubsetl)
-        
+        stopf = stops[0]
         for stemmer in stems:
             itag = docs + "." + stemmer
             print(itag)
-            system.index(itag, docsp, ["stop", stemmer])
+            system.index(itag, docsp, [stopf, stemmer])
             for model in models:
                 rtag = testcol + "." + stemmer + "." + model
                 print(rtag)
-                system.retrieve(itag,  rtag, ["stop", stemmer], model, query)
+                system.retrieve(itag,  rtag, [stopf, stemmer], model, query, 1)
                 system.evaluate(rtag, qrelsp)
 
 if __name__ == "__main__":
