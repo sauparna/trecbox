@@ -8,25 +8,36 @@ class SysTerrier():
         self.path = path
         #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
 
-        self.model_map = {"bb2": "BB2", "bm25": "BM25", "dfi0": "DFI0", "dfrbm25": "DFR_BM25", 
-                          "dfree": "DFRee", "dirichletlm": "DirichletLM", "dlh": "DLH", 
-                          "dlh13": "DLH13", "dph": "DPH", "hiemstralm": "Hiemstra_LM", 
-                          "ifb2": "IFB2", "inexpb2": "In_expB2", "inexpc2": "In_expC2", 
-                          "inb2": "InB2", "inl2": "InL2", "jskls": "Js_KLs", 
-                          "lemurtfidf": "LemurTF_IDF", "lgd": "LGD", "pl2": "PL2", 
-                          "tfidf1": "TFIDF1", "tfidf2": "TFIDF2", "tfidf3": "TFIDF3",
-                          "tfidf4": "TFIDF4", "tfidf5": "TFIDF5", "tfidf6": "TFIDF6",
-                          "tfidf7": "TFIDF7", "tfidf8": "TFIDF8", "tfidf9": "TFIDF9",
-                          "SERSIMPLE" : "SERSIMPLE", "SERSIMPLE1": "SERSIMPLE1", 
-                          "SERSIMPLE2": "SERSIMPLE2", "SERBM25"  : "SERBM25", 
-                          "DHGB": "DHGB", "DHGB1": "DHGB1", "DHGB2": "DHGB2", "DHGB3": "DHGB3",
-                          "TFIDF0" : "TFIDF0", "NOIDF"  : "NOIDF", "NONDL": "NONDL",
-                          "NOLOGTF": "NOLOGTF", "LOGNDL": "LOGNDL",
-                          "TFIDFA": "TFIDFA", "TFIDFB": "TFIDFB",  
-                          "xsqram": "XSqrA_M", "tfidf": "TF_IDF"}
+        self.model_map = {"bb2"       : "BB2",         "bm25"       : "BM25",
+                          "dfi0"      : "DFI0",        "dfrbm25"    : "DFR_BM25", 
+                          "dfree"     : "DFRee",       "dirichletlm": "DirichletLM",
+                          "dlh"       : "DLH",         "hiemstralm" : "Hiemstra_LM",
+                          "dlh13"     : "DLH13",       "dph"        : "DPH", 
+                          "ifb2"      : "IFB2",        "inexpb2"    : "In_expB2",
+                          "inexpc2"   : "In_expC2",    "jskls"      : "Js_KLs",
+                          "inb2"      : "InB2",        "inl2"       : "InL2", 
+                          "lemurtfidf": "LemurTF_IDF", "lgd"        : "LGD",
+                          "pl2"       : "PL2",         "tfidf3"     : "TFIDF3",
+                          "tfidf1"    : "TFIDF1",      "tfidf2"     : "TFIDF2",
+                          "tfidf4"    : "TFIDF4",      "tfidf5"     : "TFIDF5",
+                          "tfidf6"    : "TFIDF6",      "tfidf9"     : "TFIDF9",
+                          "tfidf7"    : "TFIDF7",      "tfidf8"     : "TFIDF8",
+                          "SERSIMPLE" : "SERSIMPLE",   "SERSIMPLE1" : "SERSIMPLE1", 
+                          "SERSIMPLE2": "SERSIMPLE2",  "SERBM25"    : "SERBM25", 
+                          "DHGB"      : "DHGB",        "DHGB1"      : "DHGB1",
+                          "DHGB2"     : "DHGB2",       "DHGB3"      : "DHGB3",
+                          "TFIDF0"    : "TFIDF0",      "NOIDF"      : "NOIDF",
+                          "NONDL"     : "NONDL",       "tf"         : "Tf",
+                          "NOLOGTF"   : "NOLOGTF",     "LOGNDL"     : "LOGNDL",
+                          "TFIDFA"    : "TFIDFA",      "TFIDFB"     : "TFIDFB",  
+                          "xsqram"    : "XSqrA_M",     "tfidf"      : "TF_IDF"}
 
-        self.stemmer_map = {"p": "PorterStemmer", "w": "WeakPorterStemmer",
-                            "s": "EnglishSnowballStemmer"}
+        self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
+                            "sn": "EnglishSnowballStemmer"}
+
+        self.qe_map      = {"kl0": "KL",         "kla": "BA",        "kli": "Information",
+                            "klm": "KLComplete", "klr": "KLCorrect", "bo1": "Bo1",
+                            "bo2": "Bo2"}
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
@@ -36,21 +47,17 @@ class SysTerrier():
         return o_file
 
     def __build_termpipeline(self, opt):
-
-        # opt is a fixed length list, so check for it
-
-        p = ["NoOp", "NoOp"]
-
-        stopwords = ""
-
-        if opt[0] != "None":
-            p[0] = "Stopwords"
-            stopwords = os.path.join(self.path["MISC"], opt[0])
-
+        p = ["", ""]
+        stopp = os.path.join(self.path["MISC"], opt[0])
+        p[0]  = "Stopwords"
+        if opt[0] == "xxx":
+            p[0]  = "NoOp"
+            stopp = ""
         if opt[1] in self.stemmer_map.keys():
             p[1] = self.stemmer_map[opt[1]]
-            
-        return ",".join(p), stopwords
+        if opt[1] == "xx":
+            p[1] = "NoOp"
+        return p[0] + "," + p[1], stopp
 
     def __query_file(self, rtag, q):
 
@@ -63,10 +70,10 @@ class SysTerrier():
         # float n query tags in the soup
 
         for num in q.keys():
-            T_top = soup.new_tag("top")
-            T_num = soup.new_tag("num")
+            T_top = soup.new_tag("TOP")
+            T_num = soup.new_tag("NUM")
             T_num.string = str(num)
-            T_text = soup.new_tag("text")
+            T_text = soup.new_tag("TEXT")
             T_text.string = q[num]
             T_top.append(T_num)
             T_top.append(T_text)
@@ -100,8 +107,7 @@ class SysTerrier():
         i_file  = self.__write_doclist(itag, doc)
         log     = ""
 
-        # This is the suggested string for disk 4 and 5:
-        # http://terrier.org/docs/v3.6/trec_examples.html
+        # recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4&5
         # -DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
         # Use process and skip to normalize across disks 1-5:
         # "-DTrecDocTags.process=TEXT" 
@@ -117,8 +123,9 @@ class SysTerrier():
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
+                "-DTrecDocTags.skip=DOCHDR",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
-                "-DTrecDocTags.casesensitive=true"],
+                "-DTrecDocTags.casesensitive=false"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
@@ -127,20 +134,35 @@ class SysTerrier():
         with open(o_log, "w+b") as f:
             f.write(log)
 
-    def retrieve(self, itag, rtag, opt, m, q, qe=None):
+    def retrieve(self, itag, rtag, opt, m, q, qe):
 
         # print(rtag)
 
-        o_dir  = self.path["RUNS"]
-        o_file = rtag
-        i_dir  = os.path.join(self.path["INDEX"], itag)
-        i_file = self.__query_file(rtag, q)
-        qe_ctrl = ""
-        qe_ordr = ""
-        if qe:
-            qe_ctrl = "qe:QueryExpansion"
-            qe_ordr = "QueryExpansion"
-        log    = ""
+        o_dir     = self.path["RUNS"]
+        o_file    = rtag
+        i_dir     = os.path.join(self.path["INDEX"], itag)
+        i_file    = self.__query_file(rtag, q)
+
+        tfnorm    = ""
+        if m[1]:
+            tfnorm = "-c " + m[1]
+
+        qe_ctrl   = ""
+        qe_ordr   = ""
+        qe_model  = ""
+        qe_terms  = "0"
+        qe_docs   = "0"
+        qe_switch = ""
+
+        if qe[0] != "xxx":
+            qe_ctrl   = "qe:QueryExpansion"
+            qe_ordr   = "QueryExpansion"
+            qe_model  = "org.terrier.matching.models.queryexpansion." + self.qe_map[qe[0]]
+            qe_terms  = qe[1]
+            qe_docs   = qe[2]
+            qe_switch = "-q"
+
+        log = ""
 
         if not os.path.exists(i_dir):
             print("retrieve(): didn't find index " + itag)
@@ -162,11 +184,27 @@ class SysTerrier():
         # needs to be told what to 'process' and what to 'skip'
         # simultaniously. 'process' this, this and this, does not
         # imply 'not processing' the others.
+        #
+        # trecbox's way of processing TREC queries (across all 5 disks):
+        # "-DTrecQueryTags.doctag=TOP",
+        # "-DTrecQueryTags.idtag=NUM",
+        # "-DTrecQueryTags.process=TOP,NUM,TEXT",
+        # "-DTrecQueryTags.skip=",
+        # "-DTrecQueryTags.casesensitive=false",
+        #
+        # terrier's way of processing TREC queries for Disks 4 & 5:
+        # "-DTrecQueryTags.doctag=TOP",
+        # "-DTrecQueryTags.idtag=NUM",
+        # "-DTrecQueryTags.process=TOP,NUM,TITLE",
+        # "-DTrecQueryTags.skip=DESC,NARR",
+        # "-DTrecQueryTags.casesensitive=false",
 
         try:
             log = subprocess.check_output(
                 [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
                  "-r",
+                 qe_switch,
+                 tfnorm,
                  "-Dterrier.index.path=" + i_dir,
                  "-Dtrec.topics=" + i_file,
                  "-DTrecQueryTags.doctag=TOP",
@@ -174,11 +212,14 @@ class SysTerrier():
                  "-DTrecQueryTags.process=TOP,NUM,TEXT",
                  "-DTrecQueryTags.skip=",
                  "-DTrecQueryTags.casesensitive=false",
+                 "-Dstopwords.filename=" + stopwords,
+                 "-Dtermpipelines=" + pipeline,
+                 "-Dtrec.model=" + self.model_map[m[0]],
                  "-Dquerying.postprocesses.controls=" + qe_ctrl,
                  "-Dquerying.postprocesses.order=" + qe_ordr,
-                 "-Dstopwords.filename=" + stopwords,
-                 "-Dtermpipelines="      + pipeline,
-                 "-Dtrec.model=" + self.model_map[m],
+                 "-Dtrec.qe.model=" + qe_model,
+                 "-Dexpansion.terms=" + qe_terms,
+                 "-Dexpansion.documents=" + qe_docs,
                  "-Dtrec.results=" + o_dir,
                  "-Dtrec.results.file=" + o_file],
                 stderr=subprocess.STDOUT)
@@ -193,8 +234,8 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_file = os.path.join(self.path["EVALS"], rtag)
-        i_file = os.path.join(self.path["RUNS"], rtag)
+        o_file  = os.path.join(self.path["EVALS"], rtag)
+        i_file  = os.path.join(self.path["RUNS"], rtag)
 
         if not os.path.exists(i_file):
             print("evaluate(): didn't find run " + rtag)
