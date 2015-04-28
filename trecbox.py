@@ -18,7 +18,17 @@ def main(argv):
     if len(argv) != 3:
         print("USAGE: python trecbox.py <conf file> <plan file>")
         sys.exit(0)
-    
+
+    stopmap = {"lucene33": "033", "indri418"  : "418",
+               "smart571": "571", "terrier733": "733",
+               "xxx"     : "xxx"}
+    stemmap = {"porter"  : "po",  "weakporter": "wp",
+               "snowball": "sn",  "sstemmer"  : "ss",
+               "xx"      : "xx"}
+    qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
+               "klcomplete":"klm", "klcorrect": "klr",
+               "bo1":"bo1", "bo2":"bo2", "xxx": "xxx"}
+
     path, plan = init(argv[1], argv[2]);
 
     # # DEBUG
@@ -34,6 +44,7 @@ def main(argv):
     models = plan["models"]
     stops  = plan["stops"]
     stems  = plan["stems"]
+    qexp   = plan["qexp"]
     system = systems[plan["system"]]
 
     for testcol in matrix:
@@ -45,12 +56,9 @@ def main(argv):
         qrelsf  = matrix[testcol][2]
         qrelsp  = os.path.join(path["QRELS"], qrelsf)
         
-        part = "d"
+        part     = t_[1]
         qsubsetf = None
         qsubsetp = None
-        qsubsetl = None
-        if len(t_) == 2:
-            part = t_[1]
         qsubsetl = []
         if len(t_) == 3:
             qsubsetf = t_[2]
@@ -58,17 +66,30 @@ def main(argv):
             with open(qsubsetp, "r") as fp:
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
+
         query = Topics(topicsp).query(plan["system"], part, qsubsetl)
-        stopf = stops[0]
-        for stemmer in stems:
-            itag = docs + "." + stemmer
-            print(itag)
-            system.index(itag, docsp, [stopf, stemmer])
-            for model in models:
-                rtag = testcol + "." + stemmer + "." + model
-                print(rtag)
-                system.retrieve(itag,  rtag, [stopf, stemmer], model, query, 1)
-                system.evaluate(rtag, qrelsp)
+
+        for stopf in stops:
+            if not stopf:
+                stopf = "xxx"
+            for stemmer in stems:
+                if not stemmer:
+                    stemmer = "xx"
+                itag = docs + "." + stopmap[stopf] + "." + stemmap[stemmer]
+                print(itag)
+                system.index(itag, docsp, [stopf, stemmap[stemmer]])
+                for modstr in models:
+                    model = modstr.split(":")
+                    for qestr in qexp:
+                        qe = qestr.split(":")
+                        if not qe[0]:
+                            qe[0] = "xxx"
+                        rtag = testcol + "." + stopmap[stopf] + "." + stemmap[stemmer] \
+                                       + "." + model[0]       + "." + qemap[qe[0]]
+                        print(rtag)
+                        system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
+                                        model, query, qe)
+                        system.evaluate(rtag, qrelsp)
 
 if __name__ == "__main__":
    main(sys.argv)
