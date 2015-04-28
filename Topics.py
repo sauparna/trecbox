@@ -17,7 +17,7 @@ class Topics():
 
         q    = OD()
         if opt:
-            opt  = opt.lower()
+            opt = opt.lower()
         mode = mode.lower()
         soup = self.__hack_n_hew()
 
