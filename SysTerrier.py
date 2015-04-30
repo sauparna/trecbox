@@ -17,20 +17,12 @@ class SysTerrier():
                           "inexpc2"   : "In_expC2",    "jskls"      : "Js_KLs",
                           "inb2"      : "InB2",        "inl2"       : "InL2", 
                           "lemurtfidf": "LemurTF_IDF", "lgd"        : "LGD",
-                          "pl2"       : "PL2",         "tfidf3"     : "TFIDF3",
-                          "tfidf1"    : "TFIDF1",      "tfidf2"     : "TFIDF2",
-                          "tfidf4"    : "TFIDF4",      "tfidf5"     : "TFIDF5",
-                          "tfidf6"    : "TFIDF6",      "tfidf9"     : "TFIDF9",
-                          "tfidf7"    : "TFIDF7",      "tfidf8"     : "TFIDF8",
-                          "SERSIMPLE" : "SERSIMPLE",   "SERSIMPLE1" : "SERSIMPLE1", 
-                          "SERSIMPLE2": "SERSIMPLE2",  "SERBM25"    : "SERBM25", 
-                          "DHGB"      : "DHGB",        "DHGB1"      : "DHGB1",
-                          "DHGB2"     : "DHGB2",       "DHGB3"      : "DHGB3",
-                          "TFIDF0"    : "TFIDF0",      "NOIDF"      : "NOIDF",
-                          "NONDL"     : "NONDL",       "tf"         : "Tf",
-                          "NOLOGTF"   : "NOLOGTF",     "LOGNDL"     : "LOGNDL",
-                          "TFIDFA"    : "TFIDFA",      "TFIDFB"     : "TFIDFB",  
-                          "xsqram"    : "XSqrA_M",     "tfidf"      : "TF_IDF"}
+                          "pl2"       : "PL2",         "xsqram"     : "XSqrA_M",
+                          "tf"        : "Tf",          "tfidf"      : "TF_IDF",
+                          "TFIDF0"    : "TFIDF0",      "TFIDF_A"    : "TFIDF_A",
+                          "NOIDF_A"   : "NOIDF_A",     "NONDL_A"    : "NONDL_A",
+                          "NOLOGTF_A" : "NOLOGTF_A",   "LOGNDL_A"   : "LOGNDL_A",
+                          "ONELOGTF_A": "ONELOGTF_A",  "ONEIDF_A"   : "ONEIDF_A"}
 
         self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
                             "sn": "EnglishSnowballStemmer"}
