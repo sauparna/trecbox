@@ -42,12 +42,12 @@ class SysTerrier():
         p = ["", ""]
         stopp = os.path.join(self.path["MISC"], opt[0])
         p[0]  = "Stopwords"
-        if opt[0] == "xxx":
+        if opt[0] == "-":
             p[0]  = "NoOp"
             stopp = ""
         if opt[1] in self.stemmer_map.keys():
             p[1] = self.stemmer_map[opt[1]]
-        if opt[1] == "xx":
+        if opt[1] == "-":
             p[1] = "NoOp"
         return p[0] + "," + p[1], stopp
 
@@ -146,7 +146,7 @@ class SysTerrier():
         qe_docs   = "0"
         qe_switch = ""
 
-        if qe[0] != "xxx":
+        if qe[0] != "-":
             qe_ctrl   = "qe:QueryExpansion"
             qe_ordr   = "QueryExpansion"
             qe_model  = "org.terrier.matching.models.queryexpansion." + self.qe_map[qe[0]]

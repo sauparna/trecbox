@@ -21,13 +21,13 @@ def main(argv):
 
     stopmap = {"lucene33": "033", "indri418"  : "418",
                "smart571": "571", "terrier733": "733",
-               "xxx"     : "xxx"}
+               "-"     : "-"}
     stemmap = {"porter"  : "po",  "weakporter": "wp",
                "snowball": "sn",  "sstemmer"  : "ss",
-               "xx"      : "xx"}
+               "-"      : "-"}
     qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
                "klcomplete":"klm", "klcorrect": "klr",
-               "bo1":"bo1", "bo2":"bo2", "xxx": "xxx"}
+               "bo1":"bo1", "bo2":"bo2", "-": "-"}
 
     path, plan = init(argv[1], argv[2]);
 
@@ -71,10 +71,10 @@ def main(argv):
 
         for stopf in stops:
             if not stopf:
-                stopf = "xxx"
+                stopf = "-"
             for stemmer in stems:
                 if not stemmer:
-                    stemmer = "xx"
+                    stemmer = "-"
                 itag = docs + "." + stopmap[stopf] + "." + stemmap[stemmer]
                 print(itag)
                 system.index(itag, docsp, [stopf, stemmap[stemmer]])
@@ -83,7 +83,7 @@ def main(argv):
                     for qestr in qexp:
                         qe = qestr.split(":")
                         if not qe[0]:
-                            qe[0] = "xxx"
+                            qe[0] = "-"
                         rtag = testcol + "." + stopmap[stopf] + "." + stemmap[stemmer] \
                                        + "." + model[0]       + "." + qemap[qe[0]]
                         print(rtag)
