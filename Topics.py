@@ -7,7 +7,7 @@ class Topics():
     def __init__(self, f):
         self.file = f
 
-    def query(self, opt=None, mode="t", qlist=None):
+    def query(self, opt=None, qtdn="T", qlist=None):
 
         # Usually, query() should return a malleable form of the query
         # text, read in from a file on disk. For indri, lucene and
@@ -18,7 +18,7 @@ class Topics():
         q    = OD()
         if opt:
             opt = opt.lower()
-        mode = mode.lower()
+
         soup = self.__hack_n_hew()
 
         # To prettyprint the soup without the tricks
@@ -29,7 +29,7 @@ class Topics():
             soup = self.__wipe_punctuations(soup)
 
         # Wade in the soup and return a dict of query text picked by
-        # 'mode', scoped by 'qlist' (if given) and indexed by qid
+        # 'qtdn', scoped by 'qlist' (if given) and indexed by qid
 
         for top in soup.find_all("top"):
             # lower (older) qids are padded with zeros, as in '002'
@@ -38,14 +38,14 @@ class Topics():
             if  qlist and (n not in qlist):
                 continue
             q[n] = ""
-            for m in list(mode):
-                if m == "t":
+            for m in list(qtdn):
+                if m == "T":
                     if top.title != None:
                         q[n] += " " + top.title.string
-                if m == "d":
+                if m == "D":
                     if top.desc != None:
                         q[n] += " " + top.desc.string
-                if m == "n":
+                if m == "N":
                     if top.narr != None:
                         q[n] += " " + top.narr.string
             q[n] = q[n].lstrip().rstrip()

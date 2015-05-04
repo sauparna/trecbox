@@ -21,13 +21,13 @@ def main(argv):
 
     stopmap = {"lucene33": "033", "indri418"  : "418",
                "smart571": "571", "terrier733": "733",
-               "-"     : "-"}
+               "x"       : "x"}
     stemmap = {"porter"  : "po",  "weakporter": "wp",
                "snowball": "sn",  "sstemmer"  : "ss",
-               "-"      : "-"}
+               "x"       : "x"}
     qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
                "klcomplete":"klm", "klcorrect": "klr",
-               "bo1":"bo1", "bo2":"bo2", "-": "-"}
+               "bo1":"bo1", "bo2":"bo2", "x": "x"}
 
     path, plan = init(argv[1], argv[2]);
 
@@ -56,7 +56,7 @@ def main(argv):
         qrelsf  = matrix[testcol][2]
         qrelsp  = os.path.join(path["QRELS"], qrelsf)
         
-        part     = t_[1]
+        qtdn     = t_[1]
         qsubsetf = None
         qsubsetp = None
         qsubsetl = []
@@ -67,14 +67,15 @@ def main(argv):
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
 
-        query = Topics(topicsp).query(plan["system"], part, qsubsetl)
+        query = Topics(topicsp).query(plan["system"], qtdn, qsubsetl)
+        qnum  = len(query)
 
         for stopf in stops:
             if not stopf:
-                stopf = "-"
+                stopf = "x"
             for stemmer in stems:
                 if not stemmer:
-                    stemmer = "-"
+                    stemmer = "x"
                 itag = docs + "." + stopmap[stopf] + "." + stemmap[stemmer]
                 print(itag)
                 system.index(itag, docsp, [stopf, stemmap[stemmer]])
@@ -83,9 +84,10 @@ def main(argv):
                     for qestr in qexp:
                         qe = qestr.split(":")
                         if not qe[0]:
-                            qe[0] = "-"
+                            qe[0] = "x"
                         rtag = testcol + "." + stopmap[stopf] + "." + stemmap[stemmer] \
-                                       + "." + model[0]       + "." + qemap[qe[0]]
+                                       + "." + model[0] \
+                                       + "." + str(qnum) + "." + qtdn + "." + qemap[qe[0]]
                         print(rtag)
                         system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
                                         model, query, qe)
