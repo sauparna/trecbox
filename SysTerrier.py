@@ -25,7 +25,7 @@ class SysTerrier():
                           "ONELOGTF_A": "ONELOGTF_A",  "ONEIDF_A"   : "ONEIDF_A"}
 
         self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
-                            "sn": "EnglishSnowballStemmer"}
+                            "sn": "EnglishSnowballStemmer", "s": "SStemmer"}
 
         self.qe_map      = {"kl0": "KL",         "kla": "BA",        "kli": "Information",
                             "klm": "KLComplete", "klr": "KLCorrect", "bo1": "Bo1",

@@ -23,7 +23,7 @@ def main(argv):
                "smart571": "571", "terrier733": "733",
                "x"       : "x"}
     stemmap = {"porter"  : "po",  "weakporter": "wp",
-               "snowball": "sn",  "sstemmer"  : "ss",
+               "snowball": "sn",          "s" : "s",
                "x"       : "x"}
     qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
                "klcomplete":"klm", "klcorrect": "klr",
