@@ -22,7 +22,27 @@ class SysTerrier():
                           "TFIDF0"    : "TFIDF0",      "TFIDF_A"    : "TFIDF_A",
                           "NOIDF_A"   : "NOIDF_A",     "NONDL_A"    : "NONDL_A",
                           "NOLOGTF_A" : "NOLOGTF_A",   "LOGNDL_A"   : "LOGNDL_A",
-                          "ONELOGTF_A": "ONELOGTF_A",  "ONEIDF_A"   : "ONEIDF_A"}
+                          "ONELOGTF_A": "ONELOGTF_A",  "ONEIDF_A"   : "ONEIDF_A",
+                          "CHECK"     : "CHECK",       "TMPL"       : "TMPL",
+                          "bfa":"BFA",
+                          "bfd":"BFD",
+                          "bfx":"BFX",
+                          "bxa":"BXA",
+                          "bxd":"BXD",
+                          "bxx":"BXX",
+                          "lfa":"LFA",
+                          "lfd":"LFD",
+                          "lfx":"LFX",
+                          "lxa":"LXA",
+                          "lxd":"LXD",
+                          "lxx":"LXX",
+                          "tfa":"TFA",
+                          "tfd":"TFD",
+                          "tfx":"TFX",
+                          "txa":"TXA",
+                          "txd":"TXD",
+                          "txx":"TXX"
+        }
 
         self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
                             "sn": "EnglishSnowballStemmer", "s": "SStemmer"}
