@@ -69,7 +69,7 @@ def main(argv):
 
         query = Topics(topicsp).query(plan["system"], qtdn, qsubsetl)
         qnum  = len(query)
-
+        c = 1
         for stopf in stops:
             if not stopf:
                 stopf = "x"
@@ -88,7 +88,7 @@ def main(argv):
                         rtag = testcol + "." + stopmap[stopf] + "." + stemmap[stemmer] \
                                        + "." + model[0] \
                                        + "." + str(qnum) + "." + qtdn + "." + qemap[qe[0]]
-                        print(rtag)
+                        print(str(c) + " " + rtag); c += 1 
                         system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
                                         model, query, qe)
                         system.evaluate(rtag, qrelsp)
