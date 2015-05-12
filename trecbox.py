@@ -47,6 +47,8 @@ def main(argv):
     qexp   = plan["qexp"]
     system = systems[plan["system"]]
 
+    c = 1
+
     for testcol in matrix:
         docs    = matrix[testcol][0]
         docsp   = os.path.join(path["DOCS"], docs)
@@ -69,7 +71,6 @@ def main(argv):
 
         query = Topics(topicsp).query(plan["system"], qtdn, qsubsetl)
         qnum  = len(query)
-        c = 1
         for stopf in stops:
             if not stopf:
                 stopf = "x"
