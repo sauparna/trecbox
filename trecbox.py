@@ -21,7 +21,7 @@ def main(argv):
 
     stopmap = {"lucene33": "033", "indri418"  : "418",
                "smart571": "571", "terrier733": "733",
-               "x"       : "x"}
+               "ser17"   : "017", "x"         : "x"}
     stemmap = {"porter"  : "po",  "weakporter": "wp",
                "snowball": "sn",          "s" : "s",
                "x"       : "x"}
