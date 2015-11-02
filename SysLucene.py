@@ -3,22 +3,22 @@ import sys, os, subprocess
 class SysLucene():
 
     def __init__(self, path):
-        self.path = path
+        self.path        = path
         self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
                             "tf_idf": "default", "lm": "lm"}
-        self.stemmer_map = {"p": "porter", "k": "krovetz", 
-                            "s": "snowball", "s1": "sstemmer"}
-        self.jar = os.path.join(self.path["LUCENE"], "bin/lucene.TREC.jar")
-        self.lib = os.path.join(self.path["LUCENE"], "lib/*")
+        self.stemmer_map = {"p": "porter",   "k": "krovetz", 
+                            "b": "snowball", "s": "sstemmer"}
+        self.jar         = os.path.join(self.path["LUCENE"], "bin/lucene.TREC.jar")
+        self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
 
 
     def __query_file(self, rtag, q):
 
-        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "lucene"]))
+        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "queries"]))
 
         with open(o_file, "w") as f:
             for num in q.keys():
-                f.write(num + " " + q[num] + "\n")
+                f.write(str(num) + " " + q[num] + "\n")
 
         return o_file
 
@@ -27,8 +27,8 @@ class SysLucene():
         
         # print(itag)
 
-        stemmer = ""
         stopwords = ""
+        stemmer   = ""
 
         if opt[0] != "None":
             stopwords = os.path.join(self.path["MISC"], opt[0])
@@ -50,12 +50,12 @@ class SysLucene():
         try:
             log = subprocess.check_output(["java",
                                            "-Xmx1024m",
-                                           "-cp", self.jar + ":" + self.lib,
+                                           "-cp",       self.jar + ":" + self.lib,
                                            "IndexTREC",
-                                           "-index", o_dir,
-                                           "-docs", doc,
-                                           "-stop", stopwords,
-                                           "-stem", stemmer],
+                                           "-index",    o_dir,
+                                           "-docs",     doc,
+                                           "-stop",     stopwords,
+                                           "-stem",     stemmer],
                                           stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
@@ -65,16 +65,18 @@ class SysLucene():
             f.write(log)
 
 
-    def retrieve(self, itag, rtag, opt, m, q):
+    def retrieve(self, itag, rtag, opt, m, q, qe):
 
-        # NOTE: Unused parameter 'opt'. Kept to maintain parity with other system retrieve() calls.
+        # NOTE: Unused parameters 'opt' and 'qe'. Kept to maintain
+        # parity with other system retrieve() calls. Haven't figured
+        # how to do query-expansion in Lucene.
 
         # print(rtag)
 
-        i_dir = os.path.join(self.path["INDEX"], itag)
+        i_dir  = os.path.join(self.path["INDEX"], itag)
         i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.path["RUNS"], rtag)
-        log = ""
+        log    = ""
 
         if not os.path.exists(i_dir):
             print("retrieve(): didn't find index " + itag)
@@ -85,17 +87,17 @@ class SysLucene():
             return
 
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
-        #-queries /path/to/title-queries.301-450 -simfn default > default.out
+        #-queries /path/to/queryfile -simfn default > default.out
 
         with open(o_file, "w+b") as f:
             f.write(
                 subprocess.check_output(
                     ["java",
-                     "-cp", self.jar + ":" + self.lib,
+                     "-cp",         self.jar + ":" + self.lib,
                      "BatchSearch",
-                     "-index", i_dir,
-                     "-queries", i_file,
-                     "-simfn", self.model_map[m]]
+                     "-index",      i_dir,
+                     "-queries",    i_file,
+                     "-simfn",      self.model_map[m[0]]]
                     )
                 )
 

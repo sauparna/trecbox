@@ -119,7 +119,9 @@ class SysTerrier():
         i_file  = self.__write_doclist(itag, doc)
         log     = ""
 
-        # recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4&5
+        # Recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1&2
+        # -DTrecDocTags.process=TEXT,TITLE,HEAD,HL
+        # Recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4&5
         # -DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
         # Use process and skip to normalize across disks 1-5:
         # "-DTrecDocTags.process=TEXT" 
@@ -135,7 +137,6 @@ class SysTerrier():
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
-                "-DTrecDocTags.skip=DOCHDR",
                 "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
                 "-DTrecDocTags.casesensitive=false"],
                stderr=subprocess.STDOUT)
