@@ -3,13 +3,13 @@ import simplejson as json
 from SysTerrier import *
 from SysIndri import *
 from SysLucene import *
-from Topics import Topics
+from Query import Query
 
 def init(cf, pf):
     name = os.path.basename(pf)
     plan = json.loads(open(pf, "r").read())
     path = json.loads(open(cf, "r").read())
-    k_   = ["DOCS", "TOPICS", "QRELS", "MISC", "INDEX", "RUNS", "EVALS"]
+    k_   = ["DOC", "QUERY", "QREL", "MISC", "INDEX", "RUNS", "EVALS"]
     path.update({k: os.path.join(path["EXP"], name, path[k]) for k in k_})
     return path, plan
 
@@ -51,25 +51,25 @@ def main(argv):
 
     for testcol in matrix:
         docs    = matrix[testcol][0]
-        docsp   = os.path.join(path["DOCS"], docs)
-        t_      = matrix[testcol][1].split(":")
-        topicsf = t_[0]
-        topicsp = os.path.join(path["TOPICS"], topicsf)
+        docsp   = os.path.join(path["DOC"], docs)
+        q_      = matrix[testcol][1].split(":")
+        queryf = q_[0]
+        queryp = os.path.join(path["QUERY"], queryf)
         qrelsf  = matrix[testcol][2]
-        qrelsp  = os.path.join(path["QRELS"], qrelsf)
+        qrelsp  = os.path.join(path["QREL"], qrelsf)
         
-        qtdn     = t_[1]
+        qtdn     = q_[1]
         qsubsetf = None
         qsubsetp = None
         qsubsetl = []
-        if len(t_) == 3:
-            qsubsetf = t_[2]
-            qsubsetp = os.path.join(path["TOPICS"], qsubsetf)
+        if len(q_) == 3:
+            qsubsetf = q_[2]
+            qsubsetp = os.path.join(path["QUERY"], qsubsetf)
             with open(qsubsetp, "r") as fp:
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
 
-        query = Topics(topicsp).query(plan["system"], qtdn, qsubsetl)
+        query = Query(queryp).query(plan["system"], qtdn, qsubsetl)
         qnum  = len(query)
         for stopf in stops:
             if not stopf:

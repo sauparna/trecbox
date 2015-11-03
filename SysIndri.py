@@ -105,7 +105,7 @@ class SysIndri():
             soup.parameters.append(T_stopwords)
             
         # add stemmer
-        if opt[1] in self.stemmer_map.keys():
+        if opt[1] in self.stemmer_map:
             T_stemmer = soup.new_tag("stemmer")
             T_name = soup.new_tag("name")
             T_name.string = self.stemmer_map[opt[1]]
@@ -115,7 +115,7 @@ class SysIndri():
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume
 
-        o_file = os.path.join(self.path["INDEX"], ".".join([itag, "indri"]))
+        o_file = os.path.join(self.path["INDEX"], itag + ".indri")
 
         with open(o_file, "w") as f:
             f.write(self.__shapeup_xml(soup.prettify().split("\n")[1:]))
@@ -131,7 +131,7 @@ class SysIndri():
 
         # float n query tags in the soup
 
-        for num in q.keys():
+        for num in q:
             T_query = soup.new_tag("query")
             T_type = soup.new_tag("type")
             T_type.string = "indri"
@@ -144,7 +144,7 @@ class SysIndri():
             T_query.append(T_text)
             soup.parameters.append(T_query)
 
-        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "indri"]))
+        o_file = os.path.join(self.path["RUNS"], rtag + ".indri")
 
         # purge the XML declaration introduced by BeautifulSoup and
         # shape it up for Indri to consume

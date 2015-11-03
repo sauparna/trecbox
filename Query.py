@@ -2,7 +2,7 @@ from collections import OrderedDict as OD
 from bs4 import BeautifulSoup
 import re, sys
 
-class Topics():
+class Query():
 
     def __init__(self, f):
         self.file = f

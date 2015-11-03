@@ -53,7 +53,7 @@ class SysTerrier():
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
-        o_file = os.path.join(self.path["INDEX"], ".".join([itag, "docs"]))
+        o_file = os.path.join(self.path["INDEX"], itag + ".docs")
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
@@ -65,7 +65,7 @@ class SysTerrier():
         if opt[0] == "x":
             p[0]  = "NoOp"
             stopp = ""
-        if opt[1] in self.stemmer_map.keys():
+        if opt[1] in self.stemmer_map:
             p[1] = self.stemmer_map[opt[1]]
         if opt[1] == "x":
             p[1] = "NoOp"
@@ -81,7 +81,7 @@ class SysTerrier():
 
         # float n query tags in the soup
 
-        for num in q.keys():
+        for num in q:
             T_top = soup.new_tag("TOP")
             T_num = soup.new_tag("NUM")
             T_num.string = str(num)
@@ -91,7 +91,7 @@ class SysTerrier():
             T_top.append(T_text)
             soup.trick.append(T_top)
         
-        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "topics"]))
+        o_file = os.path.join(self.path["RUNS"], rtag + ".queries")
 
         # Drop the XML declaration and no more tricks please. Write it
         # out.
@@ -190,7 +190,7 @@ class SysTerrier():
         # terrier is fed a topic file where all the text resides
         # within the <text> and </text> tags, because picking topic
         # portions by t, d, n is handled at a point in the past by the
-        # Topics.query() function. This does away with the need to
+        # Query.query() function. This does away with the need to
         # construct the 'TrecQueryTags.process' and
         # 'TrecQueryTags.skip' parameters here, making things look
         # neater. It so happens, and I know not why, that terrier

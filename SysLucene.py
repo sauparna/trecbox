@@ -14,10 +14,10 @@ class SysLucene():
 
     def __query_file(self, rtag, q):
 
-        o_file = os.path.join(self.path["RUNS"], ".".join([rtag, "queries"]))
+        o_file = os.path.join(self.path["RUNS"], rtag + ".queries")
 
         with open(o_file, "w") as f:
-            for num in q.keys():
+            for num in q:
                 f.write(str(num) + " " + q[num] + "\n")
 
         return o_file
@@ -33,7 +33,7 @@ class SysLucene():
         if opt[0] != "None":
             stopwords = os.path.join(self.path["MISC"], opt[0])
 
-        if opt[1] in self.stemmer_map.keys():
+        if opt[1] in self.stemmer_map:
             stemmer = self.stemmer_map[opt[1]]
 
         o_dir = os.path.join(self.path["INDEX"], itag)
