@@ -8,8 +8,8 @@ class SysLucene():
                             "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
-        self.jar         = os.path.join(self.path["LUCENE"], "bin/lucene.TREC.jar")
-        self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
+        self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/trec.jar")
+        self.lib         = os.path.join(self.path["LUCENE"], "trec/lib/*")
 
 
     def __query_file(self, rtag, q):
@@ -42,8 +42,8 @@ class SysLucene():
             print("index(): found, so skipping " + itag)
             return
 
-        #java -cp "lucene.TREC/lib/*:lucene.TREC/bin/lucene.TREC.jar" IndexTREC 
-        #-docs lucene.TREC/src
+        #java -cp "lucene-5.3.1/trec/lib/*:lucene-5.3.2/trec/bin/trec.jar" IndexTREC 
+        #-docs doc/
 
         log = ""
 
