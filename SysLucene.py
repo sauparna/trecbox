@@ -8,7 +8,7 @@ class SysLucene():
                             "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
-        self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/trec.jar")
+        self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/TREC.jar")
         self.lib         = os.path.join(self.path["LUCENE"], "trec/lib/*")
 
 
@@ -42,7 +42,7 @@ class SysLucene():
             print("index(): found, so skipping " + itag)
             return
 
-        #java -cp "lucene-5.3.1/trec/lib/*:lucene-5.3.2/trec/bin/trec.jar" IndexTREC 
+        #java -cp "lucene-5.3.1/trec/lib/*:lucene-5.3.2/trec/bin/TREC.jar" IndexTREC 
         #-docs doc/
 
         log = ""
@@ -73,6 +73,15 @@ class SysLucene():
 
         # print(rtag)
 
+        stopwords = ""
+        stemmer   = ""
+
+        if opt[0] != "None":
+            stopwords = os.path.join(self.path["MISC"], opt[0])
+
+        if opt[1] in self.stemmer_map:
+            stemmer = self.stemmer_map[opt[1]]
+        
         i_dir  = os.path.join(self.path["INDEX"], itag)
         i_file = self.__query_file(rtag, q)
         o_file = os.path.join(self.path["RUNS"], rtag)
@@ -97,7 +106,10 @@ class SysLucene():
                      "BatchSearch",
                      "-index",      i_dir,
                      "-queries",    i_file,
-                     "-simfn",      self.model_map[m[0]]]
+                     "-simfn",      self.model_map[m[0]],
+                     "-stop",       stopwords,
+                     "-stem",       stemmer
+                    ]
                     )
                 )
 
