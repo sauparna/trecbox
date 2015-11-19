@@ -4,8 +4,8 @@ class SysLucene():
 
     def __init__(self, path):
         self.path        = path
-        self.model_map   = {"bm25": "bm25", "dfr": "dfr", 
-                            "tf_idf": "default", "lm": "lm"}
+        self.model_map   = {"tmpl": "tmpl", "bm25": "bm25", "bm25L": "bm25L",
+                            "dfr": "dfr", "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
         self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/TREC.jar")
