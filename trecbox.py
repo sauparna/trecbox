@@ -13,6 +13,13 @@ def init(cf, pf):
     path.update({k: os.path.join(path["EXP"], name, path[k]) for k in k_})
     return path, plan
 
+def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qe):
+    itag = docs    + "." + stop + "." + stem
+    qtag = testcol + "." + qnum + "." + qtdn
+    rtag = testcol + "." + stop + "." + stem + "." + m \
+                   + "." + qnum + "." + qtdn + "." + qe
+    return itag, qtag, rtag
+
 def main(argv):
 
     if len(argv) != 3:
@@ -50,14 +57,13 @@ def main(argv):
     c = 1
 
     for testcol in matrix:
-        docs    = matrix[testcol][0]
-        docsp   = os.path.join(path["DOC"], docs)
-        q_      = matrix[testcol][1].split(":")
-        queryf = q_[0]
-        queryp = os.path.join(path["QUERY"], queryf)
-        qrelsf  = matrix[testcol][2]
-        qrelsp  = os.path.join(path["QREL"], qrelsf)
-        
+        docs     = matrix[testcol][0]
+        docsp    = os.path.join(path["DOC"], docs)
+        q_       = matrix[testcol][1].split(":")
+        queryf   = q_[0]
+        queryp   = os.path.join(path["QUERY"], queryf)
+        qrelsf   = matrix[testcol][2]
+        qrelsp   = os.path.join(path["QREL"], qrelsf)
         qtdn     = q_[1]
         qsubsetf = None
         qsubsetp = None
@@ -68,16 +74,19 @@ def main(argv):
             with open(qsubsetp, "r") as fp:
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
-
-        query = Query(queryp).query(plan["system"], qtdn, qsubsetl)
-        qnum  = len(query)
+        query    = Query(queryp).query(plan["system"], qtdn, qsubsetl)
+        qnum     = len(query)
+        _,qtag,_ = maketag("", testcol, "", "",
+                           "", str(qnum), qtdn, "")
+        q = system.write_file(qtag, query)
         for stopf in stops:
             if not stopf:
                 stopf = "x"
             for stemmer in stems:
                 if not stemmer:
                     stemmer = "x"
-                itag = docs + "." + stopmap[stopf] + "." + stemmap[stemmer]
+                itag,_,_ = maketag(docs, "", stopmap[stopf], stemmap[stemmer],
+                                   "", "", "", "")
                 print(itag)
                 system.index(itag, docsp, [stopf, stemmap[stemmer]])
                 for modstr in models:
@@ -86,12 +95,11 @@ def main(argv):
                         qe = qestr.split(":")
                         if not qe[0]:
                             qe[0] = "x"
-                        rtag = testcol + "." + stopmap[stopf] + "." + stemmap[stemmer] \
-                                       + "." + model[0] \
-                                       + "." + str(qnum) + "." + qtdn + "." + qemap[qe[0]]
+                        _,_,rtag = maketag("", testcol, stopmap[stopf], stemmap[stemmer],
+                                           model[0], str(qnum), qtdn, qemap[qe[0]])
                         print(str(c) + " " + rtag); c += 1 
                         system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
-                                        model, query, qe)
+                                        model, q, qe)
                         system.evaluate(rtag, qrelsp)
 
 if __name__ == "__main__":

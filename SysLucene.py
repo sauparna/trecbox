@@ -1,4 +1,5 @@
 import sys, os, subprocess
+from bs4 import BeautifulSoup
 
 class SysLucene():
 
@@ -11,16 +12,43 @@ class SysLucene():
         self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/TREC.jar")
         self.lib         = os.path.join(self.path["LUCENE"], "trec/lib/*")
 
+    def write_file(self, qtag, q):
 
-    def __query_file(self, rtag, q):
+        # queries are in the dict q
+        # Build the query XML, that we want to feed terrier, and write
+        # it out to disk.
 
-        o_file = os.path.join(self.path["RUNS"], rtag + ".queries")
+        soup = BeautifulSoup("<trick></trick>", "xml")
 
-        with open(o_file, "w") as f:
-            for num in q:
-                f.write(str(num) + " " + q[num] + "\n")
+        # float n query tags in the soup
+
+        for num in q:
+            T_top = soup.new_tag("TOP")
+            T_num = soup.new_tag("NUM")
+            T_num.string = str(num)
+            T_text = soup.new_tag("TEXT")
+            T_text.string = q[num]
+            T_top.append(T_num)
+            T_top.append(T_text)
+            soup.trick.append(T_top)
+
+        # Drop the XML declaration, remove <trick>, write it out.
+
+        o_file = os.path.join(self.path["RUNS"], qtag + ".queries")
+        if not os.path.exists(o_file):
+            with open(o_file, "w") as f:
+                f.write("\n".join(soup.prettify().split("\n")[2:-1]))
 
         return o_file
+    
+    # def write_file(self, qtag, q):
+
+    #     o_file = os.path.join(self.path["RUNS"], qtag + ".queries")
+    #     if not os.path.exists(o_file):
+    #         with open(o_file, "w") as f:
+    #             for num in q:
+    #                 f.write(str(num) + " " + q[num] + "\n")
+    #     return o_file
 
 
     def index(self, itag, doc, opt):
@@ -83,7 +111,7 @@ class SysLucene():
             stemmer = self.stemmer_map[opt[1]]
         
         i_dir  = os.path.join(self.path["INDEX"], itag)
-        i_file = self.__query_file(rtag, q)
+        i_file = q
         o_file = os.path.join(self.path["RUNS"], rtag)
         log    = ""
 

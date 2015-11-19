@@ -54,8 +54,9 @@ class SysTerrier():
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
         o_file = os.path.join(self.path["INDEX"], itag + ".docs")
-        with open(o_file, "w+b") as f:
-            f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
+        if not os.path.exists(o_file):
+            with open(o_file, "w+b") as f:
+                f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
         return o_file
 
     def __build_termpipeline(self, opt):
@@ -71,7 +72,7 @@ class SysTerrier():
             p[1] = "NoOp"
         return p[0] + "," + p[1], stopp
 
-    def __query_file(self, rtag, q):
+    def write_file(self, qtag, q):
 
         # queries are in the dict q
         # Build the query XML, that we want to feed terrier, and write
@@ -91,13 +92,12 @@ class SysTerrier():
             T_top.append(T_text)
             soup.trick.append(T_top)
         
-        o_file = os.path.join(self.path["RUNS"], rtag + ".queries")
+        # Drop the XML declaration, remove <trick>, write it out.
 
-        # Drop the XML declaration and no more tricks please. Write it
-        # out.
-
-        with open(o_file, "w") as f:
-            f.write("\n".join(soup.prettify().split("\n")[2:-1]))
+        o_file = os.path.join(self.path["RUNS"], qtag + ".queries")
+        if not os.path.exists(o_file):
+            with open(o_file, "w") as f:
+                f.write("\n".join(soup.prettify().split("\n")[2:-1]))
 
         return o_file
 
@@ -154,7 +154,7 @@ class SysTerrier():
         o_dir     = self.path["RUNS"]
         o_file    = rtag
         i_dir     = os.path.join(self.path["INDEX"], itag)
-        i_file    = self.__query_file(rtag, q)
+        i_file    = q
 
         tfnorm    = ""
         if m[1]:
