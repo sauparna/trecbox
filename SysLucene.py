@@ -9,7 +9,6 @@ class SysLucene():
                             "dfr": "dfr", "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
-        self.jar         = os.path.join(self.path["LUCENE"], "lib/lucene.TREC.jar")
         self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
 
     def write_file(self, qtag, q):
@@ -78,7 +77,7 @@ class SysLucene():
         try:
             log = subprocess.check_output(["java",
                                            "-Xmx1024m",
-                                           "-cp",       self.jar + ":" + self.lib,
+                                           "-cp",       self.lib,
                                            "IndexTREC",
                                            "-index",    o_dir,
                                            "-docs",     doc,
@@ -130,7 +129,7 @@ class SysLucene():
             f.write(
                 subprocess.check_output(
                     ["java",
-                     "-cp",         self.jar + ":" + self.lib,
+                     "-cp",         self.lib,
                      "BatchSearch",
                      "-index",      i_dir,
                      "-queries",    i_file,
