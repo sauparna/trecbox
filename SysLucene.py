@@ -39,15 +39,6 @@ class SysLucene():
                 f.write("\n".join(soup.prettify().split("\n")[2:-1]))
 
         return o_file
-    
-    # def write_file(self, qtag, q):
-
-    #     o_file = os.path.join(self.path["RUNS"], qtag + ".queries")
-    #     if not os.path.exists(o_file):
-    #         with open(o_file, "w") as f:
-    #             for num in q:
-    #                 f.write(str(num) + " " + q[num] + "\n")
-    #     return o_file
 
 
     def index(self, itag, doc, opt):
