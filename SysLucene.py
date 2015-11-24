@@ -9,8 +9,8 @@ class SysLucene():
                             "dfr": "dfr", "tf_idf": "default", "lm": "lm"}
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
-        self.jar         = os.path.join(self.path["LUCENE"], "trec/bin/TREC.jar")
-        self.lib         = os.path.join(self.path["LUCENE"], "trec/lib/*")
+        self.jar         = os.path.join(self.path["LUCENE"], "lib/lucene.TREC.jar")
+        self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
 
     def write_file(self, qtag, q):
 
