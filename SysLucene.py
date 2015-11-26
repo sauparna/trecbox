@@ -3,10 +3,58 @@ from bs4 import BeautifulSoup
 
 class SysLucene():
 
+    # Not all the types in 'model_map' are available, check if they
+    # are in lucene.TREC/src and has been built.
+    
     def __init__(self, path):
         self.path        = path
-        self.model_map   = {"tmpl": "tmpl", "bm25": "bm25", "bm25L": "bm25L",
-                            "dfr": "dfr", "tf_idf": "default", "lm": "lm"}
+        self.model_map   = {"bm25L"       : "BM25Similarity",
+                            "dfrL"        : "DFRSimilarity",
+                            "defaultL"    : "DefaultSimilarity",
+                            "dirichletlmL": "LMDirichletSimilarity",
+                            "tmpl"        : "TMPL",
+                            "bm25"        : "BM25",
+                            "bxx"       : "BXX",         "bxc"        : "BXC",       
+                            "bxd"       : "BXD",         "bxl"        : "BXL",       
+                            "bxa"       : "BXA",         "bfx"        : "BFX",       
+                            "bfc"       : "BFC",         "bfd"        : "BFD",       
+                            "bfl"       : "BFL",         "bfa"        : "BFA",       
+                            "bpx"       : "BPX",         "bpc"        : "BPC",       
+                            "bpd"       : "BPD",         "bpl"        : "BPL",       
+                            "bpa"       : "BPA",         "bix"        : "BIX",       
+                            "bic"       : "BIC",         "bid"        : "BID",       
+                            "bil"       : "BIL",         "bia"        : "BIA",       
+                            "txx"       : "TXX",         "txc"        : "TXC",       
+                            "txd"       : "TXD",         "txl"        : "TXL",       
+                            "txa"       : "TXA",         "tfx"        : "TFX",       
+                            "tfc"       : "TFC",         "tfd"        : "TFD",       
+                            "tfl"       : "TFL",         "tfa"        : "TFA",       
+                            "tpx"       : "TPX",         "tpc"        : "TPC",       
+                            "tpd"       : "TPD",         "tpl"        : "TPL",       
+                            "tpa"       : "TPA",         "tix"        : "TIX",       
+                            "tic"       : "TIC",         "tid"        : "TID",       
+                            "til"       : "TIL",         "tia"        : "TIA",       
+                            "nxx"       : "NXX",         "nxc"        : "NXC",       
+                            "nxd"       : "NXD",         "nxl"        : "NXL",       
+                            "nxa"       : "NXA",         "nfx"        : "NFX",       
+                            "nfc"       : "NFC",         "nfd"        : "NFD",       
+                            "nfl"       : "NFL",         "nfa"        : "NFA",       
+                            "npx"       : "NPX",         "npc"        : "NPC",       
+                            "npd"       : "NPD",         "npl"        : "NPL",       
+                            "npa"       : "NPA",         "nix"        : "NIX",       
+                            "nic"       : "NIC",         "nid"        : "NID",       
+                            "nil"       : "NIL",         "nia"        : "NIA",       
+                            "lxx"       : "LXX",         "lxc"        : "LXC",       
+                            "lxd"       : "LXD",         "lxl"        : "LXL",       
+                            "lxa"       : "LXA",         "lfx"        : "LFX",       
+                            "lfc"       : "LFC",         "lfd"        : "LFD",       
+                            "lfl"       : "LFL",         "lfa"        : "LFA",       
+                            "lpx"       : "LPX",         "lpc"        : "LPC",       
+                            "lpd"       : "LPD",         "lpl"        : "LPL",       
+                            "lpa"       : "LPA",         "lix"        : "LIX",       
+                            "lic"       : "LIC",         "lid"        : "LID",       
+                            "lil"       : "LIL",         "lia"        : "LIA"       
+        }
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
         self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
@@ -124,7 +172,7 @@ class SysLucene():
                      "BatchSearch",
                      "-index",      i_dir,
                      "-queries",    i_file,
-                     "-simfn",      self.model_map[m[0]],
+                     "-similarity", self.model_map[m[0]],
                      "-stop",       stopwords,
                      "-stem",       stemmer
                     ]
