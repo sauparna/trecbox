@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 class SysLucene():
 
-    # Not all the types in 'model_map' are available, check if they
+    # Not all the types in 'model_map' may be available, check if they
     # are in lucene.TREC/src and has been built.
     
     def __init__(self, path):
