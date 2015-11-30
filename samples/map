@@ -1,0 +1,9 @@
+{"matrix": {"T6":   ["CD45",    "301-450:T:t6.50",    "t6.50"]
+	    "T7":   ["CD45",    "301-450:T:t7.50",    "t7.50"]
+	   },
+ "models": [bm25:", "bm25L:", "AMITPDLN:"],
+ "stems" : ["s"],
+ "stops" : ["ser17"],
+ "qexp"  : [""],
+ "system": "lucene",
+}
