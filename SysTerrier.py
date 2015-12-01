@@ -1,62 +1,16 @@
 import sys, os, subprocess
 import time
+import simplejson as json
 from bs4 import BeautifulSoup
 
 class SysTerrier():
 
     def __init__(self, path):
-        self.path = path
-        #self.model_map   = {"bm25": "BM25", "dfr": "DFI0", "tfidf": "TF_IDF"}
-
-        self.model_map = {"bb2"       : "BB2",         "bm25"       : "BM25",
-                          "dfi0"      : "DFI0",        "dfrbm25"    : "DFR_BM25", 
-                          "dfree"     : "DFRee",       "dirichletlm": "DirichletLM",
-                          "dlh"       : "DLH",         "hiemstralm" : "Hiemstra_LM",
-                          "dlh13"     : "DLH13",       "dph"        : "DPH", 
-                          "ifb2"      : "IFB2",        "inexpb2"    : "In_expB2",
-                          "inexpc2"   : "In_expC2",    "jskls"      : "Js_KLs",
-                          "inb2"      : "InB2",        "inl2"       : "InL2", 
-                          "lemurtfidf": "LemurTF_IDF", "lgd"        : "LGD",
-                          "pl2"       : "PL2",         "xsqram"     : "XSqrA_M",
-                          "tf"        : "Tf",          "tfidf"      : "TF_IDF",
-                          "TMPL"        : "TMPL",
-                          "TerrierTFIDF": "TerrierTFIDF",
-                          "TerrierBM25A": "TerrierBM25A",
-                          "TerrierBM25B": "TerrierBM25B",
-                          "SERSIMPLE"   : "SERSIMPLE",
-                          "SERBM25T3"   : "SERBM25T3",
-                          "SERBM25T7"   : "SERBM25T7",
-                          "DHGB"        : "DHGB",
-                          "AMITPDLN"    : "AMITPDLN",
-                          "bxx"       : "BXX",          "bxd"        : "BXD",         
-                          "bxl"       : "BXL",          "bxa"        : "BXA",         
-                          "bfx"       : "BFX",          "bfd"        : "BFD",         
-                          "bfl"       : "BFL",          "bfa"        : "BFA",         
-                          "bpx"       : "BPX",          "bpd"        : "BPD",         
-                          "bpl"       : "BPL",          "bpa"        : "BPA",         
-                          "bix"       : "BIX",          "bid"        : "BID",         
-                          "bil"       : "BIL",          "bia"        : "BIA",         
-                          "txx"       : "TXX",          "txd"        : "TXD",         
-                          "txl"       : "TXL",          "txa"        : "TXA",         
-                          "tfx"       : "TFX",          "tfd"        : "TFD",         
-                          "tfl"       : "TFL",          "tfa"        : "TFA",         
-                          "tpx"       : "TPX",          "tpd"        : "TPD",         
-                          "tpl"       : "TPL",          "tpa"        : "TPA",         
-                          "tix"       : "TIX",          "tid"        : "TID",         
-                          "til"       : "TIL",          "tia"        : "TIA",         
-                          "lxx"       : "LXX",          "lxd"        : "LXD",         
-                          "lxl"       : "LXL",          "lxa"        : "LXA",         
-                          "lfx"       : "LFX",          "lfd"        : "LFD",         
-                          "lfl"       : "LFL",          "lfa"        : "LFA",         
-                          "lpx"       : "LPX",          "lpd"        : "LPD",         
-                          "lpl"       : "LPL",          "lpa"        : "LPA",         
-                          "lix"       : "LIX",          "lid"        : "LID",         
-                          "lil"       : "LIL",          "lia"        : "LIA",         
-        }
-
+        self.path        = path
+        self.model_file  = os.path.join(self.path["TERRIER"], "mods/models.terrier")
+        self.model_map   = json.loads(open(self.model_file, "r").read())
         self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
                             "sn": "EnglishSnowballStemmer", "s": "SStemmer"}
-
         self.qe_map      = {"kl0": "KL",         "kla": "BA",        "kli": "Information",
                             "klm": "KLComplete", "klr": "KLCorrect", "bo1": "Bo1",
                             "bo2": "Bo2"}

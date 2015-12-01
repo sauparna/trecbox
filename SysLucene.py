@@ -1,49 +1,13 @@
 import sys, os, subprocess
+import simplejson as json
 from bs4 import BeautifulSoup
 
 class SysLucene():
 
-    # Not all the types in 'model_map' may be available, check if they
-    # are in lucene.TREC/src and has been built.
-    
     def __init__(self, path):
         self.path        = path
-        self.model_map   = {"bm25L"       : "BM25Similarity",
-                            "dfrL"        : "DFRSimilarity",
-                            "defaultL"    : "DefaultSimilarity",
-                            "dirichletlmL": "LMDirichletSimilarity",
-                            "tmpl"        : "TMPL",
-                            "bm25"        : "BM25",
-                            "TerrierTFIDF": "TerrierTFIDF",
-                            "SERSIMPLE"   : "SERSIMPLE",
-                            "SERBM25T3"   : "SERBM25T3",
-                            "DHGB"        : "DHGB",
-                            "AMITPDLN"    : "AMITPDLN",
-                            "bxx"         : "BXX",          "bxd"        : "BXD",         
-                            "bxl"         : "BXL",          "bxa"        : "BXA",         
-                            "bfx"         : "BFX",          "bfd"        : "BFD",         
-                            "bfl"         : "BFL",          "bfa"        : "BFA",         
-                            "bpx"         : "BPX",          "bpd"        : "BPD",         
-                            "bpl"         : "BPL",          "bpa"        : "BPA",         
-                            "bix"         : "BIX",          "bid"        : "BID",         
-                            "bil"         : "BIL",          "bia"        : "BIA",         
-                            "txx"         : "TXX",          "txd"        : "TXD",         
-                            "txl"         : "TXL",          "txa"        : "TXA",         
-                            "tfx"         : "TFX",          "tfd"        : "TFD",         
-                            "tfl"         : "TFL",          "tfa"        : "TFA",         
-                            "tpx"         : "TPX",          "tpd"        : "TPD",         
-                            "tpl"         : "TPL",          "tpa"        : "TPA",         
-                            "tix"         : "TIX",          "tid"        : "TID",         
-                            "til"         : "TIL",          "tia"        : "TIA",         
-                            "lxx"         : "LXX",          "lxd"        : "LXD",         
-                            "lxl"         : "LXL",          "lxa"        : "LXA",         
-                            "lfx"         : "LFX",          "lfd"        : "LFD",         
-                            "lfl"         : "LFL",          "lfa"        : "LFA",         
-                            "lpx"         : "LPX",          "lpd"        : "LPD",         
-                            "lpl"         : "LPL",          "lpa"        : "LPA",         
-                            "lix"         : "LIX",          "lid"        : "LID",         
-                            "lil"         : "LIL",          "lia"        : "LIA",         
-        }
+        self.model_file  = os.path.join(self.path["LUCENE"], "mods/models.lucene")
+        self.model_map   = json.loads(open(self.model_file, "r").read())
         self.stemmer_map = {"p": "porter",   "k": "krovetz", 
                             "b": "snowball", "s": "sstemmer"}
         self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
