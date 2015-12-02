@@ -8,8 +8,8 @@ class SysLucene():
         self.path        = path
         self.model_file  = os.path.join(self.path["LUCENE"], "mods/models.lucene")
         self.model_map   = json.loads(open(self.model_file, "r").read())
-        self.stemmer_map = {"p": "porter",   "k": "krovetz", 
-                            "b": "snowball", "s": "sstemmer"}
+        self.stemmer_map = {"po": "PorterStemFilter", "kr": "KStemFilter", 
+                            "sn": "SnowballFilter",   "s" : "EnglishMinimalStemFilter"}
         self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
 
     def write_file(self, qtag, q):
@@ -68,7 +68,7 @@ class SysLucene():
 
         try:
             log = subprocess.check_output(["java",
-                                           "-Xmx1024m",
+                                           "-Xmx2048m",
                                            "-cp",       self.lib,
                                            "IndexTREC",
                                            "-index",    o_dir,
