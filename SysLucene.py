@@ -46,10 +46,10 @@ class SysLucene():
         
         # print(itag)
 
-        stopwords = ""
-        stemmer   = ""
+        stopwords = "None"
+        stemmer   = "None"
 
-        if opt[0] != "None":
+        if opt[0] != "x":
             stopwords = os.path.join(self.path["MISC"], opt[0])
 
         if opt[1] in self.stemmer_map:
@@ -80,8 +80,8 @@ class SysLucene():
             log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.path["INDEX"], itag + ".log"))
-        with open(o_log, "w+b") as f:
-            f.write(log)
+        with open(o_log, "w+") as f:
+            f.write(str(log))
 
 
     def retrieve(self, itag, rtag, opt, m, q, qe):
@@ -92,10 +92,10 @@ class SysLucene():
 
         # print(rtag)
 
-        stopwords = ""
-        stemmer   = ""
+        stopwords = "None"
+        stemmer   = "None"
 
-        if opt[0] != "None":
+        if opt[0] != "x":
             stopwords = os.path.join(self.path["MISC"], opt[0])
 
         if opt[1] in self.stemmer_map:
