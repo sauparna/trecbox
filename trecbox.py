@@ -29,7 +29,7 @@ def main(argv):
     stopmap = {"lucene33": "033", "indri418"  : "418",
                "smart571": "571", "terrier733": "733",
                "ser17"   : "017", "x"         : "x"}
-    stemmap = {"porter"  : "po",  "weakporter": "wp",
+    stemmap = {"porter"  : "po",  "weakporter": "wp", "krovetz": "kr",
                "snowball": "sn",          "s" : "s",
                "x"       : "x"}
     qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
