@@ -9,7 +9,7 @@ hand-crafted, and their details are described later.
 
 ##### USAGE
 
-```python3 trecbox <conf> <map>```
+```python3 trecbox.py <conf> <map>```
 
 'conf' points trecbox to the the retrieval system and the directories
 where to put the experiment's output. The 'map' lays out the
