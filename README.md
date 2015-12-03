@@ -128,25 +128,25 @@ strings in their positions.
 ```
 
 - `<name>` is a reasonable name that the test collection needs to be
-given.
+  given.
 
 - `<T|D|N>` specifies the portion of the query to use; the TITLE,
-DESCRIPTION or NARRATIVE. Any combination of these three characters
-mean that all those parts are to be concatenated and treated as one
-query.
+  DESCRIPTION or NARRATIVE. Any combination of these three characters
+  mean that all those parts are to be concatenated and treated as one
+  query.
 
 - `<qid>` is a file listing the query IDs to be used. It is a way to
   use a subset of the queries if necessary.
 
 - `<model>`, `<stemmer>` are names of models and stemmers to be
-used. These depend on the the retrieval system being used.
+  used. These depend on the the retrieval system being used.
 
-- `<qexp names>` specifies what 'query expansion' algorithm to use. This
-depends on the retrieval system, and how the system names these
-intricacies. It so happens that one of Terrier 4.0's query exapnsion
-algorithms needs two other parameters, which can be specified in the
-'map' as `<param 1>` and `<param 2>`.
+- `<qexp names>` specifies what 'query expansion' algorithm to
+  use. This depends on the retrieval system, and how the system names
+  these intricacies. It so happens that one of Terrier 4.0's query
+  exapnsion algorithms needs two other parameters, which can be
+  specified in the 'map' as `<param 1>` and `<param 2>`.
 
-- `""` The empty double-quote specifies that no query expansion is to be
-used. This way, stopping and stemming could also be switched off. Of
-course, using it in `matrix` makes no sense.
+- `<>` The empty string (`""`) specifies that no query expansion is to
+  be used. This way, stopping and stemming could also be switched
+  off. Of course, using it in `matrix` makes no sense.
