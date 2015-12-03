@@ -1,29 +1,28 @@
 *trecbox* is not a search engine, but a tool that provides an
-abstraction to specify the index-retrieve-evaluate pipeline of a
-typical IR experiment. It drives other search systems on TREC data.
+abstraction for specifying the index-retrieve-evaluate pipeline of a
+typical IR experiment. It drives other search systems on TREC data to
+this specification.
 
-The input to *trecbox* are two configuration files (in JSON), 'conf'
-and 'map'.  The locations of retrieval systems, input data and output
-data is specified in 'conf'. 'map' represents the experiment's
-pipeline. They have a format as shown below:
-
-The input to trecbox are two plain text files, a configuration and a
-map. Both the files have to be written manually, which is explained in
-detail later. 'conf' points trecbox to the the retrieval system and
-the directories where to put the experiment's output. The output is
-the 'runs' and the 'evals'. The 'map' file lays out the experiment. It
-tells trecbox which system to use, which test collection, and which
-parts of the index-retrieve-eval pipeline to engage. The map becomes a
-record of the experimental set-up. *trecbox* takes care of generating
-unique, meaningful names for the index, runs and evals.
+The input to *trecbox* are two configuration files (in JSON) that
+configure the tool and the experiment pipeline. The files have to be
+hand-crafted, and their details are described later.
 
 ##### USAGE
 
 ```python3 trecbox <conf> <map>```
 
+'conf' points trecbox to the the retrieval system and the directories
+where to put the experiment's output. The 'map' lays out the
+experiment. It specifies the systems, test collections and the parts
+of the index-retrieve-eval pipeline to engage. The 'map' becomes a
+blue-print and record of the experimental set-up. *trecbox* takes care
+of generating unique, meaningful names for the index, runs and evals.
+
 ##### Organizing the experiment
 
 ###### The directory tree
+
+Here is a typical set up that *trecbox* uses.
 
 ```
 x/
@@ -83,9 +82,7 @@ x/
 - 'index', 'runs', 'evals', must be empty at the start but will end up
   with the index, runs and evals once the experiment finishes.
 
-With this tree in mind, 'conf' and '0' will make sense. 
-
-###### 'conf' - The configuration file
+###### 'conf' - Configuring the tool
 
 ```
 {
@@ -104,9 +101,10 @@ With this tree in mind, 'conf' and '0' will make sense.
 }
 ```
 
-###### '0' - The experiment map
+###### '0' - Making the experiment's blue-print
 
-This is what a 'map' looks like and how it should be read:
+This is what a 'map' looks like and the next block explains the
+strings in their positions.
 
 ```
 {"matrix": {"T7":   ["CD45",    "351-400:T:t7.50",    "351-400.cd45-cr"]
@@ -119,16 +117,12 @@ This is what a 'map' looks like and how it should be read:
 }
 ```
 
-The 'map' reads as follows. All the strings in within the angular
-brackets must be written within double-quotes. Most of them are self
-explanatory.
-
 ```
-{"matrix": {<name>: [<doc directory>, "<query file>:<T|D|N>:<qid>",    "<qrel file>"]},
+{"matrix": {<name>: [<doc directory>, <query file>:<T|D|N>:<qid>, <qrel file>]},
  "models": [<model>, ...],
  "stems" : [<stemmer>, ...],
  "stops" : [<stop-words file>],
- "qexp"  : ["", "<qexp name>:<param 1>:<param 2>"],
+ "qexp"  : [<>, <qexp name>:<param 1>:<param 2>],
  "system": "terrier"
 }
 ```
