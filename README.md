@@ -32,7 +32,7 @@ It saves space to use symbolic links to the the data, especially in
 `Y/doc`, instead of copying everything into each experiment that you
 design.
 
-###### Where everything is:
+###### Where everything stays:
 
 ```
 x/
@@ -87,7 +87,7 @@ x/
 }
 ```
 
-###### map, `Y`
+###### `Y`
 ```
 {"matrix": {"T7":   ["CD45",    "351-400:T:t7.50",    "351-400.cd45-cr"]
 	   },
