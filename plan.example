@@ -1,8 +1,0 @@
-{"matrix": {"fr":   ["fr94",
-		     "301-450:d:fr.no01.49",
-		     "fr.49"]
-	    },
- "models": ["bm25"],
- "stems" : ["p"],
- "system": "terrier"
-}

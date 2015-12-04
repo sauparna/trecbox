@@ -34,6 +34,7 @@ design.
 
 ###### Where everything is:
 
+```
 x/
 ├── ...
 ├── trec_eval.9.0
@@ -65,6 +66,7 @@ x/
 │   │   └── Y
 │   └── ...
 └── ...
+```
 
 ###### conf
 
