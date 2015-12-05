@@ -31,8 +31,7 @@ following this specification.
 
 ###### `Y`
 ```
-{"matrix": {"T7":   ["CD45",    "351-400:T:t7.50",    "351-400.cd45-cr"]
-	   },
+{"matrix": {"T7": ["CD45", "351-400:T:t7.50", "351-400.cd45-cr"]},
  "models": ["tfidf:", "bm25:"],
  "stems" : ["s"],
  "stops" : ["ser17"],
