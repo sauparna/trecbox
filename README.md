@@ -1,9 +1,8 @@
-*trecbox* is not a search engine, but a tool that provides an
+*[trecbox][trb]* is not a search engine, but a tool that provides an
 abstraction for specifying the index-retrieve-evaluate pipeline of a
 typical IR experiment. It drives other search systems on TREC data
-following this specification.
-
-[Documentation](http://scarlet.freeshell.net/ir/trecbox)
+following this specification. This helps oranize an experiment neatly
+and easy to reproduce later.
 
 ##### USAGE
 
@@ -40,7 +39,11 @@ following this specification.
 }
 ```
 
-###### Where everything stays:
+###### Data
+
+A hypothetical layout of the input and output data and their
+locations. The configuraion files passed to *trecbox* point to these
+resources.
 
 ```
 x/
@@ -75,3 +78,5 @@ x/
 │   └── ...
 └── ...
 ```
+
+[trb]: http://scarlet.freeshell.net/ir/trecbox
