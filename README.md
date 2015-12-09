@@ -1,13 +1,25 @@
-*[trecbox][trb]* is not a search engine, but a tool that provides an
+[trecbox][trb] is not a search engine, but a tool that provides an
 abstraction for specifying the index-retrieve-evaluate pipeline of a
 typical IR experiment. It drives other search systems on TREC data
-following this specification. This helps oranize an experiment neatly
+following this specification. This helps organize an experiment neatly
 and easy to reproduce later.
 
-##### USAGE
+A hypothetical layout of the input and output data is shown. The
+configuration files passed to *trecbox* point to these resources. Note
+how the experiment-directory X contains the experiment-layout in a
+file Y in X/maps and the experiment is encapsulated in a directory of
+the same name Y in X.
 
-```python3 trecbox.py <conf> <Y>```
+##### Prerequisites
 
++ Python 3
++ simplejson
++ lxml
++ beautifulsoup4
+
+##### Usage
+
+```python trecbox.py <conf> <Y>```
 
 ###### conf
 
@@ -40,10 +52,6 @@ and easy to reproduce later.
 ```
 
 ###### Data
-
-A hypothetical layout of the input and output data and their
-locations. The configuraion files passed to *trecbox* point to these
-resources.
 
 ```
 x/
