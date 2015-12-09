@@ -13,16 +13,16 @@ the same name Y in X.
 ##### Prerequisites
 
 + Python 3
-+ simplejson
-+ lxml
-+ beautifulsoup4
++ Python libraries:
+  - simplejson
+  - lxml
+  - beautifulsoup4
 
 ##### Usage
 
 ```python trecbox.py <conf> <Y>```
 
 ###### conf
-
 ```
 {
 "TRECEVAL": "/x/trec_eval.9.0",
@@ -40,7 +40,7 @@ the same name Y in X.
 }
 ```
 
-###### `Y`
+###### Y
 ```
 {"matrix": {"T7": ["CD45", "351-400:T:t7.50", "351-400.cd45-cr"]},
  "models": ["tfidf:", "bm25:"],
@@ -52,7 +52,6 @@ the same name Y in X.
 ```
 
 ###### Data
-
 ```
 x/
 ├── ...
