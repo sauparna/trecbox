@@ -87,9 +87,9 @@ class SysTerrier():
         # -DTrecDocTags.process=TEXT,TITLE,HEAD,HL
         # Recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks4&5
         # -DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL
-        # Use process and skip to normalize across disks 1-5:
-        # "-DTrecDocTags.process=TEXT" 
-        # "-DTrecDocTags.skip=DOCHDR,H3,DOCTITLE,HEADLINE,TTL,TITLE,HEAD,HL"
+        # To be able to process all documents in CDs 1 - 5 use everything and skip nothing:
+        # "-DTrecDocTags.process=" 
+        # "-DTrecDocTags.skip="
 
         try:
            log =  subprocess.check_output(
@@ -101,7 +101,8 @@ class SysTerrier():
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
-                "-DTrecDocTags.process=TEXT,H3,DOCTITLE,HEADLINE,TTL",
+                "-DTrecDocTags.process=",
+                "-DTrecDocTags.skip=",
                 "-DTrecDocTags.casesensitive=false"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
