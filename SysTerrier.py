@@ -90,6 +90,7 @@ class SysTerrier():
         # To be able to process all documents in CDs 1 - 5 use everything and skip nothing:
         # "-DTrecDocTags.process=" 
         # "-DTrecDocTags.skip="
+        # Recommended at http://terrier.org/docs/v4.0/javadoc/org/terrier/utility/TagSet.html
 
         try:
            log =  subprocess.check_output(
