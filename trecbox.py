@@ -78,7 +78,7 @@ def main(argv):
         qnum     = len(query)
         _,qtag,_ = maketag("", testcol, "", "",
                            "", str(qnum), qtdn, "")
-        q = Query(queryp).write(qtag, query, path["RUNS"])
+        q = Query(queryp).write(path["RUNS"], qtag, query)
         for stopf in stops:
             if not stopf:
                 stopf = "x"

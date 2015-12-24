@@ -189,7 +189,7 @@ class Query():
 
         return soup
 
-    def write(self, qtag, q, o_dir):
+    def write(self, o_dir, qtag, q):
 
         # queries are in the dict q
         # Build the query XML, that we want to feed terrier, and write
