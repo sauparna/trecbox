@@ -78,7 +78,7 @@ def main(argv):
         qnum     = len(query)
         _,qtag,_ = maketag("", testcol, "", "",
                            "", str(qnum), qtdn, "")
-        q = system.write_file(qtag, query)
+        q = Query(queryp).write(qtag, query, path["RUNS"])
         for stopf in stops:
             if not stopf:
                 stopf = "x"

@@ -1,6 +1,6 @@
 from collections import OrderedDict as OD
 from bs4 import BeautifulSoup
-import re, sys
+import re, sys, os
 
 class Query():
 
@@ -188,3 +188,32 @@ class Query():
             narr.string = re.sub(r'^Narrative:', "", narr.string)
 
         return soup
+
+    def write(self, qtag, q, o_dir):
+
+        # queries are in the dict q
+        # Build the query XML, that we want to feed terrier, and write
+        # it out to disk.
+
+        soup = BeautifulSoup("<trick></trick>", "xml")
+
+        # float n query tags in the soup
+
+        for num in q:
+            T_top = soup.new_tag("TOP")
+            T_num = soup.new_tag("NUM")
+            T_num.string = str(num)
+            T_text = soup.new_tag("TEXT")
+            T_text.string = q[num]
+            T_top.append(T_num)
+            T_top.append(T_text)
+            soup.trick.append(T_top)
+        
+        # Drop the XML declaration, remove <trick>, write it out.
+
+        o_file = os.path.join(o_dir, qtag + ".queries")
+        if not os.path.exists(o_file):
+            with open(o_file, "w") as f:
+                f.write("\n".join(soup.prettify().split("\n")[2:-1]))
+
+        return o_file
