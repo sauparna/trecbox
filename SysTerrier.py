@@ -93,8 +93,9 @@ class SysTerrier():
         i_file    = q
 
         tfnorm    = ""
-        if m[1]:
-            tfnorm = "-c " + m[1]
+        if len(m) == 2:
+            if (m[1]):
+                tfnorm = "-c " + m[1]
 
         qe_ctrl   = ""
         qe_ordr   = ""
