@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys, os
 import simplejson as json
 from SysTerrier import *
@@ -74,11 +76,11 @@ def main(argv):
             with open(qsubsetp, "r") as fp:
                 for l in fp:
                     qsubsetl.append(int(l.strip()))
-        query    = Query(queryp).query(plan["system"], qtdn, qsubsetl)
-        qnum     = len(query)
+        query = Query(queryp, qtdn, qsubsetl, plan["system"])
+        query.parse()
         _,qtag,_ = maketag("", testcol, "", "",
-                           "", str(qnum), qtdn, "")
-        q = Query(queryp).write(path["RUNS"], qtag, query)
+                           "", str(query.n), qtdn, "")
+        query.write_xml(path["RUNS"], qtag + ".queries")
         for stopf in stops:
             if not stopf:
                 stopf = "x"
@@ -96,10 +98,10 @@ def main(argv):
                         if not qe[0]:
                             qe[0] = "x"
                         _,_,rtag = maketag("", testcol, stopmap[stopf], stemmap[stemmer],
-                                           model[0], str(qnum), qtdn, qemap[qe[0]])
+                                           model[0], str(query.n), qtdn, qemap[qe[0]])
                         print(str(c) + " " + rtag); c += 1 
                         system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
-                                        model, q, qe)
+                                        model, query.oqf, qe)
                         system.evaluate(rtag, qrelsp)
 
 if __name__ == "__main__":
