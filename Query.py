@@ -220,9 +220,8 @@ class Query():
         # Drop the XML declaration, remove <trick>, write it out.
 
         o_file = os.path.join(o_dir, oqf)
-        if not os.path.exists(o_file):
-            with open(o_file, "w") as f:
-                f.write("\n".join(soup.prettify().split("\n")[2:-1]))
+        with open(o_file, "w") as f:
+            f.write("\n".join(soup.prettify().split("\n")[2:-1]))
 
         self.oqf = o_file
         return self.oqf
@@ -232,10 +231,9 @@ class Query():
         # a query per line
 
         o_file = os.path.join(o_dir, oqf)
-        if not os.path.exists(o_file):
-            with open(o_file, "w") as f:
-                for num in self.q:
-                    f.write(self.q[num] + "\n")
+        with open(o_file, "w") as f:
+            for num in self.q:
+                f.write(self.q[num] + "\n")
 
         self.oqf = o_file
         return self.oqf
