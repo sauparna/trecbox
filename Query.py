@@ -4,53 +4,59 @@ import re, sys, os
 
 class Query():
 
-    def __init__(self, f):
-        self.file = f
+    def __init__(self, iqf, part="T", qids=None, kind=None):
+        self.iqf = iqf
+        self.oqf = ""
+        self.q  = OD()
+        self.n  = 0
+        self.part = part
+        self.qids = qids
+        self.kind = kind
+        if kind:
+            self.kind = self.kind.lower()
 
-    def query(self, opt=None, qtdn="T", qlist=None):
+    def parse(self):
 
         # Usually, query() should return a malleable form of the query
         # text, read in from a file on disk. For indri, lucene and
-        # terrier it returns a dict. It's recommended you don't return
-        # paths to a file on disk. Let the systems do whatever they
-        # want with it.
-
-        q    = OD()
-        if opt:
-            opt = opt.lower()
+        # terrier it returns a dict.
 
         soup = self.__hack_n_hew()
 
         # To prettyprint the soup without the tricks
-        # print "\n".join(soup.prettify().split("\n")[2:-1])
+        # print("\n".join(soup.prettify().split("\n")[2:-1]))
 
         # indri and lucene can't stand puncs
-        if opt == "indri" or opt == "lucene":
+        if self.kind == "indri" or self.kind == "lucene":
             soup = self.__wipe_punctuations(soup)
 
         # Wade in the soup and return a dict of query text picked by
-        # 'qtdn', scoped by 'qlist' (if given) and indexed by qid
+        # 'self.part', scoped by 'self.qids' (if given) and indexed by qid
 
         for top in soup.find_all("top"):
-            # lower (older) qids are padded with zeros, as in '002'
-            # int() drops these leading zeros
-            n = int(top.num.string.lstrip().rstrip())
-            if  qlist and (n not in qlist):
+            
+            # lower (older) qids are prefixed with zeros, as in '002'
+            # so typecasting to int() drops these leading zeros
+
+            qid = int(top.num.string.lstrip().rstrip())
+
+            if  self.qids and (qid not in self.qids):
                 continue
-            q[n] = ""
-            for m in list(qtdn):
+            self.q[qid] = ""
+            for m in list(self.part):
                 if m == "T":
                     if top.title != None:
-                        q[n] += " " + top.title.string
+                        self.q[qid] += " " + top.title.string
                 if m == "D":
                     if top.desc != None:
-                        q[n] += " " + top.desc.string
+                        self.q[qid] += " " + top.desc.string
                 if m == "N":
                     if top.narr != None:
-                        q[n] += " " + top.narr.string
-            q[n] = q[n].lstrip().rstrip()
-
-        return q
+                        self.q[qid] += " " + top.narr.string
+            self.q[qid] = self.q[qid].lstrip().rstrip()
+            self.n = self.n + 1
+        
+        return self.q
 
     def __name(self, tag):
         return tag.lstrip("<").rstrip(">").lstrip("/")
@@ -86,7 +92,7 @@ class Query():
         # sanitize old TREC topics for a system's consumption: add
         # closing tags and return a bowl of soup
 
-        with open(self.file, "r") as f_:
+        with open(self.iqf, "r") as f_:
             txt = f_.read()
             
         in_tag = False
@@ -180,6 +186,9 @@ class Query():
         for num in soup.find_all("num"):
             num.string = num.string.lstrip().rstrip()
             num.string = re.sub(r'^Number:[ ]*', "", num.string)
+        for title in soup.find_all("title"):
+            title.string = title.string.lstrip().rstrip()
+            title.string = re.sub(r'^Topic:[ ]*', "", title.string)
         for desc in soup.find_all("desc"):
             desc.string = desc.string.lstrip().rstrip()
             desc.string = re.sub(r'^Description:[ ]*', "", desc.string)
@@ -189,9 +198,8 @@ class Query():
 
         return soup
 
-    def write(self, o_dir, qtag, q):
-
-        # queries are in the dict q
+    def write_xml(self, o_dir, oqf):
+        
         # Build the query XML, that we want to feed terrier, and write
         # it out to disk.
 
@@ -199,21 +207,35 @@ class Query():
 
         # float n query tags in the soup
 
-        for num in q:
+        for num in self.q:
             T_top = soup.new_tag("TOP")
             T_num = soup.new_tag("NUM")
             T_num.string = str(num)
             T_text = soup.new_tag("TEXT")
-            T_text.string = q[num]
+            T_text.string = self.q[num]
             T_top.append(T_num)
             T_top.append(T_text)
             soup.trick.append(T_top)
-        
+            
         # Drop the XML declaration, remove <trick>, write it out.
 
-        o_file = os.path.join(o_dir, qtag + ".queries")
+        o_file = os.path.join(o_dir, oqf)
         if not os.path.exists(o_file):
             with open(o_file, "w") as f:
                 f.write("\n".join(soup.prettify().split("\n")[2:-1]))
 
-        return o_file
+        self.oqf = o_file
+        return self.oqf
+
+    def write_plaintext(self, o_dir, oqf):
+        
+        # a query per line
+
+        o_file = os.path.join(o_dir, oqf)
+        if not os.path.exists(o_file):
+            with open(o_file, "w") as f:
+                for num in self.q:
+                    f.write(self.q[num] + "\n")
+
+        self.oqf = o_file
+        return self.oqf
