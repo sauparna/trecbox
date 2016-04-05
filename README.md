@@ -49,6 +49,9 @@ directory at */x/Experiments/Y/*.
 
 ###### Locations
 
+INPUT: doc, query, qrel, misc
+OUTPUT: index, runs, evals, log
+
 ```
 x/
 ├── ...
