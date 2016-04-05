@@ -9,8 +9,10 @@ class SysTerrier():
         self.path        = path
         self.model_file  = os.path.join(self.path["TERRIER"], "mods/models.terrier")
         self.model_map   = json.loads(open(self.model_file, "r").read())
-        self.stemmer_map = {"po": "PorterStemmer", "wp": "WeakPorterStemmer",
-                            "sn": "EnglishSnowballStemmer", "s": "SStemmer"}
+        self.stemmer_map = {"porter"    : "PorterStemmer",
+                            "weakporter": "WeakPorterStemmer",
+                            "snowball"  : "EnglishSnowballStemmer",
+                            "s"         : "SStemmer"}
         self.qe_map      = {"kl0": "KL",         "kla": "BA",        "kli": "Information",
                             "klm": "KLComplete", "klr": "KLCorrect", "bo1": "Bo1",
                             "bo2": "Bo2"}
@@ -24,17 +26,12 @@ class SysTerrier():
         return o_file
 
     def __build_termpipeline(self, opt):
-        p = ["", ""]
-        stopp = os.path.join(self.path["MISC"], opt[0])
-        p[0]  = "Stopwords"
-        if opt[0] == "x":
-            p[0]  = "NoOp"
-            stopp = ""
+        p = ["NoOp", "NoOp"]
+        if opt[0] != "":
+            p[0]  = "Stopwords"
         if opt[1] in self.stemmer_map:
             p[1] = self.stemmer_map[opt[1]]
-        if opt[1] == "x":
-            p[1] = "NoOp"
-        return p[0] + "," + p[1], stopp
+        return p[0] + "," + p[1]
 
     def index(self, itag, doc, opt):
 
@@ -49,9 +46,10 @@ class SysTerrier():
 
         os.mkdir(o_dir)
 
-        pipeline, stopwords = self.__build_termpipeline(opt)
-        i_file  = self.__write_doclist(itag, doc)
-        log     = ""
+        stop_f   = opt[0]
+        pipeline = self.__build_termpipeline(opt)
+        i_file   = self.__write_doclist(itag, doc)
+        output   = ""
 
         # Recommended at http://ir.dcs.gla.ac.uk/wiki/Terrier/Disks1&2
         # -DTrecDocTags.process=TEXT,TITLE,HEAD,HL
@@ -63,12 +61,12 @@ class SysTerrier():
         # Recommended at http://terrier.org/docs/v4.0/javadoc/org/terrier/utility/TagSet.html
 
         try:
-           log =  subprocess.check_output(
+           output = subprocess.check_output(
                [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
-                "-Dstopwords.filename=" + stopwords,
+                "-Dstopwords.filename=" + stop_f,
                 "-Dtermpipelines="      + pipeline,
                 "-DTrecDocTags.doctag=DOC",
                 "-DTrecDocTags.idtag=DOCNO",
@@ -77,11 +75,11 @@ class SysTerrier():
                 "-DTrecDocTags.casesensitive=false"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+            output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["INDEX"], itag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["LOG"], itag + ".i"))
         with open(o_log, "w+b") as f:
-            f.write(log)
+            f.write(output)
 
     def retrieve(self, itag, rtag, opt, m, q, qe):
 
@@ -104,7 +102,7 @@ class SysTerrier():
         qe_docs   = "0"
         qe_switch = ""
 
-        if qe[0] != "x":
+        if qe[0] != "":
             qe_ctrl   = "qe:QueryExpansion"
             qe_ordr   = "QueryExpansion"
             qe_model  = "org.terrier.matching.models.queryexpansion." + self.qe_map[qe[0]]
@@ -112,7 +110,7 @@ class SysTerrier():
             qe_docs   = qe[2]
             qe_switch = "-q"
 
-        log = ""
+        output = ""
 
         if not os.path.exists(i_dir):
             print("retrieve(): didn't find index " + itag)
@@ -122,7 +120,8 @@ class SysTerrier():
             print("retrieve(): found, so skipping " + rtag)
             return
 
-        pipeline, stopwords = self.__build_termpipeline(opt)
+        stop_f   = opt[0]
+        pipeline = self.__build_termpipeline(opt)
 
         # terrier is fed a topic file where all the text resides
         # within the <text> and </text> tags, because picking topic
@@ -150,7 +149,7 @@ class SysTerrier():
         # "-DTrecQueryTags.casesensitive=false",
 
         try:
-            log = subprocess.check_output(
+            output = subprocess.check_output(
                 [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
                  "-r",
                  qe_switch,
@@ -162,7 +161,7 @@ class SysTerrier():
                  "-DTrecQueryTags.process=TOP,NUM,TEXT",
                  "-DTrecQueryTags.skip=",
                  "-DTrecQueryTags.casesensitive=false",
-                 "-Dstopwords.filename=" + stopwords,
+                 "-Dstopwords.filename=" + stop_f,
                  "-Dtermpipelines=" + pipeline,
                  "-Dtrec.model=" + self.model_map[m[0]],
                  "-Dquerying.postprocesses.controls=" + qe_ctrl,
@@ -174,11 +173,11 @@ class SysTerrier():
                  "-Dtrec.results.file=" + o_file],
                 stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            log = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+            output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["RUNS"], rtag + ".log"))
+        o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".r"))
         with open(o_log, "w+b") as f:
-            f.write(log)
+            f.write(output)
 
     def evaluate(self, rtag, qrels):
 
@@ -196,9 +195,19 @@ class SysTerrier():
             return
         
         # trec_eval -q qrels run > eval_output
-        with open(o_file, "w+b") as f:
-            f.write(subprocess.check_output(
+
+        output = ""
+        
+        try:
+            output = subprocess.check_output(
                     [os.path.join(self.path["TRECEVAL"], "trec_eval"),
                      "-q",
                      qrels,
-                     i_file]))
+                     i_file])
+            with open(o_file, "w+b") as f:
+                f.write(output)
+        except subprocess.CalledProcessError as e:
+            output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+            o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".e"))
+            with open(o_log, "w+") as f:
+                f.write(str(output))

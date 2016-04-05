@@ -7,102 +7,113 @@ from SysIndri import *
 from SysLucene import *
 from Query import Query
 
-def init(cf, pf):
-    name = os.path.basename(pf)
-    plan = json.loads(open(pf, "r").read())
-    path = json.loads(open(cf, "r").read())
-    k_   = ["DOC", "QUERY", "QREL", "MISC", "INDEX", "RUNS", "EVALS"]
-    path.update({k: os.path.join(path["EXP"], name, path[k]) for k in k_})
-    return path, plan
+def read_config(x_f, y_f):
+    y_str = os.path.basename(y_f)
+    y     = json.loads(open(y_f, "r").read())
+    x     = json.loads(open(x_f, "r").read())
+    k_    = {"DOC"  : "doc",  "QUERY": "query", "QREL": "qrel",
+             "MISC" : "misc", "INDEX": "index", "RUNS": "runs",
+             "EVALS": "evals", "LOG": "log"}
+    x.update({k: os.path.join(x["EXP"], y_str, k_[k]) for k in k_})
+    return x, y
 
-def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qe):
-    itag = docs    + "." + stop + "." + stem
+def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qexp):
+    stop_tag = {"ser17"     : "a",  "lucene33"  : "b",
+                "indri418"  : "c",  "smart571"  : "d",
+                "terrier733": "e",  ""          : "x"}
+    stem_tag = {"porter"    : "p", "weakporter": "w", "krovetz": "k",
+                "snowball"  : "o",          "s": "s",
+                ""          : "x"}
+    qexp_tag = {"kl"        : "kl0", "klapprox" : "kla", "klinformation":"kli",
+                "klcomplete": "klm", "klcorrect": "klr",
+                "bo1"       : "bo1", "bo2"      : "bo2", "": "x"}
+    if stop not in stop_tag:
+        stop = ""
+    if stem not in stem_tag:
+        stem = ""
+    itag = docs    + "." + stop_tag[stop] + "." + stem_tag[stem]
     qtag = testcol + "." + qnum + "." + qtdn
-    rtag = testcol + "." + stop + "." + stem + "." + m \
-                   + "." + qnum + "." + qtdn + "." + qe
+    rtag = testcol + "." + stop_tag[stop] + "." + stem_tag[stem] + "." + m \
+                   + "." + qnum + "." + qtdn + "." + qexp_tag[qexp]
     return itag, qtag, rtag
 
 def main(argv):
 
     if len(argv) != 3:
-        print("USAGE: python trecbox.py <conf file> <plan file>")
+        print("USAGE: python trecbox.py X Y")
+        print("     : X = config file")
+        print("     : Y = experiment map file")        
         sys.exit(0)
 
-    stopmap = {"lucene33": "033", "indri418"  : "418",
-               "smart571": "571", "terrier733": "733",
-               "ser17"   : "017", "x"         : "x"}
-    stemmap = {"porter"  : "po",  "weakporter": "wp", "krovetz": "kr",
-               "snowball": "sn",          "s" : "s",
-               "x"       : "x"}
-    qemap   = {"kl": "kl0", "klapprox"  :"kla", "klinformation":"kli",
-               "klcomplete":"klm", "klcorrect": "klr",
-               "bo1":"bo1", "bo2":"bo2", "x": "x"}
-
-    path, plan = init(argv[1], argv[2]);
-
-    # # DEBUG
-    # print(json.dumps(path, sort_keys=True, indent=2))
-    # print(json.dumps(plan, sort_keys=True, indent=2))
-    # sys.exit(0)
-
-    systems = {"terrier": SysTerrier(path), 
-               "indri"  : SysIndri(path), 
-               "lucene" : SysLucene(path)}
+    x, y = read_config(argv[1], argv[2]);
     
-    matrix = plan["matrix"]
-    models = plan["models"]
-    stops  = plan["stops"]
-    stems  = plan["stems"]
-    qexp   = plan["qexp"]
-    system = systems[plan["system"]]
+    systems = {"terrier": SysTerrier(x), 
+               "indri"  : SysIndri(x), 
+               "lucene" : SysLucene(x)}
+    
+    testcol     = y["testcol"]
+    models      = y["models"]
+    stops       = y["stops"]
+    stems       = y["stems"]
+    qexpansions = y["qexp"]
+    system      = systems[y["system"]]
 
     c = 1
 
-    for testcol in matrix:
-        docs     = matrix[testcol][0]
-        docsp    = os.path.join(path["DOC"], docs)
-        q_       = matrix[testcol][1].split(":")
-        queryf   = q_[0]
-        queryp   = os.path.join(path["QUERY"], queryf)
-        qrelsf   = matrix[testcol][2]
-        qrelsp   = os.path.join(path["QREL"], qrelsf)
-        qtdn     = q_[1]
-        qsubsetf = None
-        qsubsetp = None
-        qsubsetl = []
-        if len(q_) == 3:
-            qsubsetf = q_[2]
-            qsubsetp = os.path.join(path["QUERY"], qsubsetf)
-            with open(qsubsetp, "r") as fp:
+    for t in testcol:
+
+        d_str     = testcol[t][0]
+        d_d       = os.path.join(x["DOC"], d_str)
+        q         = testcol[t][1].split(":")
+        q_str     = q[0]
+        q_f       = os.path.join(x["QUERY"], q_str)
+        qrel_str  = testcol[t][2]
+        qrel_f    = os.path.join(x["QREL"], qrel_str)
+        q_tdn_str = q[1]
+        q_set_str = None
+        q_set_f   = None
+        q_set     = []
+
+        if len(q) == 3:
+            q_set_str = q[2]
+            q_set_f   = os.path.join(x["QUERY"], q_set_str)
+            with open(q_set_f, "r") as fp:
                 for l in fp:
-                    qsubsetl.append(int(l.strip()))
-        query = Query(queryp, qtdn, qsubsetl, plan["system"])
+                    q_set.append(int(l.strip()))
+        
+        query = Query(q_f, q_tdn_str, q_set, y["system"])
         query.parse()
-        _,qtag,_ = maketag("", testcol, "", "",
-                           "", str(query.n), qtdn, "")
-        query.write_xml(path["RUNS"], qtag + ".queries")
-        for stopf in stops:
-            if not stopf:
-                stopf = "x"
-            for stemmer in stems:
-                if not stemmer:
-                    stemmer = "x"
-                itag,_,_ = maketag(docs, "", stopmap[stopf], stemmap[stemmer],
-                                   "", "", "", "")
+        _,q_tag,_ = maketag("", t, "", "",
+                           "", str(query.n), q_tdn_str, "")
+        query.write_xml(x["RUNS"], q_tag + ".queries")
+        
+        for stop_str in stops:
+
+            stop_f = os.path.join(x["MISC"], stop_str)
+            if stop_str == "":
+                stop_f   = ""
+            
+            for stem_str in stems:
+                
+                itag,_,_ = maketag(d_str, "", stop_str,
+                                   stem_str, "", "", "", "")
                 print(itag)
-                system.index(itag, docsp, [stopf, stemmap[stemmer]])
-                for modstr in models:
-                    model = modstr.split(":")
-                    for qestr in qexp:
-                        qe = qestr.split(":")
-                        if not qe[0]:
-                            qe[0] = "x"
-                        _,_,rtag = maketag("", testcol, stopmap[stopf], stemmap[stemmer],
-                                           model[0], str(query.n), qtdn, qemap[qe[0]])
-                        print(str(c) + " " + rtag); c += 1 
-                        system.retrieve(itag,  rtag, [stopf, stemmap[stemmer]], 
-                                        model, query.oqf, qe)
-                        system.evaluate(rtag, qrelsp)
+                system.index(itag, d_d, [stop_f, stem_str])
+
+                for m_str in models:
+                    
+                    m = m_str.split(":")
+                    
+                    for qexp_str in qexpansions:
+
+                        qexp = qexp_str.split(":")
+                        _,_,rtag = maketag("", t, stop_str, stem_str, m[0],
+                                           str(query.n), q_tdn_str, qexp[0])
+                        system.retrieve(itag, rtag, [stop_f, stem_str],
+                                        m, query.oqf, qexp)
+                        system.evaluate(rtag, qrel_f)
+                        print(str(c) + " " + rtag)
+                        c += 1
 
 if __name__ == "__main__":
    main(sys.argv)
