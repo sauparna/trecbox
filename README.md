@@ -21,7 +21,8 @@ directory at */x/Experiments/Y/*.
 
 ##### Usage
 
-```python trecbox.py X Y
+```
+python trecbox.py X Y
 ```
 
 ##### X
