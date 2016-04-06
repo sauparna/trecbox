@@ -3,7 +3,7 @@ TRECBOX
 *******
 
 Rup Palchowdhury
-sauparna.palc[at]gmail.com
+rup.palchowdhury[at]gmail.com
 
 This is a tool that provides an abstraction for specifying the
 index-retrieve-evaluate pipeline of a typical IR experiment. It drives
