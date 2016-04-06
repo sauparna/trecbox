@@ -1,7 +1,14 @@
+*******
+TRECBOX
+*******
+
+Rup Palchowdhury
+sauparna.palc[at]gmail.com
+
 This is a tool that provides an abstraction for specifying the
 index-retrieve-evaluate pipeline of a typical IR experiment. It drives
-other search systems on TREC data. The utility of such a tool is
-discussed at http://kak.tx0.org/IR/trecbox.
+other search systems on TREC data. The putpose and utility of such a
+tool is discussed at http://kak.tx0.org/IR/trecbox.
 
 ----------------------------------------------------------------------
 
@@ -15,7 +22,6 @@ B. IR EXPERIMENTS
 
    2. SPECIFICATION FILE FORMAT
 
-C. VOCABULARY
 ----------------------------------------------------------------------
 
 A. PREREQUISITES
