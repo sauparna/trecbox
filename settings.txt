@@ -1,5 +1,5 @@
-TRECEVAL /x/trec_eval.9.0
-LUCENE   /x/Lucene
-TERRIER  /x/Terrier
-LEMUR    /x/Indri
-EXP	 /x/Y
+EVAL /x/trec_eval.9.0
+LUCENE /x/Lucene
+TERRIER /x/Terrier
+LEMUR /x/Indri
+EXP /x/Y

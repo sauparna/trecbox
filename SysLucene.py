@@ -124,7 +124,7 @@ class SysLucene():
         # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
-                [os.path.join(self.x["TRECEVAL"], "trec_eval"),
+                [os.path.join(self.x["EVAL"], "trec_eval"),
                  "-q", 
                  qrels,
                  i_file])
