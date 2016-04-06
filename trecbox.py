@@ -99,7 +99,7 @@ def main(argv):
                                    stem_str, "", "", "", "")
                 print(itag)
                 system.index(itag, d_d, [stop_f, stem_str])
-                sys.exit(0)
+
                 for m_str in models:
                     
                     m = m_str.split(":")
