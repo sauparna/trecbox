@@ -3,11 +3,11 @@
 import sys, os
 import simplejson as json
 from SysTerrier import *
-from SysIndri import *
-from SysLucene import *
-from Query import Query
+from SysIndri   import *
+from SysLucene  import *
+from Query      import Query
 
-def read_config(x_f, y_f):
+def init(x_f, y_f):
     y_str = os.path.basename(y_f)
     y     = json.loads(open(y_f, "r").read())
     x     = json.loads(open(x_f, "r").read())
@@ -15,6 +15,8 @@ def read_config(x_f, y_f):
              "MISC" : "misc", "INDEX": "index", "RUNS": "runs",
              "EVALS": "evals", "LOG": "log"}
     x.update({k: os.path.join(x["EXP"], y_str, k_[k]) for k in k_})
+    for k in k_:
+        os.makedirs(x[k], exist_ok=True)
     return x, y
 
 def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qexp):
@@ -31,6 +33,8 @@ def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qexp):
         stop = ""
     if stem not in stem_tag:
         stem = ""
+    if qexp not in qexp_tag:
+        qexp = ""
     itag = docs    + "." + stop_tag[stop] + "." + stem_tag[stem]
     qtag = testcol + "." + qnum + "." + qtdn
     rtag = testcol + "." + stop_tag[stop] + "." + stem_tag[stem] + "." + m \
@@ -45,7 +49,7 @@ def main(argv):
         print("     : Y = experiment map file")        
         sys.exit(0)
 
-    x, y = read_config(argv[1], argv[2]);
+    x, y = init(argv[1], argv[2]);
     
     systems = {"terrier": SysTerrier(x), 
                "indri"  : SysIndri(x), 
@@ -109,7 +113,7 @@ def main(argv):
                         qexp = qexp_str.split(":")
                         _,_,rtag = maketag("", t, stop_str, stem_str, m[0],
                                            str(query.n), q_tdn_str, qexp[0])
-                        print(str(c) + " " + rtag)
+                        print('{:<4} {}'.format(c, rtag))
                         system.retrieve(itag, rtag, [stop_f, stem_str],
                                         m, query.oqf, qexp)
                         system.evaluate(rtag, qrel_f)

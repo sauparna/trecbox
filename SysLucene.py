@@ -28,7 +28,7 @@ class SysLucene():
         o_dir = os.path.join(self.path["INDEX"], itag)
 
         if os.path.exists(o_dir):
-            print("index(): found, so skipping " + itag)
+            print("WARN: Skipped stage, perhaps index exists in " + o_dir)
             return
 
         #java -cp "lucene-5.3.1/trec/lib/*:lucene-5.3.2/trec/bin/TREC.jar" IndexTREC 
@@ -57,8 +57,8 @@ class SysLucene():
     def retrieve(self, itag, rtag, opt, m, q, qe):
 
         # NOTE: Unused parameters 'opt' and 'qe'. Kept to maintain
-        # parity with other system retrieve() calls. Haven't figured
-        # how to do query-expansion in Lucene.
+        # parity with other system retrieve() calls. I haven't figured
+        # out how to do query-expansion in Lucene.
 
         # print(rtag)
 
@@ -74,11 +74,10 @@ class SysLucene():
         o_file = os.path.join(self.path["RUNS"], rtag)
 
         if not os.path.exists(i_dir):
-            print("retrieve(): didn't find index " + itag)
+            print("WARN: Couldn't retrieve, missing index " + i_dir)
             return
-
         if os.path.exists(os.path.join(o_file)):
-            print("retrieve(): found, so skipping " + rtag)
+            print("WARN: Skipped stage, run exists " + o_file)
             return
 
         #java -cp "bin:lib/*" BatchSearch -index /path/to/index 
@@ -111,22 +110,18 @@ class SysLucene():
 
         # print(rtag)
 
-        # trec_eval -q QREL_file Retrieval_Results > eval_output
-        # call trec_eval and dump output to a file
-
         i_file = os.path.join(self.path["RUNS"], rtag)
         o_file = os.path.join(self.path["EVALS"], rtag)
-
-        if not os.path.exists(i_file):
-            print("evaluate(): didn't find run " + rtag)
-            return
-
-        if os.path.exists(o_file):
-            print("evaluate(): found, so skipping " + rtag)
-            return
-
         output = ""
 
+        if not os.path.exists(i_file):
+            print("WARN: Couldn't eval, missing run " + i_file)
+            return
+        if os.path.exists(o_file):
+            print("WARN: Skipped stage, eval exists " + o_file)
+            return
+        
+        # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
                 [os.path.join(self.path["TRECEVAL"], "trec_eval"),

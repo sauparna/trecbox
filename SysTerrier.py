@@ -37,11 +37,10 @@ class SysTerrier():
 
         # print(itag)
 
-        # Terrier needs to be be fed a o_dir, but do nothing if one exists.
         o_dir = os.path.join(self.path["INDEX"], itag)
 
         if os.path.exists(o_dir):
-            print("index(): found, so skipping " + itag)
+            print("WARN: Skipped stage, perhaps index exists in " + o_dir)
             return
 
         os.mkdir(o_dir)
@@ -86,9 +85,16 @@ class SysTerrier():
         # print(rtag)
 
         o_dir     = self.path["RUNS"]
-        o_file    = rtag
+        o_file    = os.path.join(o_dir, rtag)
         i_dir     = os.path.join(self.path["INDEX"], itag)
         i_file    = q
+
+        if not os.path.exists(i_dir):
+            print("WARN: Couldn't retrieve, missing index " + i_dir)
+            return
+        if os.path.exists(o_file):
+            print("WARN: Skipped stage, run exists " + o_file)
+            return
 
         tfnorm    = ""
         if len(m) == 2:
@@ -110,19 +116,10 @@ class SysTerrier():
             qe_docs   = qe[2]
             qe_switch = "-q"
 
-        output = ""
-
-        if not os.path.exists(i_dir):
-            print("retrieve(): didn't find index " + itag)
-            return
-
-        if os.path.exists(os.path.join(o_dir, o_file)):
-            print("retrieve(): found, so skipping " + rtag)
-            return
-
         stop_f   = opt[0]
         pipeline = self.__build_termpipeline(opt)
-
+        output   = ""
+                
         # terrier is fed a topic file where all the text resides
         # within the <text> and </text> tags, because picking topic
         # portions by t, d, n is handled at a point in the past by the
@@ -170,7 +167,7 @@ class SysTerrier():
                  "-Dexpansion.terms=" + qe_terms,
                  "-Dexpansion.documents=" + qe_docs,
                  "-Dtrec.results=" + o_dir,
-                 "-Dtrec.results.file=" + o_file],
+                 "-Dtrec.results.file=" + rtag],
                 stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
@@ -183,21 +180,18 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_file  = os.path.join(self.path["EVALS"], rtag)
-        i_file  = os.path.join(self.path["RUNS"], rtag)
-
+        o_file = os.path.join(self.path["EVALS"], rtag)
+        i_file = os.path.join(self.path["RUNS"],  rtag)
+        output = ""
+        
         if not os.path.exists(i_file):
-            print("evaluate(): didn't find run " + rtag)
+            print("WARN: Couldn't eval, missing run " + i_file)
             return
-
         if os.path.exists(o_file):
-            print("evaluate(): found, so skipping " + rtag)
+            print("WARN: Skipped stage, eval exists " + o_file)
             return
         
         # trec_eval -q qrels run > eval_output
-
-        output = ""
-        
         try:
             output = subprocess.check_output(
                     [os.path.join(self.path["TRECEVAL"], "trec_eval"),
