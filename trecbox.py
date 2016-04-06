@@ -99,7 +99,7 @@ def main(argv):
                                    stem_str, "", "", "", "")
                 print(itag)
                 system.index(itag, d_d, [stop_f, stem_str])
-
+                sys.exit(0)
                 for m_str in models:
                     
                     m = m_str.split(":")
@@ -109,10 +109,10 @@ def main(argv):
                         qexp = qexp_str.split(":")
                         _,_,rtag = maketag("", t, stop_str, stem_str, m[0],
                                            str(query.n), q_tdn_str, qexp[0])
+                        print(str(c) + " " + rtag)
                         system.retrieve(itag, rtag, [stop_f, stem_str],
                                         m, query.oqf, qexp)
                         system.evaluate(rtag, qrel_f)
-                        print(str(c) + " " + rtag)
                         c += 1
 
 if __name__ == "__main__":
