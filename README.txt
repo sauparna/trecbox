@@ -7,8 +7,8 @@ rup.palchowdhury[at]gmail.com
 
 This is a tool that provides an abstraction for specifying the
 index-retrieve-evaluate pipeline of a typical IR experiment. It drives
-other search systems on TREC data. The putpose and utility of such a
-tool is discussed at http://kak.tx0.org/IR/trecbox.
+other search systems on TREC data. The purpose and utility of it is
+discussed in this write-up: http://kak.tx0.org/IR/trecbox.
 
 ----------------------------------------------------------------------
 
@@ -40,8 +40,8 @@ An experiment is run by typing this at the shell:
    trecbox.py [settings] [spec]
 
 In the settings file are the locations of the search systems and the
-output directory. It reads a specification of the experiment pipeline
-from the spec file and translates them to appropriate configuration
+output directory. A specification of the experiment pipeline is read
+from the spec file and translated to appropriate configuration
 parameters which the systems understand. Depending on what the target
 system needs, the configuration is either written to another file or
 passed as command line options. The target system's binaries are
@@ -56,25 +56,23 @@ they need to be changed to point to actual locations in a file system.
 
 This is of the following form:
 
-    [var] [path]
+    EVAL /x/trec_eval.9.0
+    LUCENE /x/Lucene
+    TERRIER /x/Terrier
+    LEMUR /x/Indri
+    EXP /x/Y
 
-Where the [var] belongs to the set of strings:
+Where the settings are
 
-    {EVAL, LUCENE, TERRIER, LEMUR, EXP}
+    EVAL - Evaluation program's directory.
 
-and is followed by a [path] to a directory.
+    LUCENE, TERRIER, LEMUR - Installation directories of search
+    systems.
 
-    EVAL - Points to the evaluation program's directory.
-
-    LUCENE, TERRIER, LEMUR - Point to the installation directories of
-    those search systems.
-
-    EXP - Is the directory where each experiment's output will be
-    written. A directory of the same name as the spec file has to be
-    created below it and several subdirectories created inside that,
-    where in some, the input files are to be placed by hand while the
-    others are placeholders for the experiment's output files. The
-    directory tree is as shown below:
+    EXP - Directory where experiments' output go. A directory of the
+    same name as the spec file has to be created below it and several
+    subdirectories created inside that as placeholders for the input
+    and output files. The directory tree is as shown below:
 
                       [EXP] 
                         |
@@ -92,23 +90,23 @@ and is followed by a [path] to a directory.
     * Must be created and populated before running trecbox.
 
     doc - Must contain a single directory within which the corpus is
-    kept. The corpus may be a collection of files, directories or
-    both, or even symlinks to the data located elsewhere on the file
-    system.
+    kept. The corpus may be symlinks to the data located elsewhere on
+    the file system.
 
-    query - The TREC query files are place here.
+    query - Contains the TREC query files.
 
-    qrel - The TREC qrel files are placed here, along with plain text
+    qrel - The TREC qrel files are in here, along with plain text
     files containing lists of query IDs (one per line) specifying the
-    subset of queries are to be used in the experiment.
+    subset of queries that are to be used in the experiment.
 
     misc - The stop word files are placed here.
 
-    index, runs, evals - The output/results of the various stages of
-    the experiment go here.
+    index, runs, evals - Have the output/results of the various stages
+    of the experiment.
 
-    log - This will contain dumps of the stdout and stderr of the
-    invoked search systems to be used for debugging purposes later.
+    log - This will contain dumps of stdout and stderr of the invoked
+    processes. The log files end in .i, .r and .e; corresponding to
+    the indexing, retrieval and evaluations stages of the pipeline.
 
 ----------------------------------------------------------------------
 
@@ -121,22 +119,17 @@ line looks clumsy.)
 
 This is of the follwoing from:
 
-    [var] [v1] [v2] ...
     TESTCOL [name] [doc] [query:part:subset] [qrel]
-    SYS [s1]
+    MODEL [m1] [m2] ...
+    STEM [s1] [s2] ...
+    STOP [p1] [p2] ...
+    QEXP [x1] [x2] ...
+    SYS [sys]
 
-Where a variable [var] specifies a type of parameter and is followd by
-a space-separated list of actual parameter values. The TESTCOL and SYS
-variables have been singled out because they have a different format
-and meaning.
+Where a variables on the left specify a type of parameter and is
+followd by a space-separated list of actual parameter values.
 
-    [var] - This has to be one from the the following set of strings:
-    {MODEL, STEM, STOP, QEXP, SYS}. All of them have to be specified,
-    each on a new line. Each of [v1], [v2], ... and so one, are string
-    from a vocabulary specific to a search system. The 'Vocabulary'
-    section list the all of them for each system.
-
-    TESTCOL - Specifies the three components that constitutes an TREC
+    TESTCOL - Specifies a name and the three components of a TREC
     test-collection; documents, queries and qrels.
 
         [name] - A string used to identify the test-collection.
@@ -144,16 +137,18 @@ and meaning.
 	[doc] - The name of the directory in the 'doc' directory (see
 	'SETTINGS FILE').
 
-	[query:part:subset] - 'query' is the query file name, 'part'
- 	is a string constructed from a combination of the elements of
- 	the set of characters {T, D, N}, to specify which parts of the
- 	quries to use; the Title, Description or Narrative or some
- 	combination of them. 'subset' is a file containig alist of
- 	query IDs to pick a subset of the queries in the 'query' file
- 	for the experiment if the need be.
+	[query:part:subset] - 'query' is the query file, 'part' is a
+ 	string constructed from a combination of the elements of the
+ 	set of characters {T, D, N}, to specify the parts of a query
+ 	to use; the Title, Description or Narrative or a combination
+ 	of them. 'subset' is a file containig a subset of the query
+ 	IDs of the queries in the 'query' file for that experiment.
 
- 	[qre] - The qrel file.
+ 	[qrel] - The TREC qrel file.
 
-    SYS - Is one of the string {terrier, lucene, indri}.
+    MODEL, STEM, STOP, QEXP, SYS - Specify the pieces of an IR
+    experiment. The space-separated strings ([m1], [p2], [sys] and so
+    on) are picked from a vocabulary specific to each search
+    system. (See 'VOCABULARY' in following sections.)
 
 ----------------------------------------------------------------------
