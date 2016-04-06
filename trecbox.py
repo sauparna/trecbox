@@ -8,19 +8,42 @@ from SysLucene  import *
 from Query      import Query
 
 def init(x_f, y_f):
-    
+
+    x     = {}
+    y     = {}
     y_str = os.path.basename(y_f)
-    y     = json.loads(open(y_f, "r").read())
-    x     = json.loads(open(x_f, "r").read())
     k_    = {"DOC"  : "doc",   "QUERY": "query",
              "QREL" : "qrel",  "MISC" : "misc",
              "INDEX": "index", "RUNS" : "runs",
              "EVALS": "evals", "LOG"  : "log"}
-    
+
+    with open(x_f, "r") as f:
+              for l in f:
+                  a = [a_.strip() for a_ in l.split()]
+                  if a[0] == "" or a[0] == "#":
+                      continue
+                  x.update({a[0]: a[1]})
+
     x.update({k: os.path.join(x["EXP"], y_str, k_[k]) for k in k_})
 
     for k in k_:
         os.makedirs(x[k], exist_ok=True)
+
+    with open(y_f, "r") as f:
+              for l in f:
+                  a = [a_.strip() for a_ in l.split()]
+                  if a[0] == "" or a[0] == "#":
+                      continue
+                  if a[0] == "TESTCOL":
+                      if a[0] in y:
+                          y[a[0]].append(a[1:])
+                      else:
+                          y[a[0]] = [a[1:]]
+                  else:
+                      if a[0] in y:
+                          y[a[0]].extend(a[1:])
+                      else:
+                          y[a[0]] = a[1:]
 
     return x, y
 
@@ -66,66 +89,60 @@ def main(argv):
                "indri"  : SysIndri(x), 
                "lucene" : SysLucene(x)}
     
-    testcol     = y["testcol"]
-    models      = y["models"]
-    stops       = y["stops"]
-    stems       = y["stems"]
-    qexpansions = y["qexp"]
-    system      = systems[y["system"]]
+    system  = systems[y["SYS"][0]]
 
     c = 1
 
-    for t in testcol:
+    for t in y["TESTCOL"]:
 
-        d_str     = testcol[t][0]
-        d_d       = os.path.join(x["DOC"], d_str)
-        q         = testcol[t][1].split(":")
-        q_str     = q[0]
-        q_f       = os.path.join(x["QUERY"], q_str)
-        qrel_str  = testcol[t][2]
-        qrel_f    = os.path.join(x["QREL"], qrel_str)
-        q_tdn_str = q[1]
-        q_set_str = None
-        q_set_f   = None
+        d_dir     = os.path.join(x["DOC"], t[1])
+
+        q         = t[2].split(":")
+        q_f       = os.path.join(x["QUERY"], q[0])
         q_set     = []
-
         if len(q) == 3:
-            q_set_str = q[2]
-            q_set_f   = os.path.join(x["QUERY"], q_set_str)
-            with open(q_set_f, "r") as fp:
-                for l in fp:
-                    q_set.append(int(l.strip()))
-        
-        query = Query(q_f, q_tdn_str, q_set, y["system"])
+            q_set_f = os.path.join(x["QUERY"], q[2])
+            q_set   = [int(l.strip()) for l in open(q_set_f, "r")]
+
+        query = Query(q_f, q[1], q_set, y["SYS"][0])
         query.parse()
-        _,q_tag,_ = maketag("", t, "", "",
-                           "", str(query.n), q_tdn_str, "")
-        query.write_xml(x["RUNS"], q_tag + ".queries")
-        
-        for stop_str in stops:
+        _,q_tag,_ = maketag("", t[0], "", "",
+                            "", str(query.n), q[1], "")
+        query.write_xml(x["LOG"], q_tag + ".q")
 
-            stop_f = os.path.join(x["MISC"], stop_str)
-            if stop_str == "":
-                stop_f   = ""
-            
-            for stem_str in stems:
-                
-                itag,_,_ = maketag(d_str, "", stop_str,
-                                   stem_str, "", "", "", "")
+        qrel_f = os.path.join(x["QREL"], t[3])
+
+        for stop in y["STOP"]:
+
+            stop_f = os.path.join(x["MISC"], stop)
+            if stop == "x":
+                stop   = ""
+                stop_f = ""
+
+            for stem in y["STEM"]:
+
+                if stem == "x":
+                    stem = ""
+
+                itag,_,_ = maketag(t[1], "", stop, stem,
+                                   "", "", "", "")
                 print(itag)
-                system.index(itag, d_d, [stop_f, stem_str])
+                system.index(itag, d_dir, [stop_f, stem])
 
-                for m_str in models:
+                for m in y["MODEL"]:
                     
-                    m = m_str.split(":")
+                    m = m.split(":")
                     
-                    for qexp_str in qexpansions:
+                    for qexp in y["QEXP"]:
 
-                        qexp = qexp_str.split(":")
-                        _,_,rtag = maketag("", t, stop_str, stem_str, m[0],
-                                           str(query.n), q_tdn_str, qexp[0])
+                        if qexp == "x":
+                            qexp = ""
+
+                        qexp = qexp.split(":")
+                        _,_,rtag = maketag("", t[0], stop, stem, m[0],
+                                           str(query.n), q[1], qexp[0])
                         print('{:<4} {}'.format(c, rtag))
-                        system.retrieve(itag, rtag, [stop_f, stem_str],
+                        system.retrieve(itag, rtag, [stop_f, stem],
                                         m, query.oqf, qexp)
                         system.evaluate(rtag, qrel_f)
                         c += 1

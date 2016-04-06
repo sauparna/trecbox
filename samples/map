@@ -1,9 +1,8 @@
-{"matrix": {"T6":   ["CD45",    "301-450:T:t6.50",    "t6.50"]
-	    "T7":   ["CD45",    "301-450:T:t7.50",    "t7.50"]
-	   },
- "models": [bm25:", "bm25L:", "AMITPDLN:"],
- "stems" : ["s"],
- "stops" : ["ser17"],
- "qexp"  : [""],
- "system": "lucene",
-}
+TESTCOL T6 CD45 301-450:T:t6.50 t6.50
+TESTCOL T7 CD45 301-450:T:t7.50 t7.50
+MODEL bm25 bm25L AMITPDLN
+MODEL tfidf tmpl
+STEM    s
+STOP    ser17
+QEXP    x
+SYS     lucene

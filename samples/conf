@@ -1,14 +1,5 @@
-{
-"TRECEVAL": "/x/trec_eval.9.0",
-"LUCENE"  : "/x/lucene.TREC",
-"TERRIER" : "/x/terrier.TREC",
-"LEMUR"   : "/x/indri",
-"EXP"     : "/x/trecbox/example",
-"DOC"     : "doc",
-"QUERY"   : "query",
-"QREL"    : "qrel",
-"MISC"	  : "misc",
-"INDEX"   : "index",
-"RUNS"    : "runs",
-"EVALS"   : "evals"
-}
+TRECEVAL /x/trec_eval.9.0
+LUCENE   /x/lucene.TREC
+TERRIER  /x/terrier.TREC
+LEMUR    /x/indri
+EXP	 /x/Y
