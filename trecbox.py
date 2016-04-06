@@ -8,33 +8,44 @@ from SysLucene  import *
 from Query      import Query
 
 def init(x_f, y_f):
+    
     y_str = os.path.basename(y_f)
     y     = json.loads(open(y_f, "r").read())
     x     = json.loads(open(x_f, "r").read())
-    k_    = {"DOC"  : "doc",  "QUERY": "query", "QREL": "qrel",
-             "MISC" : "misc", "INDEX": "index", "RUNS": "runs",
-             "EVALS": "evals", "LOG": "log"}
+    k_    = {"DOC"  : "doc",   "QUERY": "query",
+             "QREL" : "qrel",  "MISC" : "misc",
+             "INDEX": "index", "RUNS" : "runs",
+             "EVALS": "evals", "LOG"  : "log"}
+    
     x.update({k: os.path.join(x["EXP"], y_str, k_[k]) for k in k_})
+
     for k in k_:
         os.makedirs(x[k], exist_ok=True)
+
     return x, y
 
 def maketag(docs, testcol, stop, stem, m, qnum, qtdn, qexp):
-    stop_tag = {"ser17"     : "a",  "lucene33"  : "b",
-                "indri418"  : "c",  "smart571"  : "d",
-                "terrier733": "e",  ""          : "x"}
-    stem_tag = {"porter"    : "p", "weakporter": "w", "krovetz": "k",
-                "snowball"  : "o",          "s": "s",
-                ""          : "x"}
-    qexp_tag = {"kl"        : "kl0", "klapprox" : "kla", "klinformation":"kli",
-                "klcomplete": "klm", "klcorrect": "klr",
-                "bo1"       : "bo1", "bo2"      : "bo2", "": "x"}
+    
+    stop_tag = {"ser17"        : "a",   "lucene33"  : "b",
+                "indri418"     : "c",   "smart571"  : "d",
+                "terrier733"   : "e",   ""          : "x"}
+
+    stem_tag = {"porter"       : "p",   "weakporter": "w",
+                "krovetz"      : "k",   "snowball"  : "o",
+                "s"            : "s",   ""          : "x"}
+
+    qexp_tag = {"kl"           : "kl0", "klapprox"  : "kla",
+                "klinformation": "kli", "klcomplete": "klm", 
+                "klcorrect"    : "klr", "bo1"       : "bo1", 
+                "bo2"          : "bo2", ""          : "x"}
+
     if stop not in stop_tag:
         stop = ""
     if stem not in stem_tag:
         stem = ""
     if qexp not in qexp_tag:
         qexp = ""
+
     itag = docs    + "." + stop_tag[stop] + "." + stem_tag[stem]
     qtag = testcol + "." + qnum + "." + qtdn
     rtag = testcol + "." + stop_tag[stop] + "." + stem_tag[stem] + "." + m \

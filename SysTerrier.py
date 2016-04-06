@@ -5,9 +5,9 @@ from bs4 import BeautifulSoup
 
 class SysTerrier():
 
-    def __init__(self, path):
-        self.path        = path
-        self.model_file  = os.path.join(self.path["TERRIER"], "mods/models.terrier")
+    def __init__(self, x):
+        self.x        = x
+        self.model_file  = os.path.join(self.x["TERRIER"], "mods/models.terrier")
         self.model_map   = json.loads(open(self.model_file, "r").read())
         self.stemmer_map = {"porter"    : "PorterStemmer",
                             "weakporter": "WeakPorterStemmer",
@@ -19,7 +19,7 @@ class SysTerrier():
 
     def __write_doclist(self, itag, doc):
         # write Terrier's collection.spec file
-        o_file = os.path.join(self.path["INDEX"], itag + ".docs")
+        o_file = os.path.join(self.x["INDEX"], itag + ".docs")
         if not os.path.exists(o_file):
             with open(o_file, "w+b") as f:
                 f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
@@ -37,7 +37,7 @@ class SysTerrier():
 
         # print(itag)
 
-        o_dir = os.path.join(self.path["INDEX"], itag)
+        o_dir = os.path.join(self.x["INDEX"], itag)
 
         if os.path.exists(o_dir):
             print("WARN: Skipped stage, perhaps index exists in " + o_dir)
@@ -61,7 +61,7 @@ class SysTerrier():
 
         try:
            output = subprocess.check_output(
-               [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
+               [os.path.join(self.x["TERRIER"], "bin/trec_terrier.sh"),
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
@@ -76,7 +76,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["LOG"], itag + ".i"))
+        o_log = os.path.join(os.path.join(self.x["LOG"], itag + ".i"))
         with open(o_log, "w+b") as f:
             f.write(output)
 
@@ -84,9 +84,9 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_dir     = self.path["RUNS"]
+        o_dir     = self.x["RUNS"]
         o_file    = os.path.join(o_dir, rtag)
-        i_dir     = os.path.join(self.path["INDEX"], itag)
+        i_dir     = os.path.join(self.x["INDEX"], itag)
         i_file    = q
 
         if not os.path.exists(i_dir):
@@ -147,7 +147,7 @@ class SysTerrier():
 
         try:
             output = subprocess.check_output(
-                [os.path.join(self.path["TERRIER"], "bin/trec_terrier.sh"),
+                [os.path.join(self.x["TERRIER"], "bin/trec_terrier.sh"),
                  "-r",
                  qe_switch,
                  tfnorm,
@@ -172,7 +172,7 @@ class SysTerrier():
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".r"))
+        o_log = os.path.join(os.path.join(self.x["LOG"], rtag + ".r"))
         with open(o_log, "w+b") as f:
             f.write(output)
 
@@ -180,8 +180,8 @@ class SysTerrier():
 
         # print(rtag)
 
-        o_file = os.path.join(self.path["EVALS"], rtag)
-        i_file = os.path.join(self.path["RUNS"],  rtag)
+        o_file = os.path.join(self.x["EVALS"], rtag)
+        i_file = os.path.join(self.x["RUNS"],  rtag)
         output = ""
         
         if not os.path.exists(i_file):
@@ -194,7 +194,7 @@ class SysTerrier():
         # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
-                    [os.path.join(self.path["TRECEVAL"], "trec_eval"),
+                    [os.path.join(self.x["TRECEVAL"], "trec_eval"),
                      "-q",
                      qrels,
                      i_file])
@@ -202,6 +202,6 @@ class SysTerrier():
                 f.write(output)
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
-            o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".e"))
+            o_log = os.path.join(os.path.join(self.x["LOG"], rtag + ".e"))
             with open(o_log, "w+") as f:
                 f.write(str(output))

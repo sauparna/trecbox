@@ -4,15 +4,15 @@ from bs4 import BeautifulSoup
 
 class SysLucene():
 
-    def __init__(self, path):
-        self.path        = path
-        self.model_file  = os.path.join(self.path["LUCENE"], "mods/models.lucene")
+    def __init__(self, x):
+        self.x        = x
+        self.model_file  = os.path.join(self.x["LUCENE"], "mods/models.lucene")
         self.model_map   = json.loads(open(self.model_file, "r").read())
         self.stemmer_map = {"porter"  : "PorterStemFilter",
                             "krovetz" : "KStemFilter", 
                             "snowball": "SnowballFilter",
                             "s"       : "EnglishMinimalStemFilter"}
-        self.lib         = os.path.join(self.path["LUCENE"], "lib/*")
+        self.lib         = os.path.join(self.x["LUCENE"], "lib/*")
 
     def index(self, itag, doc, opt):
         
@@ -25,7 +25,7 @@ class SysLucene():
         if opt[1] in self.stemmer_map:
             stemmer = self.stemmer_map[opt[1]]
 
-        o_dir = os.path.join(self.path["INDEX"], itag)
+        o_dir = os.path.join(self.x["INDEX"], itag)
 
         if os.path.exists(o_dir):
             print("WARN: Skipped stage, perhaps index exists in " + o_dir)
@@ -49,7 +49,7 @@ class SysLucene():
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
-        o_log = os.path.join(os.path.join(self.path["LOG"], itag + ".i"))
+        o_log = os.path.join(os.path.join(self.x["LOG"], itag + ".i"))
         with open(o_log, "w+") as f:
             f.write(str(output))
 
@@ -69,9 +69,9 @@ class SysLucene():
         if opt[1] in self.stemmer_map:
             stemmer = self.stemmer_map[opt[1]]
         
-        i_dir  = os.path.join(self.path["INDEX"], itag)
+        i_dir  = os.path.join(self.x["INDEX"], itag)
         i_file = q
-        o_file = os.path.join(self.path["RUNS"], rtag)
+        o_file = os.path.join(self.x["RUNS"], rtag)
 
         if not os.path.exists(i_dir):
             print("WARN: Couldn't retrieve, missing index " + i_dir)
@@ -101,7 +101,7 @@ class SysLucene():
                 f.write(output)
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
-            o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".r"))
+            o_log = os.path.join(os.path.join(self.x["LOG"], rtag + ".r"))
             with open(o_log, "w+") as f:
                 f.write(str(output))
 
@@ -110,8 +110,8 @@ class SysLucene():
 
         # print(rtag)
 
-        i_file = os.path.join(self.path["RUNS"], rtag)
-        o_file = os.path.join(self.path["EVALS"], rtag)
+        i_file = os.path.join(self.x["RUNS"], rtag)
+        o_file = os.path.join(self.x["EVALS"], rtag)
         output = ""
 
         if not os.path.exists(i_file):
@@ -124,7 +124,7 @@ class SysLucene():
         # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
-                [os.path.join(self.path["TRECEVAL"], "trec_eval"),
+                [os.path.join(self.x["TRECEVAL"], "trec_eval"),
                  "-q", 
                  qrels,
                  i_file])
@@ -132,6 +132,6 @@ class SysLucene():
                 f.write(output)
         except subprocess.CalledProcessError as e:
             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
-            o_log = os.path.join(os.path.join(self.path["LOG"], rtag + ".e"))
+            o_log = os.path.join(os.path.join(self.x["LOG"], rtag + ".e"))
             with open(o_log, "w+") as f:
                 f.write(str(output))
