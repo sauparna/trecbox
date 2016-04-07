@@ -1,14 +1,26 @@
-*******
 TRECBOX
-*******
 
 Rup Palchowdhury
 rup.palchowdhury[at]gmail.com
 
+(C) Copyright 2013-2016, Rup Palchowdhury
+
+This is free software, you can redistribute it and/or modify it under
+the terms of the GNU General Public License.
+
+The GNU General Public License does not permit this software to be
+redistributed in proprietary programs.
+
+This software is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+----------------------------------------------------------------------
+DESCRIPTION
+
 This is a tool that provides an abstraction for specifying the
 index-retrieve-evaluate pipeline of a typical IR experiment. It drives
-other search systems on TREC data. The purpose and utility of it is
-discussed in this write-up: http://kak.tx0.org/IR/trecbox.
+other search systems on TREC data.
 
 ----------------------------------------------------------------------
 
@@ -29,7 +41,6 @@ D. VOCABULARY
 E. PRE-PROCESSING TREC QUERIES
 
 ----------------------------------------------------------------------
-
 A. PREREQUISITES
 
 Python 3
@@ -38,7 +49,6 @@ Python libraries:
     beautifulsoup4
 
 ----------------------------------------------------------------------
-
 B. IR EXPERIMENTS
 
 An experiment is run by typing this at the shell:
