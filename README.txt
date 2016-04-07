@@ -77,7 +77,7 @@ Where the settings are
 
     EXP - Directory where experiments' output go. A directory of the
     same name as the spec file has to be created below it and several
-    subdirectories created inside that as placeholders for the input
+    sub-directories created inside that as placeholders for the input
     and output files. The directory tree is as shown below:
 
                       [EXP] 
@@ -123,7 +123,7 @@ file. (Note that, in the sample, variables have be repeated for better
 readability, otherwise, specifying a large number of models on one
 line looks clumsy.)
 
-This is of the follwoing from:
+This is of the following from:
 
     TESTCOL [name] [doc] [query:part:subset] [qrel]
     MODEL [m1:c1] [m2:c2] ...
@@ -133,7 +133,7 @@ This is of the follwoing from:
     SYS [sys]
 
 Where a variables on the left specify a type of parameter and is
-followd by a space-separated list of actual parameter values.
+followed by a space-separated list of actual parameter values.
 
     TESTCOL - Specifies a name and the three components of a TREC
     test-collection; documents, queries and qrels.
@@ -147,7 +147,7 @@ followd by a space-separated list of actual parameter values.
  	string constructed from a combination of the elements of the
  	set of characters {T, D, N}, to specify the parts of a query
  	to use; the Title, Description or Narrative or a combination
- 	of them. 'subset' is a file containig a subset of the query
+ 	of them. 'subset' is a file containing a subset of the query
  	IDs of the queries in the 'query' file for that experiment.
 
  	[qrel] - The TREC qrel file.
@@ -191,7 +191,7 @@ directories) and their scheme is as follows:
     [name].[stop].[stem].[model].[query count].[query part].[qexp]
 
 
-The first three strings match the index name, th rest are
+The first three strings match the index name, the rest are
 self-explanatory.
 
 The character 'x' in a name denotes the absence of that stage in the
@@ -256,7 +256,7 @@ Query Expansion
 
 E.  PRE-PROCESSING TREC QUERIES
 
-This is how TRECBOX's pre-processed TREC looks:
+This is what the pre-processed TREC query looks like:
 
     <TOP>
      <NUM>301</NUM>
@@ -270,7 +270,7 @@ Here is a snippet of code to test the query parser:
     import sys, os
     from Query import Query
 
-    q = Query(query_file, "T", query_subset_list, "lucene")
+    q = Query(query_file, "TD", query_subset_list, "lucene")
     q.parse()
     t = q.write_xml(out_dir, out_file)
 
@@ -278,5 +278,9 @@ Here is a snippet of code to test the query parser:
 'q' is a Python OrderedDict, returned by _query()_, of the form;
 
     {301: "why is a raven like a writing-desk?"}
+
+The parts of the query (Title and Description, "TD", here) are
+concatenated and placed within the <TEXT> tags. The systems are rigged
+to read this formatting and not worry about picking the query-parts.
 
 ----------------------------------------------------------------------
