@@ -102,7 +102,7 @@ Where the settings are
                         |
                    --------------
                   |       |      |
-                spec1*  spec2*  ...
+                spec*  spec1*  ...
                   |       |
 		  |      ...
 		  |
@@ -111,7 +111,7 @@ Where the settings are
    doc*  query*  qrel*  misc*  index  runs  evals  log
 
 
-    *Must be created and populated before running trecbox.
+    * Must be created and populated before running trecbox.
 
     doc - Must contain a single directory within which the corpus is
     kept. The corpus may be symlinks to the data located elsewhere on
