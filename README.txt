@@ -62,7 +62,7 @@ B. IR EXPERIMENTS
 
 An experiment is run by typing this at the shell:
 
-   trecbox.py settings.txt spec.txt
+   trecbox.py settings.txt exp.txt
 
 In the settings file are the locations of the search systems and the
 output directory. A specification of the experiment pipeline is read
@@ -93,36 +93,34 @@ Where the settings are
     LUCENE, TERRIER, LEMUR - Installation directories of search
     systems.
 
-    EXP - Directory where experiments' output go. A directory of the
-    same name as the spec file (i.e. 'spec' in this example) has to be
-    created below it and several sub-directories created in 'spec' as
-    placeholders for the input and output files. The directory tree is
-    as shown below:
+    EXP - Directory where the entire experiment lives. A directory of
+    the same name as the specification file (i.e. 'exp' in this
+    example) has to be created below it and several sub-directories
+    created in 'exp' as placeholders for the input and output
+    files. The directory tree is as shown below:
 
-                      [EXP] 
+                        Y
                         |
                    --------------
                   |       |      |
-                spec*  spec1*  ...
+                  |      exp1*  ...
                   |       |
-		  |      ...
+		 exp*    ...
 		  |
      ----------------------------------------------
     |      |      |      |       |     |     |     | 
    doc*  query*  qrel*  misc*  index  runs  evals  log
 
 
-    * Must be created and populated before running trecbox.
+    * To be created and populated manually before running trecbox.
 
     doc - Must contain a single directory within which the corpus is
-    kept. The corpus may be symlinks to the data located elsewhere on
-    the file system.
+    kept. (Symlinks to a corpus elsewhere on the disk will do.)
 
-    query - Contains the TREC query files.
+    query - Contains the TREC query files and associated files
+    containing list of query-IDs to speficy a subset of the queries.
 
-    qrel - The TREC qrel files are in here, along with plain text
-    files containing lists of query IDs (one per line) specifying the
-    subset of queries that are to be used in the experiment.
+    qrel - The TREC qrel files are in here.
 
     misc - The stop word files are placed here.
 
@@ -131,12 +129,13 @@ Where the settings are
 
     log - This will contain dumps of stdout and stderr of the invoked
     processes. The log files end in .i, .r and .e; corresponding to
-    the indexing, retrieval and evaluations stages of the pipeline.
+    the indexing, retrieval and evaluations stages of the pipeline. A
+    .q file has the copy of the pre-processed queries.
 
 ----------------------------------------------------------------------
 2. SPECIFICATION FILE FORMAT
 
-See spec.txt for a sample. The format is similar to the settings
+See exp.txt for a sample. The format is similar to the settings
 file. (Note that, in the sample, variables have be repeated for better
 readability, otherwise, specifying a large number of models on one
 line looks clumsy.)
@@ -226,12 +225,13 @@ Key:
 
 SPEC - Strings that are used in the spec file
 
-NAME - Counterparts of spec file strings used in naming indexes, runs
-and evals (See NAMING section). Strings from the spec were shortened
-to single characters to avoid long output file names.
+NAME - Counterparts of specification file strings used in naming
+indexes, runs and evals (See NAMING section). Strings from the
+specification were shortened to single characters to avoid long output
+file names.
 
-LUCENE, TERRIER - Counterparts of spec file names in the system's
-context.
+LUCENE, TERRIER - Counterparts of specification file names in the
+system's context.
 
 Stop Words
 ----------------------------------------------------------------------
