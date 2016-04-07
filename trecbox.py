@@ -9,9 +9,15 @@ from Query      import Query
 
 def init(x_f, y_f):
 
-    x     = {}
-    y     = {}
-    y_str = os.path.basename(y_f)
+    x = {}
+    y = {}
+    
+    path, ext = os.path.splitext(y_f)
+    if ext != ".txt":
+        print("ERROR: Spec file extension must be '.txt'")
+        sys.exit(0)
+    y_str = os.path.basename(path)
+
     k_    = {"DOC"  : "doc",   "QUERY": "query",
              "QREL" : "qrel",  "MISC" : "misc",
              "INDEX": "index", "RUNS" : "runs",
