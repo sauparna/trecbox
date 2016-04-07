@@ -23,7 +23,6 @@ index-retrieve-evaluate pipeline of a typical IR experiment. It drives
 other search systems on TREC data.
 
 ----------------------------------------------------------------------
-
 TABLE OF CONTENTS
 
 A. PREREQUISITES
@@ -64,7 +63,6 @@ passed as command line options. The target system's binaries are
 executed using Python's subprocess module.
 
 ----------------------------------------------------------------------
-
 1. SETTINGS FILE FORMAT
 
 See settings.txt for a sample. The paths in the sample are imaginary,
@@ -125,7 +123,6 @@ Where the settings are
     the indexing, retrieval and evaluations stages of the pipeline.
 
 ----------------------------------------------------------------------
-
 2. SPECIFICATION FILE FORMAT
 
 See spec.txt for a sample. The format is similar to the settings
@@ -183,7 +180,6 @@ followed by a space-separated list of actual parameter values.
 	[t1], [t2] - Two parameters for the algorithm (for Terrier).
 
 ----------------------------------------------------------------------
-
 C. NAMING
 
 Directories containing the index within the 'index' directory have the
@@ -208,12 +204,14 @@ The character 'x' in a name denotes the absence of that stage in the
 pipeline.
 
 ----------------------------------------------------------------------
-
 D. VOCABULARY
 
 This table maps the different strings used for spec file variables to systems. 
 
 Key:
+
+*Blanks in the table imply that there are no corresponding concept.
+*The character 'x' denotes the absence of a specification.
 
 SPEC - Strings that are used in the spec file
 
@@ -224,20 +222,16 @@ to single characters to avoid long output file names.
 LUCENE, TERRIER - Counterparts of spec file names in the system's
 context.
 
-Blanks in the table imply that there are no corresponding concept.
-
-The character 'x' denotes the absence of a specification.
-
 Stop Words
 ----------------------------------------------------------------------
     SPEC          NAME LUCENE                   TERRIER
 ----------------------------------------------------------------------
-    ser17         a
-    lucene33      b
-    indri418      c
-    smart571      d
-    terrier733    e
-    x             x
+    ser17         a    ser17                    ser17
+    lucene33      b    lucene33                 lucene33
+    indri418      c    indri418                 indri418
+    smart571      d    smart571                 smart571
+    terrier733    e    terrier733               terrier733
+    x             x    x                        x
 
 Stemmers
 ----------------------------------------------------------------------
@@ -250,7 +244,7 @@ Stemmers
     S-Stemmer     s    EnglishMinimalStemFilter SStemmer
     x             x
 
-Query Expansion
+Query Expansion Algorithms
 ----------------------------------------------------------------------
     SPEC          NAME LUCENE                   TERRIER
 ----------------------------------------------------------------------
@@ -262,8 +256,23 @@ Query Expansion
     bo1           bo1                           Bo1
     bo2           bo2                           Bo2
     x		  x
+
+Retrieval Models
 ----------------------------------------------------------------------
 
+The full list of models in each system, their names and what they mean
+is gathered on these pages:
+
+Lucene
+https://github.com/sauparna/LTR/blob/master/mods/models.lucene
+
+Terrier
+https://github.com/sauparna/TTR/blob/master/mods/models.terrier
+
+TF-IDF Repository
+http://kak.tx0.org/IR/TF-IDF
+
+----------------------------------------------------------------------
 E.  PRE-PROCESSING TREC QUERIES
 
 This is what the pre-processed TREC query looks like:
