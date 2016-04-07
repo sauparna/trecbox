@@ -62,7 +62,7 @@ B. IR EXPERIMENTS
 
 An experiment is run by typing this at the shell:
 
-   trecbox.py [settings] [spec]
+   trecbox.py settings.txt spec.txt
 
 In the settings file are the locations of the search systems and the
 output directory. A specification of the experiment pipeline is read
@@ -94,9 +94,10 @@ Where the settings are
     systems.
 
     EXP - Directory where experiments' output go. A directory of the
-    same name as the spec file has to be created below it and several
-    sub-directories created inside that as placeholders for the input
-    and output files. The directory tree is as shown below:
+    same name as the spec file (i.e. 'spec' in this example) has to be
+    created below it and several sub-directories created in 'spec' as
+    placeholders for the input and output files. The directory tree is
+    as shown below:
 
                       [EXP] 
                         |
