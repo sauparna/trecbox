@@ -22,14 +22,18 @@ B. IR EXPERIMENTS
 
    2. SPECIFICATION FILE FORMAT
 
+C. NAMING
+
+D. VOCABULARY
+
 ----------------------------------------------------------------------
 
 A. PREREQUISITES
 
 Python 3
 Python libraries:
-	lxml
-	beautifulsoup4
+    lxml
+    beautifulsoup4
 
 ----------------------------------------------------------------------
 
@@ -82,12 +86,12 @@ Where the settings are
                   |       |
 		  |      ...
 		  |
-     ------------------------------------------------
-    |      |      |     |     |      |    |     |    |
+     ----------------------------------------------
+    |      |      |      |       |     |     |     | 
    doc*  query*  qrel*  misc*  index  runs  evals  log
 
 
-    * Must be created and populated before running trecbox.
+    *Must be created and populated before running trecbox.
 
     doc - Must contain a single directory within which the corpus is
     kept. The corpus may be symlinks to the data located elsewhere on
@@ -120,10 +124,10 @@ line looks clumsy.)
 This is of the follwoing from:
 
     TESTCOL [name] [doc] [query:part:subset] [qrel]
-    MODEL [m1] [m2] ...
+    MODEL [m1:c1] [m2:c2] ...
     STEM [s1] [s2] ...
     STOP [p1] [p2] ...
-    QEXP [x1] [x2] ...
+    QEXP [x1:t1:t2] ...
     SYS [sys]
 
 Where a variables on the left specify a type of parameter and is
@@ -146,9 +150,104 @@ followd by a space-separated list of actual parameter values.
 
  	[qrel] - The TREC qrel file.
 
-    MODEL, STEM, STOP, QEXP, SYS - Specify the pieces of an IR
-    experiment. The space-separated strings ([m1], [p2], [sys] and so
-    on) are picked from a vocabulary specific to each search
-    system. (See 'VOCABULARY' in following sections.)
+    MODEL - Retrieval algorithm details.
 
+	[m1] - Name of the retrieval model (e.g. BM25)
+	
+	[c1] - A constant parameter for an algorithm. (Terrier
+	requires such a thing, see
+	http://kak.tx0.org/IR/TTR/Doc/Heuristics for a table of
+	values.)
+    
+    STEM, STOP, SYS - Specify the pieces of an IR experiment. The
+    space-separated strings ([s1], [p2], [sys] etc.) are picked from a
+    vocabulary specific to each search system. (See 'VOCABULARY' in
+    the following sections)
+
+    QEXP - Types of query expansion and associated parameters.
+
+        [x1] - The name of the query-expansion algorithm.
+
+	[t1], [t2] - Two parameters for the algorithm (for Terrier).
+
+----------------------------------------------------------------------
+
+C. NAMING
+
+Directories containing the index within the 'index' directory have the
+following naming scheme:
+
+    [name].[stop].[stem]
+
+Where [name] is the string '[name]' from the TESTCOL specification in
+the spec file, [stop] and [stem] are the names for the stop word file
+and the stemmer.
+
+Run files and eval files have identical names (they reside in separate
+directories) and their scheme is as follows:
+  
+    [name].[stop].[stem].[model].[query count].[query part].[qexp]
+
+
+The first three strings match the index name, th rest are
+self-explanatory.
+
+The character 'x' in a name denotes the absence of that stage in the
+pipeline.
+
+----------------------------------------------------------------------
+
+D. VOCABULARY
+
+This table maps the different strings used for spec file variables to systems. 
+
+Key:
+
+SPEC - Strings that are used in the spec file
+
+NAME - Counterparts of spec file strings used in naming indexes, runs
+and evals (See NAMING section). Strings from the spec were shortened
+to single characters to avoid long output file names.
+
+LUCENE, TERRIER - Counterparts of spec file names in the system's
+context.
+
+Blanks in the table imply that there are no corresponding concept.
+
+The character 'x' denotes the absence of a specification.
+
+Stop Words
+----------------------------------------------------------------------
+    SPEC          NAME LUCENE                   TERRIER
+----------------------------------------------------------------------
+    ser17         a
+    lucene33      b
+    indri418      c
+    smart571      d
+    terrier733    e
+    x             x
+
+Stemmers
+----------------------------------------------------------------------
+    SPEC          NAME LUCENE                   TERRIER
+----------------------------------------------------------------------
+    Porter        p    PorterStemFilter	        PorterStemmer
+    Weak Porter   w                             WeakPorterStemmer
+    Krovetz       k    KStemFilter              
+    Snowball      o    SnowballFilter           EnglishSnowballStemmer
+    S-Stemmer     s    EnglishMinimalStemFilter SStemmer
+    x             x
+
+Query Expansion
+----------------------------------------------------------------------
+    SPEC          NAME LUCENE                   TERRIER
+----------------------------------------------------------------------
+    kl            kl0                           KL
+    klapprox      kla                           BA
+    klinformation kli                           Information
+    klcomplete    klm                           KLComplete
+    klcorrect     klr                           KLCorrect
+    bo1           bo1                           Bo1
+    bo2           bo2                           Bo2
+    x		  x
 ----------------------------------------------------------------------
