@@ -242,7 +242,7 @@ Stemmers
     Krovetz       k    KStemFilter              
     Snowball      o    SnowballFilter           EnglishSnowballStemmer
     S-Stemmer     s    EnglishMinimalStemFilter SStemmer
-    x             x
+    x             x                             x
 
 Query Expansion Algorithms
 ----------------------------------------------------------------------
@@ -255,7 +255,7 @@ Query Expansion Algorithms
     klcorrect     klr                           KLCorrect
     bo1           bo1                           Bo1
     bo2           bo2                           Bo2
-    x		  x
+    x		  x                             x
 
 Retrieval Models
 ----------------------------------------------------------------------
