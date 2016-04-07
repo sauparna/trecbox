@@ -26,6 +26,8 @@ C. NAMING
 
 D. VOCABULARY
 
+E. PRE-PROCESSING TREC QUERIES
+
 ----------------------------------------------------------------------
 
 A. PREREQUISITES
@@ -250,4 +252,31 @@ Query Expansion
     bo1           bo1                           Bo1
     bo2           bo2                           Bo2
     x		  x
+----------------------------------------------------------------------
+
+E.  PRE-PROCESSING TREC QUERIES
+
+This is how TRECBOX's pre-processed TREC looks:
+
+    <TOP>
+     <NUM>301</NUM>
+     <TEXT>
+        Why is a raven like a writing-desk?
+     </TEXT>
+    <TOP>
+
+Here is a snippet of code to test the query parser:
+
+    import sys, os
+    from Query import Query
+
+    q = Query(query_file, "T", query_subset_list, "lucene")
+    q.parse()
+    t = q.write_xml(out_dir, out_file)
+
+
+'q' is a Python OrderedDict, returned by _query()_, of the form;
+
+    {301: "why is a raven like a writing-desk?"}
+
 ----------------------------------------------------------------------
