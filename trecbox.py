@@ -98,6 +98,8 @@ def main(argv):
     system  = systems[y["SYS"][0]]
 
     c = 1
+    n = len(y["TESTCOL"]) * len(y["MODEL"]) * len(y["STEM"]) \
+        * len(y["STOP"])  * len(y["QEXP"])
 
     for t in y["TESTCOL"]:
 
@@ -121,6 +123,7 @@ def main(argv):
         for stop in y["STOP"]:
 
             stop_f = os.path.join(x["MISC"], stop)
+            stop,_ = os.path.splitext(stop)
             if stop == "x":
                 stop   = ""
                 stop_f = ""
@@ -132,7 +135,7 @@ def main(argv):
 
                 itag,_,_ = maketag(t[1], "", stop, stem,
                                    "", "", "", "")
-                print(itag)
+                print("INDEX: " + itag)
                 system.index(itag, d_dir, [stop_f, stem])
 
                 for m in y["MODEL"]:
@@ -147,7 +150,7 @@ def main(argv):
                         qexp = qexp.split(":")
                         _,_,rtag = maketag("", t[0], stop, stem, m[0],
                                            str(query.n), q[1], qexp[0])
-                        print('{:<4} {}'.format(c, rtag))
+                        print('{:>5}/{:<5} {}'.format(c, n, rtag))
                         system.retrieve(itag, rtag, [stop_f, stem],
                                         m, query.oqf, qexp)
                         system.evaluate(rtag, qrel_f)
