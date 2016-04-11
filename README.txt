@@ -271,17 +271,7 @@ Query Expansion Algorithms
 Retrieval Models
 ----------------------------------------------------------------------
 
-The full list of models in each system, their names and what they mean
-is gathered on these pages:
-
-Lucene
-https://github.com/sauparna/LTR/blob/master/mods/models.lucene
-
-Terrier
-https://github.com/sauparna/TTR/blob/master/mods/models.terrier
-
-TF-IDF Repository
-http://kak.tx0.org/IR/TF-IDF
+[]
 
 ----------------------------------------------------------------------
 E.  PRE-PROCESSING TREC QUERIES
