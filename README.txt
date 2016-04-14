@@ -62,7 +62,7 @@ B. IR EXPERIMENTS
 
 An experiment is run by typing this at the shell:
 
-   trecbox.py settings.txt exp.txt
+   trecbox.py settings.txt exp-ltr.txt
 
 In the settings file are the locations of the search systems and the
 output directory. A specification of the experiment pipeline is read
@@ -94,18 +94,18 @@ Where the settings are
     systems.
 
     EXP - Directory where the entire experiment lives. A directory of
-    the same name as the specification file (i.e. 'exp' in this
+    the same name as the specification file (i.e. 'exp-ttr' in this
     example) has to be created below it and several sub-directories
-    created in 'exp' as placeholders for the input and output
-    files. The directory tree is as shown below:
+    created in 'exp-ttr' as placeholders for the input and output
+    files. The directory tree has to be as shown below:
 
                         Y
                         |
-                   --------------
-                  |       |      |
-                  |      exp1*  ...
-                  |       |
-		 exp*    ...
+                   -----------------
+                  |          |      |
+                  |       exp-ttr*  ...
+                  |          |
+	       exp-ltr*      ...
 		  |
      ----------------------------------------------
     |      |      |      |       |     |     |     | 
@@ -135,7 +135,7 @@ Where the settings are
 ----------------------------------------------------------------------
 2. SPECIFICATION FILE FORMAT
 
-See exp.txt for a sample. The format is similar to the settings
+See exp-ttr.txt for a sample. The format is similar to the settings
 file. (Note that, in the sample, variables have be repeated for better
 readability, otherwise, specifying a large number of models on one
 line looks clumsy.)
