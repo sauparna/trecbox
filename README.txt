@@ -1,7 +1,7 @@
 TRECBOX
 
 Rup Palchowdhury
-rup.palchowdhury[at]gmail.com
+rup.palchowdhury [at] gmail [dot] com
 
 MIT License
 
@@ -216,22 +216,28 @@ pipeline.
 ----------------------------------------------------------------------
 D. VOCABULARY
 
-This table maps the different strings used for spec file variables to systems. 
+This table maps the strings used for spec file variables, to
+intermediate names or concepts in the systems.
 
 Key:
 
 *Blanks in the table imply that there are no corresponding concept.
-*The character 'x' denotes the absence of a specification.
+
+*The character 'x' implies 'switching off' of a specification.
+
+*The model names that are common amongst LTR and TTR are listed
+ here. For a full list of models avaiable in the sytems, see the
+ 'models' file in their directories.
 
 SPEC - Strings that are used in the spec file
 
-NAME - Counterparts of specification file strings used in naming
-indexes, runs and evals (See NAMING section). Strings from the
-specification were shortened to single characters to avoid long output
-file names.
+NAME - Counterparts of concepts used in TRECBOX for using in run tags
+(See NAMING section). Since the run tags are used as file names,
+strings from the specification were shortened to single characters to
+avoid long output file names.
 
-LUCENE, TERRIER - Counterparts of specification file names in the
-system's context.
+LUCENE, TERRIER - Counterpart of concept names used within the
+systems.
 
 Stop Words
 ----------------------------------------------------------------------
@@ -270,10 +276,12 @@ Query Expansion Algorithms
 
 Retrieval Models
 ----------------------------------------------------------------------
-
-[]
-
+    SPEC          NAME LUCENE                   TERRIER
 ----------------------------------------------------------------------
+    bm25          bm25 BM25                     BM25
+    tmpl          tmpl TMPL                     TMPL
+----------------------------------------------------------------------
+
 E.  PRE-PROCESSING TREC QUERIES
 
 This is what the pre-processed TREC query looks like:
@@ -295,7 +303,7 @@ Here is a snippet of code to test the query parser:
     t = q.write_xml(out_dir, out_file)
 
 
-'q' is a Python OrderedDict, returned by _query()_, of the form;
+'q' is a Python OrderedDict, returned by query(), of the form;
 
     {301: "why is a raven like a writing-desk?"}
 
