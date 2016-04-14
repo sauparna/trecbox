@@ -1,13 +1,20 @@
 import sys, os, subprocess
-import simplejson as json
 from bs4 import BeautifulSoup
 
 class SysLucene():
 
     def __init__(self, x):
-        self.x        = x
-        self.model_file  = os.path.join(self.x["LUCENE"], "mods/models.lucene")
-        self.model_map   = json.loads(open(self.model_file, "r").read())
+        self.x         = x
+        self.model_f   = os.path.join(self.x["LUCENE"], "models")
+        self.model_map = {}
+
+        with open(self.model_f, "r") as f:
+              for l in f:
+                  a = [a_.strip() for a_ in l.split()]
+                  if a[0] == "" or a[0] == "#":
+                      continue
+                  self.model_map.update({a[0]: a[1]})
+
         self.stemmer_map = {"porter"  : "PorterStemFilter",
                             "krovetz" : "KStemFilter", 
                             "snowball": "SnowballFilter",

@@ -1,20 +1,26 @@
 import sys, os, subprocess
 import time
-import simplejson as json
 from bs4 import BeautifulSoup
 
 class SysTerrier():
 
     def __init__(self, x):
-        self.x        = x
-        self.model_file  = os.path.join(self.x["TERRIER"], "mods/models.terrier")
-        self.model_map   = json.loads(open(self.model_file, "r").read())
+        self.x           = x
+        self.model_f     = os.path.join(self.x["TERRIER"], "models")
+        self.model_map   = {}
+        with open(self.model_f, "r") as f:
+              for l in f:
+                  a = [a_.strip() for a_ in l.split()]
+                  if a[0] == "" or a[0] == "#":
+                      continue
+                  self.model_map.update({a[0]: a[1]})
         self.stemmer_map = {"porter"    : "PorterStemmer",
                             "weakporter": "WeakPorterStemmer",
                             "snowball"  : "EnglishSnowballStemmer",
                             "s"         : "SStemmer"}
-        self.qe_map      = {"kl0": "KL",         "kla": "BA",        "kli": "Information",
-                            "klm": "KLComplete", "klr": "KLCorrect", "bo1": "Bo1",
+        self.qe_map      = {"kl0": "KL",          "kla": "BA",
+                            "kli": "Information", "klm": "KLComplete", 
+                            "klr": "KLCorrect",   "bo1": "Bo1",
                             "bo2": "Bo2"}
 
     def __write_doclist(self, itag, doc):
