@@ -1,6 +1,0 @@
-TESTCOL DEMO AP query.txt:D:subset.txt qrel.txt
-MODEL bm25L bm25 bm25e tmpl tmple
-STEM s
-STOP ser17.txt
-QEXP x
-SYS lucene
