@@ -25,9 +25,9 @@ def init(x_f, y_f):
 
     with open(x_f, "r") as f:
               for l in f:
-                  a = [a_.strip() for a_ in l.split()]
-                  if a[0] == "" or a[0] == "#":
+                  if not l.strip() or l.strip() == "#":
                       continue
+                  a = [a_.strip() for a_ in l.split()]
                   x.update({a[0]: a[1]})
 
     x.update({k: os.path.join(x["EXP"], y_str, k_[k]) for k in k_})
@@ -37,9 +37,9 @@ def init(x_f, y_f):
 
     with open(y_f, "r") as f:
               for l in f:
-                  a = [a_.strip() for a_ in l.split()]
-                  if a[0] == "" or a[0] == "#":
+                  if not l.strip() or l.strip() == "#":
                       continue
+                  a = [a_.strip() for a_ in l.split()]
                   if a[0] == "TESTCOL":
                       if a[0] in y:
                           y[a[0]].append(a[1:])
