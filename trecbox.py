@@ -25,7 +25,7 @@ def init(x_f, y_f):
 
     with open(x_f, "r") as f:
               for l in f:
-                  if not l.strip() or l.strip() == "#":
+                  if (not l.strip()) or (l.strip() == "#"):
                       continue
                   a = [a_.strip() for a_ in l.split()]
                   x.update({a[0]: a[1]})
@@ -37,7 +37,7 @@ def init(x_f, y_f):
 
     with open(y_f, "r") as f:
               for l in f:
-                  if not l.strip() or l.strip() == "#":
+                  if (not l.strip()) or (l.strip() == "#"):
                       continue
                   a = [a_.strip() for a_ in l.split()]
                   if a[0] == "TESTCOL":
