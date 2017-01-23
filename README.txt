@@ -35,19 +35,21 @@ other search systems on TREC data.
 ----------------------------------------------------------------------
 TABLE OF CONTENTS
 
-A. PREREQUISITES
+A.  PREREQUISITES
 
-B. IR EXPERIMENTS
+A1. WINDOWS SETUP
 
-   1. SETTINGS FILE FORMAT
+B.  IR EXPERIMENTS
 
-   2. SPECIFICATION FILE FORMAT
+    1. SETTINGS FILE FORMAT
 
-C. NAMING
+    2. SPECIFICATION FILE FORMAT
 
-D. VOCABULARY
+C.  NAMING
 
-E. PRE-PROCESSING TREC QUERIES
+D.  VOCABULARY
+
+E.  PRE-PROCESSING TREC QUERIES
 
 ----------------------------------------------------------------------
 A. PREREQUISITES
@@ -56,6 +58,38 @@ Python 3
 Python libraries:
     lxml
     beautifulsoup4
+
+----------------------------------------------------------------------
+A1. WINDOWS SETUP
+
+1. Run package installations like 'pip install' in a cmd
+   'Administrator' window:
+
+    right click cmd icon -> move mouse to move selection to 'Command Prompt' in the pop-up menu -> right click -> chose 'Run as administrator'
+
+2. Compile a trec_eval exe for Windows
+   (https://github.com/usnistgov/trec_eval):
+
+   To achieve a compilation of trec_eval for Windows, you will need
+   Cygwin installed. Download and install the Cygwin platform. You
+   will need make and gcc installed by Cygwin. To achieve this, on top
+   of the default Cygwin installation, it is recommended to install
+   automake, make, gcc, cygwin-gcc and git from the Develop category,
+   and permitting dependencies to be installed. Then, to compile
+   trec_eval, open a Cygwin Terminal, navigate using cd to the
+   directory of the trec_eval source, and type make.
+
+   The resulting trec_eval.exe should be usable directly from the
+   Cygwin Terminal. The resulting trec_eval.exe should be usable on
+   any machine without Cygwin installed, as long as the cygwin1.dll is
+   available. For instance, place a copy the cygwin1.dll from Cygwin's
+   /bin directory into the same directory as trec_eval.exe.
+
+3. Symlinks to a corpus directory from the experiment's 'doc'
+   directory is created using the mklink command in the
+   'administrator' CLI:
+
+    mklink /D link target
 
 ----------------------------------------------------------------------
 B. IR EXPERIMENTS
