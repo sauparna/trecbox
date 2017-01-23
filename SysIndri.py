@@ -235,7 +235,7 @@ class SysIndri():
 
         with open(o_file, "w+b") as f:
             f.write(subprocess.check_output(
-                    [os.path.join(self.path["TRECEVAL"], "trec_eval"),
+                    [self.path["EVAL"],
                      "-q",
                      qrels,
                      i_file]))
