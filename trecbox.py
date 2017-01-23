@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import sys, os
+import sys, os, time
 import simplejson as json
-from SysTerrier import *
-from SysIndri   import *
-from SysLucene  import *
-from Query      import Query
+from   SysTerrier import *
+from   SysIndri   import *
+from   SysLucene  import *
+from   Query      import Query
 
 def init(x_f, y_f):
 
@@ -91,15 +91,20 @@ def main(argv):
 
     x, y = init(argv[1], argv[2]);
     
-    systems = {"terrier": SysTerrier(x), 
+    fp_stdout= open(os.path.join(x["LOG"], "stdout.txt"), "w")
+
+    systems = {"terrier": SysTerrier(x),
                "indri"  : SysIndri(x), 
                "lucene" : SysLucene(x)}
     
     system  = systems[y["SYS"][0]]
 
-    c = 1
+    c, indexcount, retcount, evalcount = 1, 1, 1, 1
+    indextime, rettime, evaltime = [], [], []
+
     n = len(y["TESTCOL"]) * len(y["MODEL"]) * len(y["STEM"]) \
         * len(y["STOP"])  * len(y["QEXP"])
+
 
     for t in y["TESTCOL"]:
 
@@ -135,8 +140,15 @@ def main(argv):
 
                 itag,_,_ = maketag(t[1], "", stop, stem,
                                    "", "", "", "")
-                print("INDEX: " + itag)
+                
+                start = time.clock()
                 system.index(itag, d_dir, [stop_f, stem])
+                indextime.append((itag, time.clock() - start))
+                str_stdout = '{:>5} {:<5} {:<30} {:<10}'.format(indexcount, ' ', itag, 
+                      round(indextime[indexcount-1][1], 3))
+                print(str_stdout)
+                fp_stdout.write(str_stdout + '\n')
+                indexcount += 1
 
                 for m in y["MODEL"]:
                     
@@ -150,11 +162,48 @@ def main(argv):
                         qexp = qexp.split(":")
                         _,_,rtag = maketag("", t[0], stop, stem, m[0],
                                            str(query.n), q[1], qexp[0])
-                        print('{:>5}/{:<5} {}'.format(c, n, rtag))
+
+                        start = time.clock()
                         system.retrieve(itag, rtag, [stop_f, stem],
                                         m, query.oqf, qexp)
+                        rettime.append((rtag, time.clock() - start))
+                        
+                        start = time.clock()
                         system.evaluate(rtag, qrel_f)
+                        evaltime.append((rtag, time.clock() - start))
+                        str_stdout = '{:>5}/{:<5} {:<30} {:<10} {:<10}'.format(c, n, rtag, 
+                              round(rettime[c-1][1], 3), round(evaltime[c-1][1], 3))
+                        print(str_stdout)
+                        fp_stdout.write(str_stdout + '\n')
                         c += 1
+
+    # Summarise the running times
+    str_stdout = "Timings"
+    print(str_stdout)
+    fp_stdout.write(str_stdout + '\n')
+    sum = 0.0
+    for i in range(len(indextime)):
+        sum += indextime[i][1]
+        str_stdout = '{} took {:<.3f} seconds'.format(indextime[i][0], indextime[i][1])
+        print(str_stdout)
+        fp_stdout.write(str_stdout + '\n')
+    str_stdout = '{:<5d} indexes took {:<.3f} seconds; {:<.3f} seconds on average.'.format(indexcount, sum, sum/len(indextime))
+    print(str_stdout)
+    fp_stdout.write(str_stdout + '\n')
+    sum = 0.0
+    for i in range(len(rettime)):
+        sum += rettime[i][1]
+    str_stdout = '{:<5d} retrieval runs took {:<.3f} seconds; {:<.3f} seconds on average.'.format(c, sum, sum/len(rettime))
+    print(str_stdout)
+    fp_stdout.write(str_stdout + '\n')
+    sum = 0.0
+    for i in range(len(evaltime)):
+        sum += evaltime[i][1]
+    str_stdout = '{:<5d} evaluations took {:<.3f} seconds; {:<.3f} seconds on average.'.format(c, sum, sum/len(evaltime))
+    print(str_stdout)
+    fp_stdout.write(str_stdout + '\n')
+
+    fp_stdout.close()
 
 if __name__ == "__main__":
    main(sys.argv)
