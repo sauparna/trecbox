@@ -25,6 +25,7 @@ class SysLucene():
         
         # print(itag)
 
+        mem     = '20480' # 20G
         stop_f  = "None"
         stemmer = "None"
         if opt[0] != "":
@@ -48,6 +49,7 @@ class SysLucene():
                                            "-Xmx2048m",
                                            "-cp",       self.lib,
                                            "IndexTREC",
+                                           "-m",        mem,
                                            "-index",    o_dir,
                                            "-docs",     doc,
                                            "-stop",     stop_f,
@@ -127,11 +129,11 @@ class SysLucene():
         if os.path.exists(o_file):
             print("WARN: Skipped stage, eval exists " + o_file)
             return
-        
+
         # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
-                [os.path.join(self.x["EVAL"], "trec_eval"),
+                [self.x["EVALEXE"],
                  "-q", 
                  qrels,
                  i_file])
