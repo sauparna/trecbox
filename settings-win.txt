@@ -1,0 +1,7 @@
+EVAL C:\IR\trec_eval
+EVALEXE C:\IR\trec_eval\trec_eval.exe
+LUCENE C:\IR\LTR
+TERRIER C:\IR\TTR
+TERRIEREXE C:\IR\TTR\bin\trec_terrier.bat
+LEMUR C:\IR\indri
+EXP C:\IR\xcollection
