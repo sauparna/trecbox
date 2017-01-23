@@ -1,8 +1,10 @@
-TESTCOL T6 CD45 301-450:T:t6.50 t6.50
-TESTCOL T7 CD45 301-450:T:t7.50 t7.50
-MODEL bm25 bm25L AMITPDLN
-MODEL tfidf tmpl
-STEM s
-STOP ser17
+TESTCOL	DEMO	    ap	    query.txt:D:subset.txt	    qrel.txt
+TESTCOL TREC6	    cd45	1-450.txt:T:301-350.50	    301-350.cd45-cr
+TESTCOL TERABYTE1   gov2	701-850.txt:T:701-750.50    701-750.GOV2.txt
+
+MODEL bm25L bm25 bm25e dfrL lmdirichletL defaultL ibL tmpl tmple
+STEM x s porter
+STOP x ser17.txt smart571.txt
+
 QEXP x
 SYS lucene
