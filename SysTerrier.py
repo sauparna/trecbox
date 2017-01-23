@@ -1,5 +1,4 @@
 import sys, os, subprocess
-import time
 from bs4 import BeautifulSoup
 
 class SysTerrier():
@@ -27,8 +26,11 @@ class SysTerrier():
         # write Terrier's collection.spec file
         o_file = os.path.join(self.x["INDEX"], itag + ".docs")
         if not os.path.exists(o_file):
-            with open(o_file, "w+b") as f:
-                f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
+            with open(o_file, "w+") as fp:
+                #f.write(subprocess.check_output(["find", "-L", doc, "-type", "f"]))
+                for root, dirs, files in os.walk(doc, followlinks=True):
+                    for name in files:
+                        fp.write(os.path.join(root, name) + "\n")
         return o_file
 
     def __build_termpipeline(self, opt):
@@ -67,7 +69,7 @@ class SysTerrier():
 
         try:
            output = subprocess.check_output(
-               [os.path.join(self.x["TERRIER"], "bin/trec_terrier.sh"),
+               [self.x["TERRIEREXE"],
                 "-i",
                 "-Dcollection.spec="    + i_file,
                 "-Dterrier.index.path=" + o_dir,
@@ -80,10 +82,10 @@ class SysTerrier():
                 "-DTrecDocTags.casesensitive=false"],
                stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
+             output = str(e.cmd) + "\n" + str(e.returncode) + "\n" + str(e.output)
 
         o_log = os.path.join(os.path.join(self.x["LOG"], itag + ".i"))
-        with open(o_log, "w+b") as f:
+        with open(o_log, "w+") as f:
             f.write(output)
 
     def retrieve(self, itag, rtag, opt, m, q, qe):
@@ -153,7 +155,7 @@ class SysTerrier():
 
         try:
             output = subprocess.check_output(
-                [os.path.join(self.x["TERRIER"], "bin/trec_terrier.sh"),
+                [self.x["TERRIEREXE"],
                  "-r",
                  qe_switch,
                  tfnorm,
@@ -200,7 +202,7 @@ class SysTerrier():
         # trec_eval -q qrels run > eval_output
         try:
             output = subprocess.check_output(
-                    [os.path.join(self.x["EVAL"], "trec_eval"),
+                    [self.x["EVALEXE"],
                      "-q",
                      qrels,
                      i_file])
